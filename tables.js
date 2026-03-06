@@ -1,4 +1,6 @@
 let DATA = null
+let avgPosition = "right"
+let currentType = "damage"
 
 fetch("battle_data.json")
 .then(r=>r.json())
@@ -7,9 +9,18 @@ DATA = data
 loadTable("damage")
 })
 
+function toggleAverage(){
+
+avgPosition = avgPosition === "right" ? "left" : "right"
+loadTable(currentType)
+
+}
+
 function loadTable(type,event){
 
-document.querySelectorAll("button").forEach(b=>b.classList.remove("active"))
+currentType = type
+
+document.querySelectorAll("button.mode").forEach(b=>b.classList.remove("active"))
 if(event) event.target.classList.add("active")
 
 let battles = DATA.battles
@@ -109,6 +120,10 @@ let html = "<table>"
 html+="<tr>"
 html+="<th>Ник</th>"
 
+if(type!=="hits" && avgPosition==="left"){
+html+="<th>Среднее</th>"
+}
+
 if(type==="hits"){
 html+="<th>% пробития</th>"
 }
@@ -116,14 +131,13 @@ html+="<th>% пробития</th>"
 battles.forEach(b=>{
 
 let resultClass = b.win ? "win" : "lose"
-
 let mapName = b.map.replace(" ","<br>")
 
 html+=`<th class="${resultClass}">${mapName}</th>`
 
 })
 
-if(type!=="hits"){
+if(type!=="hits" && avgPosition==="right"){
 html+="<th>Среднее</th>"
 }
 
@@ -134,6 +148,10 @@ sorted.forEach(name=>{
 html+="<tr>"
 
 html+=`<td>${name}</td>`
+
+if(type!=="hits" && avgPosition==="left"){
+html+=`<td>${averages[name]}</td>`
+}
 
 if(type==="hits"){
 
@@ -180,7 +198,7 @@ ${displayValue}
 
 })
 
-if(type!=="hits"){
+if(type!=="hits" && avgPosition==="right"){
 html+=`<td>${averages[name]}</td>`
 }
 
@@ -193,6 +211,3 @@ html+="</table>"
 document.getElementById("table").innerHTML = html
 
 }
-
-
-
