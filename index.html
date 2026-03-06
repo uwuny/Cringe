@@ -162,6 +162,17 @@ color:#777;
 border-top:1px solid #333;
 }
 
+#tableWrapper{
+display:flex;
+justify-content:center;
+overflow-x:auto;
+padding-bottom:10px;
+}
+
+#tableWrapper.left{
+justify-content:flex-start;
+}
+  
 </style>
 
 </head>
@@ -185,7 +196,9 @@ border-top:1px solid #333;
 
 </div>
 
-<div id="table"></div>
+<div id="tableWrapper">
+  <div id="table"></div>
+</div>
 
 <footer class="footer">
 Created by McQueen
@@ -245,4 +258,5 @@ setInterval(draw,40)
 
 </body>
 </html>
+
 
