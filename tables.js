@@ -110,7 +110,7 @@ html+="<tr>"
 html+="<th>Ник</th>"
 
 if(type==="hits"){
-html+="<th>%</th>"
+html+="<th>% пробития</th>"
 }
 
 battles.forEach(b=>{
@@ -154,7 +154,7 @@ pen+=p.piercings
 
 let percent = hits ? Math.round(pen/hits*100) : 0
 
-html+=`<td>${percent}% пробития</td>`
+html+=`<td>${percent}%</td>`
 }
 
 battles.forEach((battle,i)=>{
@@ -193,5 +193,6 @@ html+="</table>"
 document.getElementById("table").innerHTML = html
 
 }
+
 
 
