@@ -109,16 +109,23 @@ averages[name] = count ? Math.round(sum/count) : 0
 
 let sorted = Object.keys(players)
 
+if(type==="hits"){
+sorted.sort((a,b)=>getPenRate(b,battles)-getPenRate(a,battles))
+}else{
 sorted.sort((a,b)=>averages[b]-averages[a])
+}
 
 let html = "<table>"
 
 html+="<tr>"
 html+="<th>Ник</th>"
 
-if(avgPosition==="left"){
-html+="<th>Среднее</th>"
+if(type==="hits" && avgPosition==="left"){
 html+="<th>% пробития</th>"
+}
+
+if(type!=="hits" && avgPosition==="left"){
+html+="<th>Среднее</th>"
 }
 
 battles.forEach(b=>{
@@ -130,9 +137,12 @@ html+=`<th class="${resultClass}">${mapName}</th>`
 
 })
 
-if(avgPosition==="right"){
-html+="<th>Среднее</th>"
+if(type==="hits" && avgPosition==="right"){
 html+="<th>% пробития</th>"
+}
+
+if(type!=="hits" && avgPosition==="right"){
+html+="<th>Среднее</th>"
 }
 
 html+="</tr>"
@@ -143,11 +153,13 @@ html+="<tr>"
 
 html+=`<td>${name}</td>`
 
-let penRate = Math.round(getPenRate(name,battles)*100)
+if(type==="hits" && avgPosition==="left"){
+let percent = Math.round(getPenRate(name,battles)*100)
+html+=`<td>${percent}%</td>`
+}
 
-if(avgPosition==="left"){
+if(type!=="hits" && avgPosition==="left"){
 html+=`<td>${averages[name]}</td>`
-html+=`<td>${penRate}%</td>`
 }
 
 battles.forEach((battle,i)=>{
@@ -173,9 +185,13 @@ ${displayValue}
 
 })
 
-if(avgPosition==="right"){
+if(type==="hits" && avgPosition==="right"){
+let percent = Math.round(getPenRate(name,battles)*100)
+html+=`<td>${percent}%</td>`
+}
+
+if(type!=="hits" && avgPosition==="right"){
 html+=`<td>${averages[name]}</td>`
-html+=`<td>${penRate}%</td>`
 }
 
 html+="</tr>"
