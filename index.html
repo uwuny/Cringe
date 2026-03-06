@@ -10,83 +10,47 @@
 <style>
 
 body{
-background:#0b0b0b;
+background:#000;
 color:white;
 font-family:Arial;
 margin:0;
 padding:0;
 }
 
-/* MATRIX HEADER */
-
-.matrix-header{
-position:relative;
-height:150px;
-display:flex;
-justify-content:center;
-align-items:center;
-overflow:hidden;
-}
+/* MATRIX BACKGROUND */
 
 #matrixCanvas{
-position:absolute;
+position:fixed;
 top:0;
 left:0;
 width:100%;
 height:100%;
+z-index:0;
 opacity:0.35;
 }
 
-.matrix-title{
+/* PAGE CONTENT */
+
+.page{
 position:relative;
 z-index:2;
+}
+
+/* HEADER */
+
+.matrix-title{
+text-align:center;
 font-family:monospace;
-font-size:56px;
+font-size:64px;
 color:#00ff66;
+margin-top:30px;
+margin-bottom:10px;
 letter-spacing:6px;
+
 text-shadow:
 0 0 5px #00ff66,
 0 0 15px #00ff66,
-0 0 35px #00ff66;
-}
-
-.glitch{
-position:relative;
-}
-
-.glitch::before,
-.glitch::after{
-content:attr(data-text);
-position:absolute;
-left:0;
-top:0;
-width:100%;
-opacity:0.7;
-}
-
-.glitch::before{
-animation:glitch1 4s infinite linear alternate-reverse;
-}
-
-.glitch::after{
-animation:glitch2 3s infinite linear alternate-reverse;
-}
-
-@keyframes glitch1{
-0%{transform:translate(0)}
-20%{transform:translate(-2px,2px)}
-40%{transform:translate(-3px,-1px)}
-60%{transform:translate(2px,1px)}
-80%{transform:translate(-1px,-2px)}
-100%{transform:translate(0)}
-}
-
-@keyframes glitch2{
-0%{transform:translate(0)}
-25%{transform:translate(2px,-2px)}
-50%{transform:translate(-1px,2px)}
-75%{transform:translate(1px,-1px)}
-100%{transform:translate(0)}
+0 0 30px #00ff66;
 }
 
 /* TABLE */
@@ -122,16 +86,17 @@ background:#333;
 td:first-child{
 font-family: Bahnschrift, Arial, sans-serif;
 font-weight:bold;
+
 position:sticky;
 left:0;
-z-index:2;
+z-index:3;
 background:#1e1e1e;
 }
 
 th:first-child{
 position:sticky;
 left:0;
-z-index:3;
+z-index:4;
 background:#262626;
 }
 
@@ -152,6 +117,11 @@ color:#d16b6b;
 }
 
 /* BUTTONS */
+
+.buttons{
+text-align:center;
+margin-bottom:10px;
+}
 
 button{
 background:#2b2b2b;
@@ -192,17 +162,13 @@ border-top:1px solid #333;
 
 <body>
 
-<div class="matrix-header">
-
 <canvas id="matrixCanvas"></canvas>
 
-<h1 class="matrix-title">
-<span class="glitch" data-text="СТАТИСТИКА">СТАТИСТИКА</span>
-</h1>
+<div class="page">
 
-</div>
+<h1 class="matrix-title">СТАТИСТИКА</h1>
 
-<div style="padding-left:10px">
+<div class="buttons">
 
 <button class="mode" onclick="loadTable('damage',event)">Урон</button>
 <button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
@@ -219,6 +185,8 @@ border-top:1px solid #333;
 Created by McQueen
 </footer>
 
+</div>
+
 <script src="tables.js"></script>
 
 <script>
@@ -227,7 +195,7 @@ const canvas = document.getElementById("matrixCanvas")
 const ctx = canvas.getContext("2d")
 
 canvas.width = window.innerWidth
-canvas.height = 150
+canvas.height = window.innerHeight
 
 const letters = "アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const chars = letters.split("")
