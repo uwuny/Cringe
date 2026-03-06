@@ -154,7 +154,7 @@ pen+=p.piercings
 
 let percent = hits ? Math.round(pen/hits*100) : 0
 
-html+=`<td>${percent}%</td>`
+html+=`<td>${percent}% пробития</td>`
 }
 
 battles.forEach((battle,i)=>{
@@ -193,4 +193,5 @@ html+="</table>"
 document.getElementById("table").innerHTML = html
 
 }
+
 
