@@ -16,6 +16,28 @@ loadTable(currentType)
 
 }
 
+function getPenRate(name,battles){
+
+let shots=0
+let hits=0
+let pen=0
+
+battles.forEach(b=>{
+
+let p=b.players[name]
+if(!p) return
+
+shots+=p.shots
+hits+=p.hits
+pen+=p.piercings
+
+})
+
+if(hits==0) return 0
+return pen/hits
+
+}
+
 function loadTable(type,event){
 
 currentType = type
@@ -85,46 +107,17 @@ averages[name] = count ? Math.round(sum/count) : 0
 
 }
 
-function getPenRate(name){
-
-let shots=0
-let hits=0
-let pen=0
-
-battles.forEach(b=>{
-
-let p=b.players[name]
-if(!p) return
-
-shots+=p.shots
-hits+=p.hits
-pen+=p.piercings
-
-})
-
-if(hits==0) return 0
-return pen/hits
-
-}
-
 let sorted = Object.keys(players)
 
-if(type==="hits"){
-sorted.sort((a,b)=>getPenRate(b)-getPenRate(a))
-}else{
 sorted.sort((a,b)=>averages[b]-averages[a])
-}
 
 let html = "<table>"
 
 html+="<tr>"
 html+="<th>Ник</th>"
 
-if(type!=="hits" && avgPosition==="left"){
+if(avgPosition==="left"){
 html+="<th>Среднее</th>"
-}
-
-if(type==="hits"){
 html+="<th>% пробития</th>"
 }
 
@@ -137,8 +130,9 @@ html+=`<th class="${resultClass}">${mapName}</th>`
 
 })
 
-if(type!=="hits" && avgPosition==="right"){
+if(avgPosition==="right"){
 html+="<th>Среднее</th>"
+html+="<th>% пробития</th>"
 }
 
 html+="</tr>"
@@ -149,30 +143,11 @@ html+="<tr>"
 
 html+=`<td>${name}</td>`
 
-if(type!=="hits" && avgPosition==="left"){
+let penRate = Math.round(getPenRate(name,battles)*100)
+
+if(avgPosition==="left"){
 html+=`<td>${averages[name]}</td>`
-}
-
-if(type==="hits"){
-
-let shots=0
-let hits=0
-let pen=0
-
-battles.forEach(b=>{
-
-let p=b.players[name]
-if(!p) return
-
-shots+=p.shots
-hits+=p.hits
-pen+=p.piercings
-
-})
-
-let percent = hits ? Math.round(pen/hits*100) : 0
-
-html+=`<td>${percent}%</td>`
+html+=`<td>${penRate}%</td>`
 }
 
 battles.forEach((battle,i)=>{
@@ -198,8 +173,9 @@ ${displayValue}
 
 })
 
-if(type!=="hits" && avgPosition==="right"){
+if(avgPosition==="right"){
 html+=`<td>${averages[name]}</td>`
+html+=`<td>${penRate}%</td>`
 }
 
 html+="</tr>"
