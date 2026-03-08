@@ -174,10 +174,9 @@ justify-content:flex-start;
 }
 
 /* SIDE IMAGES */
-
 .side-image{
 position:fixed;
-top:250px;
+top:20px; /* расстояние от верхнего края страницы */
 width:620px;
 height:auto;
 z-index:1;
@@ -189,15 +188,13 @@ box-shadow:0 0 15px rgba(0,255,100,0.3);
 }
 
 /* левая */
-
 .side-image.left{
-left:calc(50% - 1000px);
+left:calc(50% - 1000px); /* можно подвинуть вручную */
 }
 
 /* правая */
-
 .side-image.right{
-right:calc(50% - 900px);
+right:calc(50% - 900px); /* можно подвинуть вручную */
 }
 
 /* FOOTER IMAGE */
@@ -319,6 +316,7 @@ setInterval(draw,40)
 
 </body>
 </html>
+
 
 
 
