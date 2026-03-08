@@ -1,5 +1,5 @@
-```html
 <!DOCTYPE html>
+
 <html lang="ru">
 
 <head>
@@ -9,18 +9,18 @@
 
 <style>
 
-/* --- БАЗА --- */
+/* БАЗА */
 
 body{
 background:#000;
-color:white;
+color:#fff;
 font-family:Arial,sans-serif;
 margin:0;
 padding:0;
 overflow-x:hidden;
 }
 
-/* --- MATRIX --- */
+/* MATRIX */
 
 #matrixCanvas{
 position:fixed;
@@ -32,7 +32,7 @@ z-index:0;
 opacity:0.35;
 }
 
-/* --- PAGE --- */
+/* PAGE */
 
 .page{
 position:relative;
@@ -40,26 +40,25 @@ z-index:1;
 padding-top:20px;
 }
 
-/* --- БОКОВЫЕ КАРТИНКИ (НЕ ВЛИЯЮТ НА РАЗМЕТКУ) --- */
+/* БОКОВЫЕ КАРТИНКИ */
 
 .overlay-img{
 position:absolute;
-top:80px;          /* выше */
-width:204px;       /* было 170 → +20% */
-height:auto;
+top:60px;      /* выше */
+width:220px;   /* больше */
 pointer-events:none;
-z-index:2;
+z-index:5;
 }
 
 .overlay-left{
-left:40px;         /* правее */
+left:80px;     /* правее */
 }
 
 .overlay-right{
-right:40px;        /* правее */
+right:80px;    /* правее */
 }
 
-/* --- HEADER --- */
+/* ЗАГОЛОВОК */
 
 .matrix-title{
 text-align:center;
@@ -75,7 +74,7 @@ text-shadow:
 0 0 30px #00ff66;
 }
 
-/* --- BUTTONS --- */
+/* КНОПКИ */
 
 .buttons{
 text-align:center;
@@ -104,13 +103,12 @@ background:#4a6ed1;
 border-color:#6f8fff;
 }
 
-/* --- TABLE --- */
+/* ТАБЛИЦА */
 
 #tableWrapper{
 display:flex;
 justify-content:center;
 overflow-x:auto;
-padding-bottom:10px;
 }
 
 table{
@@ -129,19 +127,9 @@ background:#1e1e1e;
 
 th{
 background:#262626;
-line-height:1.1;
-}
-
-tr:hover td{
-background:#2a2a2a;
-}
-
-tr:hover td:first-child{
-background:#333;
 }
 
 td:first-child{
-font-family:Bahnschrift,Arial,sans-serif;
 font-weight:bold;
 position:sticky;
 left:0;
@@ -156,32 +144,22 @@ z-index:4;
 background:#262626;
 }
 
-.win{background:#2e5e2e;}
-.lose{background:#5e2e2e;}
-.alive{color:#6bd16b;}
-.dead{color:#d16b6b;}
-
-/* --- НИЖНИЙ БЛОК --- */
+/* НИЖНИЙ БЛОК */
 
 .credits{
 text-align:center;
-margin-top:10px;
+margin:5px 0 0 0;
+padding:0;
 font-size:13px;
 color:#777;
-line-height:1;
-}
-
-.credits-text{
-margin:0;
-padding:0;
 }
 
 .credits img{
 display:block;
 margin:0 auto;
+padding:0;
 width:750px;
 max-width:95%;
-height:auto;
 }
 
 </style>
@@ -193,8 +171,6 @@ height:auto;
 <canvas id="matrixCanvas"></canvas>
 
 <div class="page">
-
-<!-- БОКОВЫЕ КАРТИНКИ -->
 
 <img src="left_image.png" class="overlay-img overlay-left">
 <img src="right_image.png" class="overlay-img overlay-right">
@@ -214,7 +190,7 @@ height:auto;
 </div>
 
 <div class="credits">
-<div class="credits-text">Created by McQueen</div>
+Created by McQueen
 <img src="Down.png">
 </div>
 
@@ -224,7 +200,7 @@ height:auto;
 
 <script>
 
-/* MATRIX EFFECT */
+/* MATRIX */
 
 const canvas=document.getElementById("matrixCanvas")
 const ctx=canvas.getContext("2d")
@@ -274,4 +250,3 @@ setInterval(draw,40)
 
 </body>
 </html>
-```
