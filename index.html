@@ -38,7 +38,7 @@ body {
 /* --- SIDE IMAGES LAYER --- */
 .side-layer {
   position: absolute;
-  top: 5px;          /* 5px от верха страницы */
+  top: 5px;          /* отступ от верха страницы */
   left: 50%;
   transform: translateX(-50%);
   width: 1000px;     /* ширина контейнера */
@@ -151,26 +151,29 @@ th:first-child {
 .alive { color: #6bd16b; }
 .dead { color: #d16b6b; }
 
-/* --- CREDITS --- */
-.credits {
+/* --- FOOTER --- */
+.footer {
+  margin-top: 40px;         /* от таблицы */
+  padding: 15px 0 0 0;
   text-align: center;
-  margin: 0;        /* убираем лишние отступы */
-  padding: 0;
   font-size: 13px;
   color: #777;
-  line-height: 1.1;
+  border-top: 1px solid #333; /* линия */
 }
 
-.credits img {
+.credit-text {
+  margin: 0;
+  padding: 0;
+}
+
+.credit-image {
   display: block;
   margin: 2px auto 0 auto;   /* 2px от текста */
-  padding: 0;
   width: 750px;
   max-width: 95%;
   height: auto;
 }
 </style>
-
 </head>
 
 <body>
@@ -199,10 +202,11 @@ th:first-child {
     <div id="table"></div>
   </div>
 
-  <div class="credits">
-    Created by McQueen
-    <img src="Down.png">
-  </div>
+  <!-- Нижний блок -->
+  <footer class="footer">
+    <div class="credit-text">Created by McQueen</div>
+    <img src="Down.png" class="credit-image">
+  </footer>
 
 </div>
 
