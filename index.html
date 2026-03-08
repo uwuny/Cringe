@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 
 <head>
@@ -8,171 +7,167 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
 <style>
-
 /* --- BASE --- */
-
-body{
-background:#000;
-color:white;
-font-family:Arial,sans-serif;
-margin:0;
-padding:0;
-overflow-x:hidden;
+body {
+  background: #000;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 /* --- MATRIX --- */
-
-#matrixCanvas{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-z-index:0;
-opacity:0.35;
+#matrixCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0.35;
 }
 
 /* --- PAGE --- */
-
-.page{
-position:relative;
-z-index:1;
-padding-top:20px;
+.page {
+  position: relative;
+  z-index: 1;
+  padding-top: 20px;
 }
 
 /* --- SIDE IMAGES LAYER --- */
-
-.side-layer{
-position:absolute;
-top:110px;          /* уровень кнопок */
-left:50%;
-transform:translateX(-50%);
-width:1100px;       /* такая же ширина как у таблицы */
-pointer-events:none;
-z-index:2;
+.side-layer {
+  position: absolute;
+  top: 80px;       /* уровень кнопок */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1000px;   /* ширина контейнера */
+  pointer-events: none;
+  z-index: 2;
 }
 
-.side-img{
-position:absolute;
-width:200px;        /* +20% примерно */
+.side-img {
+  position: absolute;
+  width: 204px;   /* +20% */
+  height: auto;
 }
 
-.side-left{
-left:-220px;
+.side-left {
+  left: -220px;
 }
 
-.side-right{
-right:-220px;
+.side-right {
+  right: -220px;
 }
 
 /* --- HEADER --- */
-
-.matrix-title{
-text-align:center;
-font-family:monospace;
-font-size:64px;
-color:#00ff66;
-margin:20px 0 10px 0;
-letter-spacing:6px;
-
-text-shadow:
-0 0 5px #00ff66,
-0 0 15px #00ff66,
-0 0 30px #00ff66;
+.matrix-title {
+  text-align: center;
+  font-family: monospace;
+  font-size: 64px;
+  color: #00ff66;
+  margin: 20px 0 10px 0;
+  letter-spacing: 6px;
+  text-shadow: 0 0 5px #00ff66,
+               0 0 15px #00ff66,
+               0 0 30px #00ff66;
 }
 
 /* --- BUTTONS --- */
-
-.buttons{
-text-align:center;
-margin-bottom:10px;
+.buttons {
+  text-align: center;
+  margin-bottom: 10px;
 }
 
-button{
-background:#2b2b2b;
-color:white;
-border:1px solid #444;
-padding:6px 12px;
-margin:4px;
-border-radius:6px;
-font-size:14px;
-cursor:pointer;
-transition:0.15s;
+button {
+  background: #2b2b2b;
+  color: white;
+  border: 1px solid #444;
+  padding: 6px 12px;
+  margin: 4px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.15s;
 }
 
-button:hover{
-background:#3a3a3a;
-border-color:#666;
+button:hover {
+  background: #3a3a3a;
+  border-color: #666;
 }
 
-button.active{
-background:#4a6ed1;
-border-color:#6f8fff;
+button.active {
+  background: #4a6ed1;
+  border-color: #6f8fff;
 }
 
 /* --- TABLE --- */
-
-#tableWrapper{
-display:flex;
-justify-content:center;
-overflow-x:auto;
+#tableWrapper {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
 }
 
-table{
-border-collapse:collapse;
-margin-top:10px;
-background:#1a1a1a;
-box-shadow:0 0 20px rgba(0,255,100,0.1);
+table {
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: #1a1a1a;
+  box-shadow: 0 0 20px rgba(0, 255, 100, 0.1);
 }
 
-td,th{
-border:1px solid #444;
-padding:4px 6px;
-text-align:center;
-background:#1e1e1e;
+td, th {
+  border: 1px solid #444;
+  padding: 4px 6px;
+  text-align: center;
+  background: #1e1e1e;
 }
 
-th{
-background:#262626;
+th {
+  background: #262626;
 }
 
-tr:hover td{
-background:#2a2a2a;
+tr:hover td {
+  background: #2a2a2a;
 }
 
-td:first-child{
-font-weight:bold;
-position:sticky;
-left:0;
-z-index:3;
-background:#1e1e1e;
+td:first-child {
+  font-weight: bold;
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: #1e1e1e;
 }
 
-th:first-child{
-position:sticky;
-left:0;
-z-index:4;
-background:#262626;
+th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  background: #262626;
 }
+
+.win { background: #2e5e2e; }
+.lose { background: #5e2e2e; }
+.alive { color: #6bd16b; }
+.dead { color: #d16b6b; }
 
 /* --- CREDITS --- */
-
-.credits{
-text-align:center;
-margin-top:20px;
-font-size:13px;
-color:#777;
-line-height:1.1;
+.credits {
+  text-align: center;
+  margin: 5px 0 0 0;
+  padding: 0;
+  font-size: 13px;
+  color: #777;
+  line-height: 1.1;
 }
 
-.credits img{
-display:block;
-margin:0 auto;
-width:750px;
-max-width:95%;
-height:auto;
+.credits img {
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  width: 750px;
+  max-width: 95%;
+  height: auto;
 }
-
 </style>
 
 </head>
@@ -183,38 +178,37 @@ height:auto;
 
 <div class="page">
 
-<div class="side-layer">
-<img src="left_image.png" class="side-img side-left">
-<img src="right_image.png" class="side-img side-right">
-</div>
+  <!-- БОКОВЫЕ КАРТИНКИ -->
+  <div class="side-layer">
+    <img src="left_image.png" class="side-img side-left">
+    <img src="right_image.png" class="side-img side-right">
+  </div>
 
-<h1 class="matrix-title">СТАТИСТИКА</h1>
+  <h1 class="matrix-title">СТАТИСТИКА</h1>
 
-<div class="buttons">
-<button class="mode" onclick="loadTable('damage',event)">Урон</button>
-<button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
-<button class="mode" onclick="loadTable('hits',event)">Попадания</button>
-<button class="mode" onclick="loadTable('assist',event)">Ассист</button>
-<button onclick="toggleAverage()">Среднее слева / справа</button>
-</div>
+  <div class="buttons">
+    <button class="mode" onclick="loadTable('damage',event)">Урон</button>
+    <button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
+    <button class="mode" onclick="loadTable('hits',event)">Попадания</button>
+    <button class="mode" onclick="loadTable('assist',event)">Ассист</button>
+    <button onclick="toggleAverage()">Среднее слева / справа</button>
+  </div>
 
-<div id="tableWrapper">
-<div id="table"></div>
-</div>
+  <div id="tableWrapper">
+    <div id="table"></div>
+  </div>
 
-<div class="credits">
-Created by McQueen
-<img src="Down.png">
-</div>
+  <div class="credits">
+    Created by McQueen
+    <img src="Down.png">
+  </div>
 
 </div>
 
 <script src="tables.js"></script>
 
 <script>
-
 /* MATRIX EFFECT */
-
 const canvas=document.getElementById("matrixCanvas")
 const ctx=canvas.getContext("2d")
 
@@ -228,37 +222,21 @@ const fontSize=14
 const columns=canvas.width/fontSize
 
 const drops=[]
-
-for(let i=0;i<columns;i++){
-drops[i]=1
-}
+for(let i=0;i<columns;i++){ drops[i]=1 }
 
 function draw(){
-
-ctx.fillStyle="rgba(0,0,0,0.05)"
-ctx.fillRect(0,0,canvas.width,canvas.height)
-
-ctx.fillStyle="#00ff66"
-ctx.font=fontSize+"px monospace"
-
-for(let i=0;i<drops.length;i++){
-
-const text=chars[Math.floor(Math.random()*chars.length)]
-
-ctx.fillText(text,i*fontSize,drops[i]*fontSize)
-
-if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
-drops[i]=0
+  ctx.fillStyle="rgba(0,0,0,0.05)"
+  ctx.fillRect(0,0,canvas.width,canvas.height)
+  ctx.fillStyle="#00ff66"
+  ctx.font=fontSize+"px monospace"
+  for(let i=0;i<drops.length;i++){
+    const text=chars[Math.floor(Math.random()*chars.length)]
+    ctx.fillText(text,i*fontSize,drops[i]*fontSize)
+    if(drops[i]*fontSize>canvas.height && Math.random()>0.975){ drops[i]=0 }
+    drops[i]++
+  }
 }
-
-drops[i]++
-
-}
-
-}
-
 setInterval(draw,40)
-
 </script>
 
 </body>
