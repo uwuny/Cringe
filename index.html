@@ -28,30 +28,36 @@ body {
     opacity: 0.35;
 }
 
-/* --- SIDE IMAGES (верхние картинки) --- */
-.side-image {
-    position: fixed;
-    top: 50px; /* регулирует вертикальное положение */
-    width: 500px; /* размер картинок, можно менять */
-    height: auto;
-    z-index: 0; /* позади контента */
-    opacity: 0.7;
-    pointer-events: none;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0, 255, 100, 0.2);
-}
-.side-image.left {
-    left: 20px;
-}
-.side-image.right {
-    right: 20px;
-}
-
 /* --- PAGE CONTENT --- */
 .page {
     position: relative;
-    z-index: 2; /* поверх картинок */
+    z-index: 1;
     padding-top: 20px;
+}
+
+/* --- SIDE IMAGES (верхние картинки, теперь движутся вместе с таблицей) --- */
+.side-image {
+    display: block;
+    position: relative;  /* привязка к .page */
+    width: 620px;        /* размер картинки, можно менять */
+    height: auto;
+    opacity: 0.7;
+    pointer-events: none;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,255,100,0.2);
+    margin-top: 10px;
+}
+
+/* левая картинка */
+.side-image.left {
+    float: left;
+    margin-left: 20px;
+}
+
+/* правая картинка */
+.side-image.right {
+    float: right;
+    margin-right: 20px;
 }
 
 /* --- HEADER --- */
@@ -63,6 +69,7 @@ body {
     margin-top: 30px;
     margin-bottom: 10px;
     letter-spacing: 6px;
+    clear: both; /* чтобы заголовок был под картинками */
     text-shadow:
         0 0 5px #00ff66,
         0 0 15px #00ff66,
@@ -108,7 +115,7 @@ table {
     border-collapse: collapse;
     margin-top: 10px;
     background: #1a1a1a;
-    box-shadow: 0 0 20px rgba(0, 255, 100, 0.1);
+    box-shadow: 0 0 20px rgba(0,255,100,0.1);
 }
 td, th {
     border: 1px solid #444;
@@ -168,9 +175,9 @@ th:first-child {
 .credit-image {
     display: block;
     margin: 0 auto;
-    width: 300px; /* размер картинки в футере */
+    width: 620px; /* вернули размер нижней картинки */
     height: auto;
-    transform: translateY(-10px); /* поднимаем чуть выше если нужно */
+    transform: translateY(0px);
 }
 </style>
 </head>
@@ -179,30 +186,30 @@ th:first-child {
 
 <canvas id="matrixCanvas"></canvas>
 
-<!-- Верхние картинки -->
-<img class="side-image left" src="left_image.png">
-<img class="side-image right" src="right_image.png">
-
 <div class="page">
 
-<h1 class="matrix-title">СТАТИСТИКА</h1>
+  <!-- Верхние картинки -->
+  <img class="side-image left" src="left_image.png">
+  <img class="side-image right" src="right_image.png">
 
-<div class="buttons">
-    <button class="mode" onclick="loadTable('damage',event)">Урон</button>
-    <button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
-    <button class="mode" onclick="loadTable('hits',event)">Попадания</button>
-    <button class="mode" onclick="loadTable('assist',event)">Ассист</button>
-    <button onclick="toggleAverage()">Среднее слева / справа</button>
-</div>
+  <h1 class="matrix-title">СТАТИСТИКА</h1>
 
-<div id="tableWrapper">
-    <div id="table"></div>
-</div>
+  <div class="buttons">
+      <button class="mode" onclick="loadTable('damage',event)">Урон</button>
+      <button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
+      <button class="mode" onclick="loadTable('hits',event)">Попадания</button>
+      <button class="mode" onclick="loadTable('assist',event)">Ассист</button>
+      <button onclick="toggleAverage()">Среднее слева / справа</button>
+  </div>
 
-<footer class="footer">
-    <div class="credit-text">Created by McQueen</div>
-    <img src="Down.png" class="credit-image">
-</footer>
+  <div id="tableWrapper">
+      <div id="table"></div>
+  </div>
+
+  <footer class="footer">
+      <div class="credit-text">Created by McQueen</div>
+      <img src="Down.png" class="credit-image">
+  </footer>
 
 </div>
 
