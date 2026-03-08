@@ -7,178 +7,157 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
 <style>
-/* --- Базовые стили --- */
-body {
-    background: #000;
-    color: white;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
+
+body{
+    background:#000;
+    color:white;
+    font-family:Arial,sans-serif;
+    margin:0;
+    overflow-x:hidden;
 }
 
-/* --- MATRIX BACKGROUND --- */
-#matrixCanvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    opacity: 0.35;
+/* MATRIX */
+#matrixCanvas{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    opacity:0.35;
 }
 
-/* --- PAGE CONTENT --- */
-.page {
-    position: relative;
-    z-index: 1;
-    padding-top: 20px;
+/* PAGE */
+.page{
+    position:relative;
+    z-index:1;
+    padding-top:20px;
 }
 
-/* --- SIDE IMAGES (верхние картинки, теперь движутся вместе с таблицей) --- */
-.side-image {
-    display: block;
-    position: relative;  /* привязка к .page */
-    width: 400px;        /* размер картинки, можно менять */
-    height: auto;
-    opacity: 0.7;
-    pointer-events: none;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0,255,100,0.2);
-    margin-top: 50px;
+/* HEADER BLOCK */
+.header{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:25px;
+    margin-top:10px;
 }
 
-/* левая картинка */
-.side-image.left {
-    float: left;
-    margin-left: 20px;
+/* SIDE IMAGES */
+.side-image{
+    width:140px;
+    height:auto;
+    opacity:0.8;
+    border-radius:10px;
+    box-shadow:0 0 12px rgba(0,255,100,0.2);
 }
 
-/* правая картинка */
-.side-image.right {
-    float: right;
-    margin-right: 20px;
-}
-
-/* --- HEADER --- */
-.matrix-title {
-    text-align: center;
-    font-family: monospace;
-    font-size: 64px;
-    color: #00ff66;
-    margin-top: 30px;
-    margin-bottom: 10px;
-    letter-spacing: 6px;
-    clear: both; /* чтобы заголовок был под картинками */
+/* TITLE */
+.matrix-title{
+    font-family:monospace;
+    font-size:64px;
+    color:#00ff66;
+    letter-spacing:6px;
+    margin:0;
     text-shadow:
         0 0 5px #00ff66,
         0 0 15px #00ff66,
         0 0 30px #00ff66;
 }
 
-/* --- BUTTONS --- */
-.buttons {
-    text-align: center;
-    margin-bottom: 10px;
-}
-button {
-    background: #2b2b2b;
-    color: white;
-    border: 1px solid #444;
-    padding: 6px 12px;
-    margin: 4px;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.15s;
-}
-button:hover {
-    background: #3a3a3a;
-    border-color: #666;
-}
-button.active {
-    background: #4a6ed1;
-    border-color: #6f8fff;
+/* BUTTONS */
+.buttons{
+    text-align:center;
+    margin-top:15px;
 }
 
-/* --- TABLE --- */
-#tableWrapper {
-    display: flex;
-    justify-content: center;
-    overflow-x: auto;
-    padding-bottom: 10px;
-}
-#tableWrapper.left {
-    justify-content: flex-start;
-}
-table {
-    border-collapse: collapse;
-    margin-top: 10px;
-    background: #1a1a1a;
-    box-shadow: 0 0 20px rgba(0,255,100,0.1);
-}
-td, th {
-    border: 1px solid #444;
-    padding: 4px 6px;
-    text-align: center;
-    background: #1e1e1e;
-}
-th {
-    background: #262626;
-    line-height: 1.1;
-}
-tr:hover td {
-    background: #2a2a2a;
-}
-tr:hover td:first-child {
-    background: #333;
-}
-td:first-child {
-    font-family: Bahnschrift, Arial, sans-serif;
-    font-weight: bold;
-    position: sticky;
-    left: 0;
-    z-index: 3;
-    background: #1e1e1e;
-}
-th:first-child {
-    position: sticky;
-    left: 0;
-    z-index: 4;
-    background: #262626;
-}
-.win {
-    background: #2e5e2e;
-}
-.lose {
-    background: #5e2e2e;
-}
-.alive {
-    color: #6bd16b;
-}
-.dead {
-    color: #d16b6b;
+button{
+    background:#2b2b2b;
+    color:white;
+    border:1px solid #444;
+    padding:6px 12px;
+    margin:4px;
+    border-radius:6px;
+    font-size:14px;
+    cursor:pointer;
 }
 
-/* --- FOOTER --- */
-.footer {
-    margin-top: 40px;
-    padding: 15px;
-    text-align: center;
-    font-size: 13px;
-    color: #777;
-    border-top: 1px solid #333;
+button:hover{
+    background:#3a3a3a;
 }
-.credit-text {
-    margin-bottom: 10px;
+
+button.active{
+    background:#4a6ed1;
 }
-.credit-image {
-    display: block;
-    margin: 0 auto;
-    width: 620px; /* вернули размер нижней картинки */
-    height: auto;
-    transform: translateY(-100px);
+
+/* TABLE */
+#tableWrapper{
+    display:flex;
+    justify-content:center;
+    overflow-x:auto;
+    padding-bottom:10px;
 }
+
+table{
+    border-collapse:collapse;
+    margin-top:10px;
+    background:#1a1a1a;
+    box-shadow:0 0 20px rgba(0,255,100,0.1);
+}
+
+td,th{
+    border:1px solid #444;
+    padding:4px 6px;
+    text-align:center;
+    background:#1e1e1e;
+}
+
+th{
+    background:#262626;
+}
+
+tr:hover td{
+    background:#2a2a2a;
+}
+
+td:first-child{
+    font-weight:bold;
+    position:sticky;
+    left:0;
+    background:#1e1e1e;
+}
+
+th:first-child{
+    position:sticky;
+    left:0;
+    background:#262626;
+}
+
+.win{background:#2e5e2e;}
+.lose{background:#5e2e2e;}
+.alive{color:#6bd16b;}
+.dead{color:#d16b6b;}
+
+/* FOOTER */
+.footer{
+    margin-top:50px;
+    padding:20px;
+    text-align:center;
+    font-size:13px;
+    color:#777;
+    border-top:1px solid #333;
+}
+
+.credit-text{
+    margin-bottom:10px;
+}
+
+.credit-image{
+    display:block;
+    margin:0 auto;
+    width:780px; /* увеличил нижнюю картинку */
+}
+
 </style>
 </head>
 
@@ -188,62 +167,80 @@ th:first-child {
 
 <div class="page">
 
-  <!-- Верхние картинки -->
-  <img class="side-image left" src="left_image.png">
-  <img class="side-image right" src="right_image.png">
+<!-- HEADER -->
+<div class="header">
 
-  <h1 class="matrix-title">СТАТИСТИКА</h1>
+<img src="left_image.png" class="side-image">
 
-  <div class="buttons">
-      <button class="mode" onclick="loadTable('damage',event)">Урон</button>
-      <button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
-      <button class="mode" onclick="loadTable('hits',event)">Попадания</button>
-      <button class="mode" onclick="loadTable('assist',event)">Ассист</button>
-      <button onclick="toggleAverage()">Среднее слева / справа</button>
-  </div>
+<h1 class="matrix-title">СТАТИСТИКА</h1>
 
-  <div id="tableWrapper">
-      <div id="table"></div>
-  </div>
+<img src="right_image.png" class="side-image">
 
-  <footer class="footer">
-      <div class="credit-text">Created by McQueen</div>
-      <img src="Down.png" class="credit-image">
-  </footer>
+</div>
+
+<div class="buttons">
+<button class="mode" onclick="loadTable('damage',event)">Урон</button>
+<button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
+<button class="mode" onclick="loadTable('hits',event)">Попадания</button>
+<button class="mode" onclick="loadTable('assist',event)">Ассист</button>
+<button onclick="toggleAverage()">Среднее слева / справа</button>
+</div>
+
+<div id="tableWrapper">
+<div id="table"></div>
+</div>
+
+<footer class="footer">
+<div class="credit-text">Created by McQueen</div>
+<img src="Down.png" class="credit-image">
+</footer>
 
 </div>
 
 <script src="tables.js"></script>
 
 <script>
-/* MATRIX EFFECT */
-const canvas = document.getElementById("matrixCanvas")
-const ctx = canvas.getContext("2d")
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
 
-const letters = "アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-const chars = letters.split("")
-const fontSize = 14
-const columns = canvas.width / fontSize
-const drops = []
+const canvas=document.getElementById("matrixCanvas")
+const ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+const letters="アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const chars=letters.split("")
+const fontSize=14
+const columns=canvas.width/fontSize
+
+const drops=[]
 for(let i=0;i<columns;i++){drops[i]=1}
 
 function draw(){
-    ctx.fillStyle="rgba(0,0,0,0.05)"
-    ctx.fillRect(0,0,canvas.width,canvas.height)
-    ctx.fillStyle="#00ff66"
-    ctx.font=fontSize+"px monospace"
-    for(let i=0;i<drops.length;i++){
-        const text = chars[Math.floor(Math.random()*chars.length)]
-        ctx.fillText(text,i*fontSize,drops[i]*fontSize)
-        if(drops[i]*fontSize>canvas.height && Math.random()>0.975){drops[i]=0}
-        drops[i]++
-    }
+ctx.fillStyle="rgba(0,0,0,0.05)"
+ctx.fillRect(0,0,canvas.width,canvas.height)
+
+ctx.fillStyle="#00ff66"
+ctx.font=fontSize+"px monospace"
+
+for(let i=0;i<drops.length;i++){
+
+const text=chars[Math.floor(Math.random()*chars.length)]
+
+ctx.fillText(text,i*fontSize,drops[i]*fontSize)
+
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
+drops[i]=0
 }
+
+drops[i]++
+
+}
+
+}
+
 setInterval(draw,40)
+
 </script>
 
 </body>
 </html>
-
