@@ -150,11 +150,40 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
     <div id="table"></div>
   </div>
 
-  <!-- Нижний блок -->
   <footer class="footer">
-    <div class="credit-text">Created by McQueen</div>
-    <img src="Down.png" class="credit-image">
-  </footer>
+  <div class="credit-text">Created by McQueen</div>
+  <div class="credit-image-bg"></div>
+</footer>
+
+<style>
+.footer{
+  margin-top:40px;
+  padding:15px 0 0 0;
+  text-align:center;
+  font-size:13px;
+  color:#777;
+  border-top:1px solid #333;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+/* CSS-переменная для регулировки сдвига картинки */
+:root {
+  --image-top-offset: -10px; /* среднее значение, меняй для подгонки */
+}
+
+/* Нижняя картинка как фон */
+.credit-image-bg{
+  width: 150px;       /* ширина картинки */
+  height: 50px;       /* видимая высота */
+  margin-top: 2px;    /* расстояние до текста */
+  background: url('Down.png') no-repeat center top;
+  background-size: contain;
+  position: relative;
+  top: var(--image-top-offset); /* регулируемый сдвиг */
+}
+</style>
 
 </div>
 
@@ -190,3 +219,4 @@ setInterval(draw,40)
 
 </body>
 </html>
+
