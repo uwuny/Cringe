@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 
 <head>
@@ -86,6 +85,24 @@ background:#4a6ed1;
 border-color:#6f8fff;
 }
 
+/* --- TABLE AREA --- */
+
+.table-area{
+display:flex;
+justify-content:center;
+align-items:flex-start;
+gap:25px;
+margin-top:10px;
+}
+
+/* боковые картинки */
+
+.side-image{
+width:180px;
+height:auto;
+opacity:0.9;
+}
+
 /* --- TABLE --- */
 
 #tableWrapper{
@@ -159,14 +176,14 @@ border-top:1px solid #333;
 }
 
 .credit-text{
-margin-bottom:6px;
+margin-bottom:10px;
 }
 
 /* НИЖНЯЯ КАРТИНКА */
 
 .credit-image{
 display:block;
-margin:6px auto 0 auto;
+margin:20px auto 0 auto;
 width:750px;
 max-width:95%;
 height:auto;
@@ -192,8 +209,18 @@ height:auto;
 <button onclick="toggleAverage()">Среднее слева / справа</button>
 </div>
 
+<!-- БЛОК С БОКОВЫМИ КАРТИНКАМИ -->
+
+<div class="table-area">
+
+<img src="left_image.png" class="side-image">
+
 <div id="tableWrapper">
 <div id="table"></div>
+</div>
+
+<img src="right_image.png" class="side-image">
+
 </div>
 
 <footer class="footer">
