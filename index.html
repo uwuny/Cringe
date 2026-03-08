@@ -9,18 +9,18 @@
 
 <style>
 
-/* БАЗА */
+/* --- BASE --- */
 
 body{
 background:#000;
-color:#fff;
+color:white;
 font-family:Arial,sans-serif;
 margin:0;
 padding:0;
 overflow-x:hidden;
 }
 
-/* MATRIX */
+/* --- MATRIX --- */
 
 #matrixCanvas{
 position:fixed;
@@ -32,7 +32,7 @@ z-index:0;
 opacity:0.35;
 }
 
-/* PAGE */
+/* --- PAGE --- */
 
 .page{
 position:relative;
@@ -40,25 +40,32 @@ z-index:1;
 padding-top:20px;
 }
 
-/* БОКОВЫЕ КАРТИНКИ */
+/* --- SIDE IMAGES LAYER --- */
 
-.overlay-img{
+.side-layer{
 position:absolute;
-top:60px;      /* выше */
-width:220px;   /* больше */
+top:110px;          /* уровень кнопок */
+left:50%;
+transform:translateX(-50%);
+width:1100px;       /* такая же ширина как у таблицы */
 pointer-events:none;
-z-index:5;
+z-index:2;
 }
 
-.overlay-left{
-left:80px;     /* правее */
+.side-img{
+position:absolute;
+width:200px;        /* +20% примерно */
 }
 
-.overlay-right{
-right:80px;    /* правее */
+.side-left{
+left:-220px;
 }
 
-/* ЗАГОЛОВОК */
+.side-right{
+right:-220px;
+}
+
+/* --- HEADER --- */
 
 .matrix-title{
 text-align:center;
@@ -74,7 +81,7 @@ text-shadow:
 0 0 30px #00ff66;
 }
 
-/* КНОПКИ */
+/* --- BUTTONS --- */
 
 .buttons{
 text-align:center;
@@ -103,7 +110,7 @@ background:#4a6ed1;
 border-color:#6f8fff;
 }
 
-/* ТАБЛИЦА */
+/* --- TABLE --- */
 
 #tableWrapper{
 display:flex;
@@ -129,6 +136,10 @@ th{
 background:#262626;
 }
 
+tr:hover td{
+background:#2a2a2a;
+}
+
 td:first-child{
 font-weight:bold;
 position:sticky;
@@ -144,22 +155,22 @@ z-index:4;
 background:#262626;
 }
 
-/* НИЖНИЙ БЛОК */
+/* --- CREDITS --- */
 
 .credits{
 text-align:center;
-margin:5px 0 0 0;
-padding:0;
+margin-top:20px;
 font-size:13px;
 color:#777;
+line-height:1.1;
 }
 
 .credits img{
 display:block;
 margin:0 auto;
-padding:0;
 width:750px;
 max-width:95%;
+height:auto;
 }
 
 </style>
@@ -172,8 +183,10 @@ max-width:95%;
 
 <div class="page">
 
-<img src="left_image.png" class="overlay-img overlay-left">
-<img src="right_image.png" class="overlay-img overlay-right">
+<div class="side-layer">
+<img src="left_image.png" class="side-img side-left">
+<img src="right_image.png" class="side-img side-right">
+</div>
 
 <h1 class="matrix-title">СТАТИСТИКА</h1>
 
@@ -200,7 +213,7 @@ Created by McQueen
 
 <script>
 
-/* MATRIX */
+/* MATRIX EFFECT */
 
 const canvas=document.getElementById("matrixCanvas")
 const ctx=canvas.getContext("2d")
