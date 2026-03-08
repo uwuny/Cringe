@@ -208,18 +208,14 @@ margin-bottom:10px;
 
 .credit-image{
 display:block;
-margin-left:auto;
-margin-right:auto;
+margin:0 auto;
 
-width:300px;   /* размер картинки */
+width:300px;
 height:auto;
 
 /* ручная корректировка */
-position:relative;
-left:0px;      /* двигать влево/вправо */
-top:0px;       /* двигать вверх/вниз */
+transform:translateX(0px);
 }
-  
 </style>
 
 </head>
@@ -259,7 +255,7 @@ top:0px;       /* двигать вверх/вниз */
 
 <div class="credit-text">Created by McQueen</div>
 
-<img class="credit-image" src="Down.png">
+<img src="Down.png" class="credit-image">
 
 </footer>
 
@@ -317,6 +313,7 @@ setInterval(draw,40)
 
 </body>
 </html>
+
 
 
 
