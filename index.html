@@ -31,7 +31,7 @@ body{
   padding-top:20px;
 }
 
-/* --- SIDE IMAGES --- */
+/* Боковые картинки */
 .side-layer{
   position:absolute;
   top:5px;
@@ -51,7 +51,7 @@ body{
 .side-left{ left:-220px; }
 .side-right{ right:-220px; }
 
-/* --- HEADER --- */
+/* Заголовок */
 .matrix-title{
   text-align:center;
   font-family:monospace;
@@ -62,7 +62,7 @@ body{
   text-shadow:0 0 5px #00ff66,0 0 15px #00ff66,0 0 30px #00ff66;
 }
 
-/* --- BUTTONS --- */
+/* Кнопки */
 .buttons{text-align:center;margin-bottom:10px;}
 button{
   background:#2b2b2b;
@@ -78,7 +78,7 @@ button{
 button:hover{background:#3a3a3a;border-color:#666;}
 button.active{background:#4a6ed1;border-color:#6f8fff;}
 
-/* --- TABLE --- */
+/* Таблица */
 #tableWrapper{display:flex;justify-content:center;overflow-x:auto;}
 table{
   border-collapse:collapse;
@@ -86,7 +86,7 @@ table{
   background:#1a1a1a;
   box-shadow:0 0 20px rgba(0,255,100,0.1);
 }
-td,th{border:1px solid #444;padding:4px 6px;text-align:center;background:#1e1e1e;}
+td, th{border:1px solid #444;padding:4px 6px;text-align:center;background:#1e1e1e;}
 th{background:#262626;}
 tr:hover td{background:#2a2a2a;}
 td:first-child{font-weight:bold;position:sticky;left:0;z-index:3;background:#1e1e1e;}
@@ -96,7 +96,7 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
 .alive{color:#6bd16b;}
 .dead{color:#d16b6b;}
 
-/* --- FOOTER --- */
+/* Footer */
 .footer{
   margin-top:40px;
   padding:15px 0 0 0;
@@ -109,28 +109,19 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   align-items:center;
 }
 
-/* Контейнер для нижней картинки, чтобы "обрезать" прозрачный верх PNG */
-.credit-image-container{
-  width:750px;
-  max-width:95%;
-  height: auto;
-  overflow:hidden; /* обрезает прозрачный верх */
-  display:block;
-  margin-top:2px; /* расстояние до текста */
-}
-
-.credit-image-container img{
-  display:block;
-  width:100%;
-  height:auto;
-  margin-top:-30px; /* сдвиг PNG вверх внутри контейнера */
-}
-
 .credit-text{
   margin:0;
   padding:0;
 }
 
+/* Нижняя картинка, уменьшена */
+.credit-image{
+  display:block;
+  width:50%;         /* уменьшаем до 50% */
+  max-width:50%;     /* ограничиваем */
+  height:auto;
+  margin-top:2px;    /* расстояние до текста */
+}
 </style>
 </head>
 <body>
@@ -162,9 +153,7 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   <!-- Нижний блок -->
   <footer class="footer">
     <div class="credit-text">Created by McQueen</div>
-    <div class="credit-image-container">
-      <img src="Downn.png">
-    </div>
+    <img src="Down.png" class="credit-image">
   </footer>
 
 </div>
@@ -172,6 +161,7 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
 <script src="tables.js"></script>
 
 <script>
+/* MATRIX EFFECT */
 const canvas=document.getElementById("matrixCanvas")
 const ctx=canvas.getContext("2d")
 canvas.width=window.innerWidth
@@ -200,4 +190,3 @@ setInterval(draw,40)
 
 </body>
 </html>
-
