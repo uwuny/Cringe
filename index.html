@@ -9,15 +9,18 @@
 
 <style>
 
+/* --- БАЗА --- */
+
 body{
 background:#000;
 color:white;
 font-family:Arial,sans-serif;
 margin:0;
+padding:0;
 overflow-x:hidden;
 }
 
-/* MATRIX BACKGROUND */
+/* --- MATRIX --- */
 
 #matrixCanvas{
 position:fixed;
@@ -29,34 +32,35 @@ z-index:0;
 opacity:0.35;
 }
 
-/* PAGE */
+/* --- PAGE --- */
 
 .page{
 position:relative;
 z-index:1;
-max-width:1200px;
-margin:auto;
-text-align:center;
 padding-top:20px;
 }
 
-/* TITLE */
+/* --- HEADER --- */
 
 .matrix-title{
+text-align:center;
 font-family:monospace;
 font-size:64px;
 color:#00ff66;
+margin-top:20px;
+margin-bottom:10px;
 letter-spacing:6px;
-margin:10px 0 15px 0;
+
 text-shadow:
 0 0 5px #00ff66,
 0 0 15px #00ff66,
 0 0 30px #00ff66;
 }
 
-/* BUTTONS */
+/* --- BUTTONS --- */
 
 .buttons{
+text-align:center;
 margin-bottom:10px;
 }
 
@@ -69,22 +73,30 @@ margin:4px;
 border-radius:6px;
 font-size:14px;
 cursor:pointer;
+transition:0.15s;
 }
 
 button:hover{
 background:#3a3a3a;
+border-color:#666;
 }
 
 button.active{
 background:#4a6ed1;
+border-color:#6f8fff;
 }
 
-/* TABLE */
+/* --- TABLE --- */
 
 #tableWrapper{
 display:flex;
 justify-content:center;
 overflow-x:auto;
+padding-bottom:10px;
+}
+
+#tableWrapper.left{
+justify-content:flex-start;
 }
 
 table{
@@ -103,22 +115,30 @@ background:#1e1e1e;
 
 th{
 background:#262626;
+line-height:1.1;
 }
 
 tr:hover td{
 background:#2a2a2a;
 }
 
+tr:hover td:first-child{
+background:#333;
+}
+
 td:first-child{
+font-family:Bahnschrift,Arial,sans-serif;
 font-weight:bold;
 position:sticky;
 left:0;
+z-index:3;
 background:#1e1e1e;
 }
 
 th:first-child{
 position:sticky;
 left:0;
+z-index:4;
 background:#262626;
 }
 
@@ -127,28 +147,29 @@ background:#262626;
 .alive{color:#6bd16b;}
 .dead{color:#d16b6b;}
 
-/* FOOTER */
+/* --- FOOTER --- */
 
 .footer{
 margin-top:40px;
-padding-top:15px;
-border-top:1px solid #333;
+padding:15px;
 text-align:center;
+font-size:13px;
+color:#777;
+border-top:1px solid #333;
 }
 
 .credit-text{
-font-size:13px;
-color:#777;
-margin-bottom:8px;
+margin-bottom:6px;
 }
 
 /* НИЖНЯЯ КАРТИНКА */
 
 .credit-image{
 display:block;
-margin:0 auto;
-width:900px;
-max-width:100%;
+margin:6px auto 0 auto;
+width:750px;
+max-width:95%;
+height:auto;
 }
 
 </style>
@@ -191,6 +212,8 @@ Created by McQueen
 
 <script>
 
+/* MATRIX EFFECT */
+
 const canvas=document.getElementById("matrixCanvas")
 const ctx=canvas.getContext("2d")
 
@@ -199,11 +222,15 @@ canvas.height=window.innerHeight
 
 const letters="アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const chars=letters.split("")
+
 const fontSize=14
 const columns=canvas.width/fontSize
 
 const drops=[]
-for(let i=0;i<columns;i++){drops[i]=1}
+
+for(let i=0;i<columns;i++){
+drops[i]=1
+}
 
 function draw(){
 
