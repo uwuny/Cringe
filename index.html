@@ -16,7 +16,8 @@ body{
     overflow-x:hidden;
 }
 
-/* MATRIX */
+/* MATRIX BACKGROUND */
+
 #matrixCanvas{
     position:fixed;
     top:0;
@@ -28,31 +29,35 @@ body{
 }
 
 /* PAGE */
+
 .page{
     position:relative;
     z-index:1;
-    padding-top:20px;
+    padding-top:15px;
 }
 
-/* HEADER BLOCK */
+/* HEADER */
+
 .header{
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:25px;
+    gap:60px; /* расстояние между элементами */
     margin-top:10px;
 }
 
 /* SIDE IMAGES */
+
 .side-image{
-    width:140px;
+    width:280px; /* увеличено в 2 раза */
     height:auto;
-    opacity:0.8;
-    border-radius:10px;
-    box-shadow:0 0 12px rgba(0,255,100,0.2);
+    opacity:0.85;
+    border-radius:12px;
+    box-shadow:0 0 18px rgba(0,255,100,0.25);
 }
 
 /* TITLE */
+
 .matrix-title{
     font-family:monospace;
     font-size:64px;
@@ -66,9 +71,10 @@ body{
 }
 
 /* BUTTONS */
+
 .buttons{
     text-align:center;
-    margin-top:15px;
+    margin-top:20px;
 }
 
 button{
@@ -91,6 +97,7 @@ button.active{
 }
 
 /* TABLE */
+
 #tableWrapper{
     display:flex;
     justify-content:center;
@@ -139,8 +146,9 @@ th:first-child{
 .dead{color:#d16b6b;}
 
 /* FOOTER */
+
 .footer{
-    margin-top:50px;
+    margin-top:60px;
     padding:20px;
     text-align:center;
     font-size:13px;
@@ -155,7 +163,7 @@ th:first-child{
 .credit-image{
     display:block;
     margin:0 auto;
-    width:780px; /* увеличил нижнюю картинку */
+    width:900px; /* ещё увеличил */
 }
 
 </style>
@@ -167,7 +175,6 @@ th:first-child{
 
 <div class="page">
 
-<!-- HEADER -->
 <div class="header">
 
 <img src="left_image.png" class="side-image">
@@ -216,6 +223,7 @@ const drops=[]
 for(let i=0;i<columns;i++){drops[i]=1}
 
 function draw(){
+
 ctx.fillStyle="rgba(0,0,0,0.05)"
 ctx.fillRect(0,0,canvas.width,canvas.height)
 
