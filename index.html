@@ -29,38 +29,34 @@ z-index:0;
 opacity:0.35;
 }
 
-/* PAGE GRID */
+/* PAGE */
 
 .page{
 position:relative;
 z-index:1;
-
-display:grid;
-grid-template-columns:220px 1fr 220px;
-
-max-width:1400px;
+max-width:1200px;
 margin:auto;
+text-align:center;
 padding-top:20px;
 }
 
 /* SIDE IMAGES */
 
-.side{
-display:flex;
-justify-content:center;
-}
-
-.side img{
-width:200px;
+.side-image{
+position:absolute;
+top:10px;
+width:280px;
 opacity:0.9;
 border-radius:12px;
 box-shadow:0 0 20px rgba(0,255,100,0.25);
 }
 
-/* CENTER CONTENT */
+.left-img{
+left:-300px;
+}
 
-.content{
-text-align:center;
+.right-img{
+right:-300px;
 }
 
 /* TITLE */
@@ -80,6 +76,7 @@ text-shadow:
 /* BUTTONS */
 
 .buttons{
+margin-top:10px;
 margin-bottom:10px;
 }
 
@@ -154,22 +151,22 @@ background:#262626;
 
 .footer{
 margin-top:40px;
-padding-top:15px;
+padding-top:10px;
 border-top:1px solid #333;
 }
 
 .credit-text{
-color:#777;
 font-size:13px;
+color:#777;
 margin-bottom:4px;
 }
 
-/* НИЖНЯЯ КАРТИНКА */
+/* LOWER IMAGE */
 
 .credit-image{
 display:block;
-margin:0 auto;
-width:900px;
+margin:2px auto 0 auto;
+width:950px;
 }
 
 </style>
@@ -182,11 +179,8 @@ width:900px;
 
 <div class="page">
 
-<div class="side">
-<img src="left_image.png">
-</div>
-
-<div class="content">
+<img src="left_image.png" class="side-image left-img">
+<img src="right_image.png" class="side-image right-img">
 
 <h1 class="matrix-title">СТАТИСТИКА</h1>
 
@@ -206,12 +200,6 @@ width:900px;
 <div class="credit-text">Created by McQueen</div>
 <img src="Down.png" class="credit-image">
 </footer>
-
-</div>
-
-<div class="side">
-<img src="right_image.png">
-</div>
 
 </div>
 
