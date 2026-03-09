@@ -31,7 +31,7 @@ body{
   padding-top:20px;
 }
 
-/* Боковые элементы */
+/* Боковые картинки */
 .side-layer{
   position:absolute;
   top:5px;
@@ -42,29 +42,14 @@ body{
   z-index:2;
 }
 
-/* Правая картинка */
 .side-img{
   position:absolute;
   width:204px;
   height:auto;
 }
 
+.side-left{ left:-220px; }
 .side-right{ right:-220px; }
-
-/* Левое видео вместо картинки */
-.side-video {
-  position:absolute;
-  width:400px;      /* увеличили */
-  height:auto;
-  pointer-events:none;
-  top:0;
-  filter: drop-shadow(0 0 15px #00ff66); /* подсветка Matrix */
-}
-
-.side-left {
-  left:-220px;
-  transform:none;
-}
 
 /* Заголовок */
 .matrix-title{
@@ -124,17 +109,24 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   align-items:center;
 }
 
-/* Текст футера неоновый */
+/* Текст "Created by" — ярко белый */
 .credit-text {
-  color: #00ff66;
-  font-weight: bold;
-  font-family: monospace;
-  font-size: 14px;
-  text-shadow:
-     0 0 3px #00ff66,
-     0 0 10px #00ff66,
-     0 0 20px #00ff66;
+  color: #ffffff;          /* белый цвет */
+  font-weight: bold;        /* чуть жирнее */
+  font-family: monospace;  /* моноширинный стиль */
+  font-size: 14px;          /* чуть больше стандартного */
+  text-shadow: 0 0 3px rgba(255,255,255,0.5); /* лёгкий glow */
   margin-bottom: 8px;
+}
+
+/* Нижнее видео футера */
+.credit-video{
+  width: 260px;
+  height: auto;
+  display: block;
+  margin-top: 10px;
+  pointer-events: none;
+  filter: drop-shadow(0 0 10px #00ff66);
 }
 </style>
 </head>
@@ -145,14 +137,9 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
 
 <div class="page">
 
-  <!-- Боковые элементы -->
+  <!-- Боковые картинки -->
   <div class="side-layer">
-    <!-- Левое видео вместо картинки -->
-    <video class="side-video side-left" autoplay muted loop playsinline>
-      <source src="Down.webm" type="video/webm">
-    </video>
-
-    <!-- Правая картинка -->
+    <img src="left_image.png" class="side-img side-left">
     <img src="right_image.png" class="side-img side-right">
   </div>
 
@@ -173,6 +160,9 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   <!-- Футер -->
   <footer class="footer">
     <div class="credit-text">Created by McQueen</div>
+    <video class="credit-video" autoplay muted loop playsinline>
+      <source src="Down.webm" type="video/webm">
+    </video>
   </footer>
 
 </div>
