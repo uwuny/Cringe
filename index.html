@@ -54,11 +54,11 @@ body{
 /* Левое видео вместо картинки */
 .side-video {
   position:absolute;
-  width:204px;
+  width:400px;      /* увеличили */
   height:auto;
   pointer-events:none;
   top:0;
-  filter: drop-shadow(0 0 10px #00ff66);
+  filter: drop-shadow(0 0 15px #00ff66); /* подсветка Matrix */
 }
 
 .side-left {
@@ -136,16 +136,6 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
      0 0 20px #00ff66;
   margin-bottom: 8px;
 }
-
-/* Видео футера */
-.credit-video {
-  width: 400px;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-  pointer-events: none;
-  filter: drop-shadow(0 0 15px #00ff66);
-}
 </style>
 </head>
 
@@ -162,7 +152,7 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
       <source src="Down.webm" type="video/webm">
     </video>
 
-    <!-- Правая картинка оставляем -->
+    <!-- Правая картинка -->
     <img src="right_image.png" class="side-img side-right">
   </div>
 
@@ -183,10 +173,6 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   <!-- Футер -->
   <footer class="footer">
     <div class="credit-text">Created by McQueen</div>
-
-    <video class="credit-video" autoplay muted loop playsinline>
-      <source src="Down.webm" type="video/webm">
-    </video>
   </footer>
 
 </div>
