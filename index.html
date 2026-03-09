@@ -109,24 +109,31 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   align-items:center;
 }
 
-/* Текст "Created by" — ярко белый */
+/* Текст Created by */
 .credit-text {
-  color: #ffffff;             /* оставляем яркий белый */
-  font-weight: bold;           /* чуть жирнее */
-  font-family: century gothic, sans-serif;  /* шрифт Verdana */
-  font-size: 14px;             /* размер текста */
-  text-shadow: 0 0 3px rgba(255,255,255,0.5); /* лёгкий glow для яркости */
-  margin-bottom: 8px;
+  color:#ffffff;
+  font-weight:bold;
+  font-family:century gothic,sans-serif;
+  font-size:14px;
+  text-shadow:0 0 3px rgba(255,255,255,0.5);
+  margin-bottom:10px;
 }
 
-/* Нижнее видео футера */
+/* Контейнер для двух видео */
+.credit-videos{
+  display:flex;
+  gap:20px;
+  align-items:center;
+  justify-content:center;
+  margin-top:10px;
+}
+
+/* Видео */
 .credit-video{
-  width: 550px;
-  height: auto;
-  display: block;
-  margin-top: 10px;
-  pointer-events: none;
-  filter: drop-shadow(0 0 10px #00ff66);
+  width:550px;
+  height:auto;
+  pointer-events:none;
+  filter:drop-shadow(0 0 10px #00ff66);
 }
 </style>
 </head>
@@ -160,9 +167,21 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   <!-- Футер -->
   <footer class="footer">
     <div class="credit-text">Created by McQueen</div>
-    <video class="credit-video" autoplay muted loop playsinline>
-      <source src="Down.webm" type="video/webm">
-    </video>
+
+    <div class="credit-videos">
+
+      <!-- ЛЕВОЕ ВИДЕО MP4 -->
+      <video class="credit-video" autoplay muted loop playsinline>
+        <source src="Left.mp4" type="video/mp4">
+      </video>
+
+      <!-- ПРАВОЕ ВИДЕО WEBM -->
+      <video class="credit-video" autoplay muted loop playsinline>
+        <source src="Down.webm" type="video/webm">
+      </video>
+
+    </div>
+
   </footer>
 
 </div>
@@ -207,6 +226,3 @@ setInterval(draw,40)
 
 </body>
 </html>
-
-
-
