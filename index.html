@@ -114,16 +114,19 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   padding:0;
 }
 
-/* Нижняя картинка, уменьшена */
-.credit-image{
-  display:block;
-  width:50%;         /* уменьшаем до 50% */
-  max-width:50%;     /* ограничиваем */
+/* Видео снизу */
+.credit-video{
+  width:250px;
   height:auto;
-  margin-top:2px;    /* расстояние до текста */
+  margin-top:30px;
+  position:relative;
+  top:-10px; /* можно менять положение */
+  pointer-events:none;
 }
+
 </style>
 </head>
+
 <body>
 
 <canvas id="matrixCanvas"></canvas>
@@ -151,39 +154,13 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   </div>
 
   <footer class="footer">
-  <div class="credit-text">Created by McQueen</div>
-  <div class="credit-image-bg"></div>
-</footer>
+    <div class="credit-text">Created by McQueen</div>
 
-<style>
-.footer{
-  margin-top:40px;
-  padding:15px 0 0 0;
-  text-align:center;
-  font-size:13px;
-  color:#777;
-  border-top:1px solid #333;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
+    <video class="credit-video" autoplay muted loop playsinline>
+      <source src="Down.mp4" type="video/mp4">
+    </video>
 
-/* CSS-переменная для регулировки сдвига картинки */
-:root {
-  --image-top-offset: -10px; /* среднее значение, меняй для подгонки */
-}
-
-/* Нижняя картинка как фон */
-.credit-image-bg{
-  width: 250px;       /* ширина картинки */
-  height: 250px;       /* видимая высота */
-  margin-top: 30px;    /* расстояние до текста */
-  background: url('Down.mp4') no-repeat center top;
-  background-size: contain;
-  position: relative;
-  top: var(--image-top-offset); /* регулируемый сдвиг */
-}
-</style>
+  </footer>
 
 </div>
 
@@ -193,33 +170,42 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
 /* MATRIX EFFECT */
 const canvas=document.getElementById("matrixCanvas")
 const ctx=canvas.getContext("2d")
+
 canvas.width=window.innerWidth
 canvas.height=window.innerHeight
+
 const letters="アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const chars=letters.split("")
+
 const fontSize=14
 const columns=canvas.width/fontSize
 const drops=[]
-for(let i=0;i<columns;i++){ drops[i]=1 }
+
+for(let i=0;i<columns;i++){
+  drops[i]=1
+}
 
 function draw(){
   ctx.fillStyle="rgba(0,0,0,0.05)"
   ctx.fillRect(0,0,canvas.width,canvas.height)
+
   ctx.fillStyle="#00ff66"
   ctx.font=fontSize+"px monospace"
+
   for(let i=0;i<drops.length;i++){
     const text=chars[Math.floor(Math.random()*chars.length)]
     ctx.fillText(text,i*fontSize,drops[i]*fontSize)
-    if(drops[i]*fontSize>canvas.height && Math.random()>0.975){ drops[i]=0 }
+
+    if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
+      drops[i]=0
+    }
+
     drops[i]++
   }
 }
+
 setInterval(draw,40)
 </script>
 
 </body>
 </html>
-
-
-
-
