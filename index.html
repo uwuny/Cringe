@@ -104,13 +104,11 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   font-size:13px;
   color:#777;
   border-top:1px solid #333;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+  position:relative;
 }
 
 /* Текст Created by */
-.credit-text {
+.credit-text{
   color:#ffffff;
   font-weight:bold;
   font-family:century gothic,sans-serif;
@@ -119,19 +117,21 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   margin-bottom:10px;
 }
 
-/* Контейнер для двух видео */
-.credit-videos{
-  display:flex;
-  gap:20px;
-  align-items:center;
-  justify-content:center;
-  margin-top:10px;
+/* Центральное видео */
+.credit-video-center{
+  width:550px;
+  display:block;
+  margin:10px auto 0 auto;
+  pointer-events:none;
+  filter:drop-shadow(0 0 10px #00ff66);
 }
 
-/* Видео */
-.credit-video{
+/* Левое видео */
+.credit-video-left{
+  position:absolute;
+  bottom:0;
+  left:0;
   width:550px;
-  height:auto;
   pointer-events:none;
   filter:drop-shadow(0 0 10px #00ff66);
 }
@@ -166,21 +166,18 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
 
   <!-- Футер -->
   <footer class="footer">
+
     <div class="credit-text">Created by McQueen</div>
 
-    <div class="credit-videos">
+    <!-- Левое видео -->
+    <video class="credit-video-left" autoplay muted loop playsinline>
+      <source src="Left.mp4" type="video/mp4">
+    </video>
 
-      <!-- ЛЕВОЕ ВИДЕО MP4 -->
-      <video class="credit-video" autoplay muted loop playsinline>
-        <source src="Left.mp4" type="video/mp4">
-      </video>
-
-      <!-- ПРАВОЕ ВИДЕО WEBM -->
-      <video class="credit-video" autoplay muted loop playsinline>
-        <source src="Down.webm" type="video/webm">
-      </video>
-
-    </div>
+    <!-- Центральное видео -->
+    <video class="credit-video-center" autoplay muted loop playsinline>
+      <source src="Down.webm" type="video/webm">
+    </video>
 
   </footer>
 
@@ -189,7 +186,6 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
 <script src="tables.js"></script>
 
 <script>
-/* MATRIX EFFECT */
 const canvas=document.getElementById("matrixCanvas")
 const ctx=canvas.getContext("2d")
 
