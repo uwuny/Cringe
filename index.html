@@ -146,15 +146,40 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
 </div>
 
 <footer class="footer">
+  <div class="credit-text">Created by McQueen</div>
 
-<div>Created by McQueen</div>
-
-<video class="credit-video" autoplay muted loop playsinline>
-<source src="Down.webm" type="video/webm">
-</video>
-
+  <video class="credit-video" autoplay muted loop playsinline>
+    <source src="Down.webm" type="video/webm">
+  </video>
 </footer>
 
+<style>
+/* Футер */
+.footer {
+  margin-top: 40px;
+  padding: 15px 0 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: #777;
+  border-top: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Текст с эффектом неона */
+.credit-text {
+  color: #00ff66;  /* яркий зеленый как Matrix */
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 14px;
+  text-shadow:
+     0 0 3px #00ff66,
+     0 0 10px #00ff66,
+     0 0 20px #00ff66;
+  margin-bottom: 8px;
+}
+</style>
 </div>
 
 <script src="tables.js"></script>
@@ -196,5 +221,6 @@ setInterval(draw,40)
 
 </body>
 </html>
+
 
 
