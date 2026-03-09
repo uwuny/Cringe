@@ -31,7 +31,7 @@ body{
   padding-top:20px;
 }
 
-/* Боковые картинки */
+/* Боковые элементы */
 .side-layer{
   position:absolute;
   top:5px;
@@ -42,14 +42,29 @@ body{
   z-index:2;
 }
 
+/* Правая картинка */
 .side-img{
   position:absolute;
   width:204px;
   height:auto;
 }
 
-.side-left{ left:-220px; }
 .side-right{ right:-220px; }
+
+/* Левое видео вместо картинки */
+.side-video {
+  position:absolute;
+  width:204px;
+  height:auto;
+  pointer-events:none;
+  top:0;
+  filter: drop-shadow(0 0 10px #00ff66);
+}
+
+.side-left {
+  left:-220px;
+  transform:none;
+}
 
 /* Заголовок */
 .matrix-title{
@@ -109,67 +124,9 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   align-items:center;
 }
 
-/* Видео */
-.credit-video{
-  width:550px;
-  margin-top:20px;
-  pointer-events:none;
-  filter: drop-shadow(0 0 10px #00ff66);
-}
-
-</style>
-</head>
-
-<body>
-
-<canvas id="matrixCanvas"></canvas>
-
-<div class="page">
-
-<div class="side-layer">
-<img src="left_image.png" class="side-img side-left">
-<img src="right_image.png" class="side-img side-right">
-</div>
-
-<h1 class="matrix-title">СТАТИСТИКА</h1>
-
-<div class="buttons">
-<button class="mode" onclick="loadTable('damage',event)">Урон</button>
-<button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
-<button class="mode" onclick="loadTable('hits',event)">Попадания</button>
-<button class="mode" onclick="loadTable('assist',event)">Ассист</button>
-<button onclick="toggleAverage()">Среднее слева / справа</button>
-</div>
-
-<div id="tableWrapper">
-<div id="table"></div>
-</div>
-
-<footer class="footer">
-  <div class="credit-text">Created by McQueen</div>
-
-  <video class="credit-video" autoplay muted loop playsinline>
-    <source src="Down.webm" type="video/webm">
-  </video>
-</footer>
-
-<style>
-/* Футер */
-.footer {
-  margin-top: 40px;
-  padding: 15px 0 0 0;
-  text-align: center;
-  font-size: 13px;
-  color: #777;
-  border-top: 1px solid #333;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Текст с эффектом неона */
+/* Текст футера неоновый */
 .credit-text {
-  color: #00ff66;  /* яркий зеленый как Matrix */
+  color: #00ff66;
   font-weight: bold;
   font-family: monospace;
   font-size: 14px;
@@ -179,12 +136,65 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
      0 0 20px #00ff66;
   margin-bottom: 8px;
 }
+
+/* Видео футера */
+.credit-video {
+  width: 400px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  pointer-events: none;
+  filter: drop-shadow(0 0 15px #00ff66);
+}
 </style>
+</head>
+
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<div class="page">
+
+  <!-- Боковые элементы -->
+  <div class="side-layer">
+    <!-- Левое видео вместо картинки -->
+    <video class="side-video side-left" autoplay muted loop playsinline>
+      <source src="Down.webm" type="video/webm">
+    </video>
+
+    <!-- Правая картинка оставляем -->
+    <img src="right_image.png" class="side-img side-right">
+  </div>
+
+  <h1 class="matrix-title">СТАТИСТИКА</h1>
+
+  <div class="buttons">
+    <button class="mode" onclick="loadTable('damage',event)">Урон</button>
+    <button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
+    <button class="mode" onclick="loadTable('hits',event)">Попадания</button>
+    <button class="mode" onclick="loadTable('assist',event)">Ассист</button>
+    <button onclick="toggleAverage()">Среднее слева / справа</button>
+  </div>
+
+  <div id="tableWrapper">
+    <div id="table"></div>
+  </div>
+
+  <!-- Футер -->
+  <footer class="footer">
+    <div class="credit-text">Created by McQueen</div>
+
+    <video class="credit-video" autoplay muted loop playsinline>
+      <source src="Down.webm" type="video/webm">
+    </video>
+  </footer>
+
 </div>
 
 <script src="tables.js"></script>
 
 <script>
+/* MATRIX EFFECT */
 const canvas=document.getElementById("matrixCanvas")
 const ctx=canvas.getContext("2d")
 
@@ -221,6 +231,3 @@ setInterval(draw,40)
 
 </body>
 </html>
-
-
-
