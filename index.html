@@ -99,38 +99,43 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
 /* Footer */
 .footer{
   margin-top:40px;
-  padding:15px 0 0 0;
+  padding-top:15px;
   text-align:center;
-  font-size:13px;
-  color:#777;
   border-top:1px solid #333;
   position:relative;
 }
 
-/* Текст Created by */
+/* Created by */
 .credit-text{
   color:#ffffff;
   font-weight:bold;
   font-family:century gothic,sans-serif;
   font-size:14px;
   text-shadow:0 0 3px rgba(255,255,255,0.5);
-  margin-bottom:10px;
+  margin-bottom:20px;
+}
+
+/* Блок видео */
+.video-area{
+  position:relative;
+  margin-top:10px;
+  padding-bottom:80px;
 }
 
 /* Центральное видео */
-.credit-video-center{
+.video-center{
   width:550px;
   display:block;
-  margin:10px auto 0 auto;
+  margin:0 auto;
   pointer-events:none;
   filter:drop-shadow(0 0 10px #00ff66);
 }
 
 /* Левое видео */
-.credit-video-left{
+.video-left{
   position:absolute;
-  bottom:0;
   left:0;
+  top:0;
   width:550px;
   pointer-events:none;
   filter:drop-shadow(0 0 10px #00ff66);
@@ -144,42 +149,42 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
 
 <div class="page">
 
-  <!-- Боковые картинки -->
-  <div class="side-layer">
-    <img src="left_image.png" class="side-img side-left">
-    <img src="right_image.png" class="side-img side-right">
-  </div>
+<div class="side-layer">
+<img src="left_image.png" class="side-img side-left">
+<img src="right_image.png" class="side-img side-right">
+</div>
 
-  <h1 class="matrix-title">СТАТИСТИКА</h1>
+<h1 class="matrix-title">СТАТИСТИКА</h1>
 
-  <div class="buttons">
-    <button class="mode" onclick="loadTable('damage',event)">Урон</button>
-    <button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
-    <button class="mode" onclick="loadTable('hits',event)">Попадания</button>
-    <button class="mode" onclick="loadTable('assist',event)">Ассист</button>
-    <button onclick="toggleAverage()">Среднее слева / справа</button>
-  </div>
+<div class="buttons">
+<button class="mode" onclick="loadTable('damage',event)">Урон</button>
+<button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
+<button class="mode" onclick="loadTable('hits',event)">Попадания</button>
+<button class="mode" onclick="loadTable('assist',event)">Ассист</button>
+<button onclick="toggleAverage()">Среднее слева / справа</button>
+</div>
 
-  <div id="tableWrapper">
-    <div id="table"></div>
-  </div>
+<div id="tableWrapper">
+<div id="table"></div>
+</div>
 
-  <!-- Футер -->
-  <footer class="footer">
+<footer class="footer">
 
-    <div class="credit-text">Created by McQueen</div>
+<div class="credit-text">Created by McQueen</div>
 
-    <!-- Левое видео -->
-    <video class="credit-video-left" autoplay muted loop playsinline>
-      <source src="Left.mp4" type="video/mp4">
-    </video>
+<div class="video-area">
 
-    <!-- Центральное видео -->
-    <video class="credit-video-center" autoplay muted loop playsinline>
-      <source src="Down.webm" type="video/webm">
-    </video>
+<video class="video-left" autoplay muted loop playsinline>
+<source src="Left.mp4" type="video/mp4">
+</video>
 
-  </footer>
+<video class="video-center" autoplay muted loop playsinline>
+<source src="Down.webm" type="video/webm">
+</video>
+
+</div>
+
+</footer>
 
 </div>
 
