@@ -109,19 +109,12 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   align-items:center;
 }
 
-.credit-text{
-  margin:0;
-  padding:0;
-}
-
-/* Видео снизу */
+/* Видео */
 .credit-video{
-  width:250px;
-  height:auto;
-  margin-top:30px;
-  position:relative;
-  top:-10px; /* можно менять положение */
+  width:260px;
+  margin-top:20px;
   pointer-events:none;
+  filter: drop-shadow(0 0 10px #00ff66);
 }
 
 </style>
@@ -133,41 +126,40 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
 
 <div class="page">
 
-  <!-- Боковые картинки -->
-  <div class="side-layer">
-    <img src="left_image.png" class="side-img side-left">
-    <img src="right_image.png" class="side-img side-right">
-  </div>
+<div class="side-layer">
+<img src="left_image.png" class="side-img side-left">
+<img src="right_image.png" class="side-img side-right">
+</div>
 
-  <h1 class="matrix-title">СТАТИСТИКА</h1>
+<h1 class="matrix-title">СТАТИСТИКА</h1>
 
-  <div class="buttons">
-    <button class="mode" onclick="loadTable('damage',event)">Урон</button>
-    <button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
-    <button class="mode" onclick="loadTable('hits',event)">Попадания</button>
-    <button class="mode" onclick="loadTable('assist',event)">Ассист</button>
-    <button onclick="toggleAverage()">Среднее слева / справа</button>
-  </div>
+<div class="buttons">
+<button class="mode" onclick="loadTable('damage',event)">Урон</button>
+<button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
+<button class="mode" onclick="loadTable('hits',event)">Попадания</button>
+<button class="mode" onclick="loadTable('assist',event)">Ассист</button>
+<button onclick="toggleAverage()">Среднее слева / справа</button>
+</div>
 
-  <div id="tableWrapper">
-    <div id="table"></div>
-  </div>
+<div id="tableWrapper">
+<div id="table"></div>
+</div>
 
-  <footer class="footer">
-    <div class="credit-text">Created by McQueen</div>
+<footer class="footer">
 
-    <video class="credit-video" autoplay muted loop playsinline>
-      <source src="Down.mp4" type="video/mp4">
-    </video>
+<div>Created by McQueen</div>
 
-  </footer>
+<video class="credit-video" autoplay muted loop playsinline>
+<source src="Down.webm" type="video/webm">
+</video>
+
+</footer>
 
 </div>
 
 <script src="tables.js"></script>
 
 <script>
-/* MATRIX EFFECT */
 const canvas=document.getElementById("matrixCanvas")
 const ctx=canvas.getContext("2d")
 
@@ -181,27 +173,22 @@ const fontSize=14
 const columns=canvas.width/fontSize
 const drops=[]
 
-for(let i=0;i<columns;i++){
-  drops[i]=1
-}
+for(let i=0;i<columns;i++){drops[i]=1}
 
 function draw(){
-  ctx.fillStyle="rgba(0,0,0,0.05)"
-  ctx.fillRect(0,0,canvas.width,canvas.height)
+ctx.fillStyle="rgba(0,0,0,0.05)"
+ctx.fillRect(0,0,canvas.width,canvas.height)
 
-  ctx.fillStyle="#00ff66"
-  ctx.font=fontSize+"px monospace"
+ctx.fillStyle="#00ff66"
+ctx.font=fontSize+"px monospace"
 
-  for(let i=0;i<drops.length;i++){
-    const text=chars[Math.floor(Math.random()*chars.length)]
-    ctx.fillText(text,i*fontSize,drops[i]*fontSize)
+for(let i=0;i<drops.length;i++){
+const text=chars[Math.floor(Math.random()*chars.length)]
+ctx.fillText(text,i*fontSize,drops[i]*fontSize)
 
-    if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
-      drops[i]=0
-    }
-
-    drops[i]++
-  }
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975){drops[i]=0}
+drops[i]++
+}
 }
 
 setInterval(draw,40)
