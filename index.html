@@ -79,24 +79,52 @@ button:hover{background:#3a3a3a;border-color:#666;}
 button.active{background:#4a6ed1;border-color:#6f8fff;}
 
 /* Таблица */
-#tableWrapper{display:flex;justify-content:center;overflow-x:auto;}
+#tableWrapper{
+  display:flex;
+  justify-content:center;
+  overflow-x:auto;
+}
+
 table{
   border-collapse:collapse;
   margin-top:10px;
   background:#1a1a1a;
   box-shadow:0 0 20px rgba(0,255,100,0.1);
 }
-td, th{border:1px solid #444;padding:4px 6px;text-align:center;background:#1e1e1e;}
+
+td, th{
+  border:1px solid #444;
+  padding:4px 6px;
+  text-align:center;
+  background:#1e1e1e;
+}
+
 th{background:#262626;}
+
 tr:hover td{background:#2a2a2a;}
-td:first-child{font-weight:bold;position:sticky;left:0;z-index:3;background:#1e1e1e;}
-th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
+
+td:first-child{
+  font-weight:bold;
+  position:sticky;
+  left:0;
+  z-index:3;
+  background:#1e1e1e;
+}
+
+th:first-child{
+  position:sticky;
+  left:0;
+  z-index:4;
+  background:#262626;
+}
+
 .win{background:#2e5e2e;}
 .lose{background:#5e2e2e;}
 .alive{color:#6bd16b;}
 .dead{color:#d16b6b;}
 
 /* Footer */
+
 .footer{
   margin-top:40px;
   padding-top:15px;
@@ -105,7 +133,8 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   position:relative;
 }
 
-/* Created by */
+/* Текст */
+
 .credit-text{
   color:#ffffff;
   font-weight:bold;
@@ -116,13 +145,15 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
 }
 
 /* Блок видео */
+
 .video-area{
   position:relative;
   margin-top:10px;
-  padding-bottom:80px;
+  padding-bottom:100px;
 }
 
-/* Центральное видео */
+/* Центральное видео (MP4) */
+
 .video-center{
   width:550px;
   display:block;
@@ -131,15 +162,17 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
   filter:drop-shadow(0 0 10px #00ff66);
 }
 
-/* Левое видео */
+/* Левое видео (WEBM) */
+
 .video-left{
   position:absolute;
-  left:0;
+  left:20px;
   top:0;
   width:550px;
   pointer-events:none;
   filter:drop-shadow(0 0 10px #00ff66);
 }
+
 </style>
 </head>
 
@@ -170,16 +203,22 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
 
 <footer class="footer">
 
-<div class="credit-text">© 2026 McQueen | Статистика боёв</div>
+<div class="credit-text">
+© 2026 McQueen — Battle Statistics
+</div>
 
 <div class="video-area">
 
+<!-- Левое видео WEBM -->
+
 <video class="video-left" autoplay muted loop playsinline>
-<source src="Left.mp4" type="video/mp4">
+<source src="Down.webm" type="video/webm">
 </video>
 
+<!-- Центральное видео MP4 -->
+
 <video class="video-center" autoplay muted loop playsinline>
-<source src="Down.webm" type="video/webm">
+<source src="Center.mp4" type="video/mp4">
 </video>
 
 </div>
@@ -191,6 +230,7 @@ th:first-child{position:sticky;left:0;z-index:4;background:#262626;}
 <script src="tables.js"></script>
 
 <script>
+
 const canvas=document.getElementById("matrixCanvas")
 const ctx=canvas.getContext("2d")
 
@@ -207,6 +247,7 @@ const drops=[]
 for(let i=0;i<columns;i++){drops[i]=1}
 
 function draw(){
+
 ctx.fillStyle="rgba(0,0,0,0.05)"
 ctx.fillRect(0,0,canvas.width,canvas.height)
 
@@ -214,17 +255,26 @@ ctx.fillStyle="#00ff66"
 ctx.font=fontSize+"px monospace"
 
 for(let i=0;i<drops.length;i++){
+
 const text=chars[Math.floor(Math.random()*chars.length)]
+
 ctx.fillText(text,i*fontSize,drops[i]*fontSize)
 
-if(drops[i]*fontSize>canvas.height && Math.random()>0.975){drops[i]=0}
-drops[i]++
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
+
+drops[i]=0
+
 }
+
+drops[i]++
+
+}
+
 }
 
 setInterval(draw,40)
+
 </script>
 
 </body>
 </html>
-
