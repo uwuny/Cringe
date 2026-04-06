@@ -84,8 +84,8 @@ button.active{background:#4a6ed1;}
 table{
   border-collapse:collapse;
   background:#1a1a1a;
-  width:max-content; /* ширина по содержимому */
-  min-width:100%;    /* растягиваем минимум на экран */
+  width:max-content;
+  min-width:100%;
   table-layout:fixed;
 }
 
@@ -96,9 +96,15 @@ th, td{
   word-wrap:break-word;
 }
 
+/* Столбец с никами всегда на 10% и минимум 150px */
 th:first-child, td:first-child{
-  width:10%; /* увеличиваем столбец с никами */
-  min-width:150px; /* минимум 150px */
+  width:10%;
+  min-width:150px;
+}
+
+/* Hover подсветка */
+td:hover, th:hover{
+  background:rgba(74,110,209,0.4);
 }
 
 .win{background:#2e5e2e;}
@@ -208,6 +214,7 @@ function draw(){
   }
 }
 
+/* медленнее на 15% */
 setInterval(draw,38);
 </script>
 
