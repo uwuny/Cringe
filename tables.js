@@ -6,248 +6,247 @@ let currentDate = null;
 fetch("battle_data.json")
 .then(r=>r.json())
 .then(data=>{
-DATA=data;
-initDates();
-loadTable(currentType);
+  DATA=data;
+  initDates();
+  loadTable(currentType);
 });
 
 function toggleAverage(){
-avgPosition = avgPosition==="right" ? "left" : "right";
-loadTable(currentType);
+  avgPosition = avgPosition==="right" ? "left" : "right";
+  loadTable(currentType);
 }
 
 function parseDate(str){
-let [d,m] = str.split(".").map(Number);
-return new Date(2025,m-1,d);
+  let [d,m] = str.split(".").map(Number);
+  return new Date(2025,m-1,d);
 }
 
 function initDates(){
+  const box=document.getElementById("dateButtons");
+  box.innerHTML="";
 
-const box=document.getElementById("dateButtons");
-box.innerHTML="";
+  let dates=[...new Set(DATA.battles.map(b=>b.date))];
+  dates.sort((a,b)=>parseDate(a)-parseDate(b));
 
-let dates=[...new Set(DATA.battles.map(b=>b.date))];
+  dates.forEach((date,index)=>{
+    let btn=document.createElement("button");
+    btn.innerText=date;
 
-dates.sort((a,b)=>parseDate(a)-parseDate(b));
+    btn.onclick=()=>{
+      currentDate=date;
+      document.querySelectorAll(".date-buttons button")
+        .forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      loadTable(currentType);
+    };
 
-dates.forEach((date,index)=>{
+    box.appendChild(btn);
 
-let btn=document.createElement("button");
-btn.innerText=date;
+    if(index===0){
+      btn.classList.add("active");
+      currentDate=date;
+    }
+  });
 
-btn.onclick=()=>{
+  let allBtn=document.createElement("button");
+  allBtn.innerText="ВСЕ БОИ";
 
-currentDate=date;
+  allBtn.onclick=()=>{
+    currentDate=null;
+    document.querySelectorAll(".date-buttons button")
+      .forEach(b=>b.classList.remove("active"));
+    allBtn.classList.add("active");
+    loadTable(currentType);
+  };
 
-document.querySelectorAll(".date-buttons button")
-.forEach(b=>b.classList.remove("active"));
-
-btn.classList.add("active");
-
-loadTable(currentType);
-
-};
-
-box.appendChild(btn);
-
-if(index===0){
-btn.classList.add("active");
-currentDate=date;
-}
-
-});
-
-/* кнопка ВСЕ БОИ ПОСЛЕДНЯЯ */
-
-let allBtn=document.createElement("button");
-allBtn.innerText="ВСЕ БОИ";
-
-allBtn.onclick=()=>{
-
-currentDate=null;
-
-document.querySelectorAll(".date-buttons button")
-.forEach(b=>b.classList.remove("active"));
-
-allBtn.classList.add("active");
-
-loadTable(currentType);
-
-};
-
-box.appendChild(allBtn);
-
+  box.appendChild(allBtn);
 }
 
 function getPenRate(name,battles){
+  let hits=0,pen=0;
 
-let shots=0,hits=0,pen=0;
+  battles.forEach(b=>{
+    let p=b.players[name];
+    if(!p) return;
+    hits+=p.hits;
+    pen+=p.piercings;
+  });
 
-battles.forEach(b=>{
-
-let p=b.players[name];
-if(!p) return;
-
-shots+=p.shots;
-hits+=p.hits;
-pen+=p.piercings;
-
-});
-
-return hits ? pen/hits : 0;
-
+  return hits ? pen/hits : 0;
 }
 
 function loadTable(type,event){
 
-currentType=type;
+  currentType=type;
 
-if(event){
+  if(event){
+    document.querySelectorAll(".mode")
+      .forEach(b=>b.classList.remove("active"));
+    event.target.classList.add("active");
+  }
 
-document.querySelectorAll(".mode")
-.forEach(b=>b.classList.remove("active"));
+  let battles=DATA.battles.filter(
+    b=>!currentDate || b.date===currentDate
+  );
 
-event.target.classList.add("active");
+  if(battles.length===0){
+    document.getElementById("table").innerHTML="<p>Нет боёв</p>";
+    return;
+  }
 
+  let players={};
+
+  battles.forEach((battle,idx)=>{
+    for(let name in battle.players){
+
+      let p=battle.players[name];
+
+      if(!players[name]) players[name]={};
+
+      let value=0;
+
+      if(type==="damage") value=p.damage;
+      if(type==="damage_received") value=p.damage_received;
+      if(type==="hits") value=`${p.shots}/${p.hits}/${p.piercings}`;
+      if(type==="assist") value=p.assist_track+p.assist_radio;
+
+      players[name][idx]={
+        tank:p.tank,
+        value:value,
+        assist_track:p.assist_track,
+        assist_radio:p.assist_radio,
+        alive:p.alive
+      };
+    }
+  });
+
+  let averages={};
+
+  for(let name in players){
+    let sum=0,count=0;
+
+    battles.forEach((b,i)=>{
+      let cell=players[name][i];
+      if(!cell) return;
+
+      if(typeof cell.value==="number"){
+        sum+=cell.value;
+        count++;
+      }
+    });
+
+    averages[name]=count ? Math.round(sum/count) : 0;
+  }
+
+  let sorted=Object.keys(players);
+
+  if(type==="hits")
+    sorted.sort((a,b)=>getPenRate(b,battles)-getPenRate(a,battles));
+  else
+    sorted.sort((a,b)=>averages[b]-averages[a]);
+
+  let html="<table>";
+
+  html+="<tr><th>Ник</th>";
+
+  if(type==="hits" && avgPosition==="left")
+    html+="<th>%</th>";
+
+  if(type!=="hits" && avgPosition==="left")
+    html+="<th>Ср</th>";
+
+  battles.forEach(b=>{
+    html+=`<th class="${b.win ? "win":"lose"}">${b.map}</th>`;
+  });
+
+  if(type==="hits" && avgPosition==="right")
+    html+="<th>%</th>";
+
+  if(type!=="hits" && avgPosition==="right")
+    html+="<th>Ср</th>";
+
+  html+="</tr>";
+
+  sorted.forEach(name=>{
+    html+="<tr>";
+    html+=`<td>${name}</td>`;
+
+    if(type==="hits" && avgPosition==="left")
+      html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
+
+    if(type!=="hits" && avgPosition==="left")
+      html+=`<td>${averages[name]}</td>`;
+
+    battles.forEach((b,i)=>{
+      let cell=players[name][i];
+
+      if(!cell){
+        html+="<td></td>";
+        return;
+      }
+
+      let tankClass = cell.alive ? "alive":"dead";
+
+      html+=`<td>
+        <span class="${tankClass}">${cell.tank}</span><br>
+        <span>${cell.value}</span>
+      </td>`;
+    });
+
+    if(type==="hits" && avgPosition==="right")
+      html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
+
+    if(type!=="hits" && avgPosition==="right")
+      html+=`<td>${averages[name]}</td>`;
+
+    html+="</tr>";
+  });
+
+  html+="</table>";
+
+  document.getElementById("table").innerHTML=html;
+
+  enableHover();
 }
 
-let battles=DATA.battles.filter(
-b=>!currentDate || b.date===currentDate
-);
+/* 🔥 HOVER ЛОГИКА */
+function enableHover(){
+  const table=document.querySelector("table");
+  if(!table) return;
 
-if(battles.length===0){
-document.getElementById("table").innerHTML="<p>Нет боёв</p>";
-return;
-}
+  const cells=table.querySelectorAll("td");
 
-let players={};
+  cells.forEach(cell=>{
 
-battles.forEach((battle,idx)=>{
+    cell.addEventListener("mouseenter",()=>{
+      const row=cell.parentElement;
+      const index=cell.cellIndex;
 
-for(let name in battle.players){
+      row.classList.add("hover-row");
 
-let p=battle.players[name];
+      table.querySelectorAll("tr").forEach(tr=>{
+        if(tr.children[index]){
+          tr.children[index].classList.add("hover-col");
+        }
+      });
 
-if(!players[name]) players[name]={};
+      cell.classList.add("hover-cell");
+    });
 
-let value=0;
+    cell.addEventListener("mouseleave",()=>{
+      const row=cell.parentElement;
+      const index=cell.cellIndex;
 
-if(type==="damage") value=p.damage;
-if(type==="damage_received") value=p.damage_received;
-if(type==="hits") value=`${p.shots}/${p.hits}/${p.piercings}`;
-if(type==="assist") value=p.assist_track+p.assist_radio;
+      row.classList.remove("hover-row");
 
-players[name][idx]={
-tank:p.tank,
-value:value,
-assist_track:p.assist_track,
-assist_radio:p.assist_radio,
-alive:p.alive
-};
+      table.querySelectorAll("tr").forEach(tr=>{
+        if(tr.children[index]){
+          tr.children[index].classList.remove("hover-col");
+        }
+      });
 
-}
+      cell.classList.remove("hover-cell");
+    });
 
-});
-
-let averages={};
-
-for(let name in players){
-
-let sum=0,count=0;
-
-battles.forEach((b,i)=>{
-
-let cell=players[name][i];
-if(!cell) return;
-
-if(typeof cell.value==="number"){
-sum+=cell.value;
-count++;
-}
-
-});
-
-averages[name]=count ? Math.round(sum/count) : 0;
-
-}
-
-let sorted=Object.keys(players);
-
-if(type==="hits")
-sorted.sort((a,b)=>getPenRate(b,battles)-getPenRate(a,battles));
-else
-sorted.sort((a,b)=>averages[b]-averages[a]);
-
-let html="<table>";
-
-html+="<tr><th>Ник</th>";
-
-if(type==="hits" && avgPosition==="left")
-html+="<th>% пробития</th>";
-
-if(type!=="hits" && avgPosition==="left")
-html+="<th>Среднее</th>";
-
-battles.forEach(b=>{
-let cls=b.win ? "win":"lose";
-html+=`<th class="${cls}">${b.map}</th>`;
-});
-
-if(type==="hits" && avgPosition==="right")
-html+="<th>% пробития</th>";
-
-if(type!=="hits" && avgPosition==="right")
-html+="<th>Среднее</th>";
-
-html+="</tr>";
-
-sorted.forEach(name=>{
-
-html+="<tr>";
-html+=`<td>${name}</td>`;
-
-if(type==="hits" && avgPosition==="left")
-html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
-
-if(type!=="hits" && avgPosition==="left")
-html+=`<td>${averages[name]}</td>`;
-
-battles.forEach((b,i)=>{
-
-let cell=players[name][i];
-
-if(!cell){
-html+="<td></td>";
-return;
-}
-
-let tankClass = cell.alive ? "alive":"dead";
-
-let displayValue = cell.value;
-
-if(type==="assist"){
-displayValue=`${cell.value}<br><small>track:${cell.assist_track} / radio:${cell.assist_radio}</small>`;
-}
-
-html+=`<td>
-<span class="${tankClass}">${cell.tank}</span><br>
-<span>${displayValue}</span>
-</td>`;
-
-});
-
-if(type==="hits" && avgPosition==="right")
-html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
-
-if(type!=="hits" && avgPosition==="right")
-html+=`<td>${averages[name]}</td>`;
-
-html+="</tr>";
-
-});
-
-html+="</table>";
-
-document.getElementById("table").innerHTML=html;
-
+  });
 }
