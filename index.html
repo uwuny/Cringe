@@ -298,14 +298,14 @@ function loadTable(type,event){
   html+="<tr><th>Ник</th>";
 
   if(type==="hits" && avgPosition==="left") html+="<th>%</th>";
-  if(type!=="hits" && avgPosition==="left") html+="<th>Ср</th>";
+  if(type!=="hits" && avgPosition==="left") html+="<th>Среднее</th>";
 
   battles.forEach(b=>{
     html+=`<th class="${b.win?"win":"lose"}">${b.map}</th>`;
   });
 
   if(type==="hits" && avgPosition==="right") html+="<th>%</th>";
-  if(type!=="hits" && avgPosition==="right") html+="<th>Ср</th>";
+  if(type!=="hits" && avgPosition==="right") html+="<th>Среднее</th>";
 
   html+="</tr>";
 
