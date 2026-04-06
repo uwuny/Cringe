@@ -4,243 +4,250 @@ let currentType = "damage";
 let currentDate = null;
 
 fetch("battle_data.json")
-.then(r => r.json())
-.then(data => {
-  DATA = data;
-  initDates();
-  loadTable(currentType);
+.then(r=>r.json())
+.then(data=>{
+DATA=data;
+initDates();
+loadTable(currentType);
 });
 
 function toggleAverage(){
-  avgPosition = avgPosition === "right" ? "left" : "right";
-  loadTable(currentType);
+avgPosition = avgPosition==="right" ? "left" : "right";
+loadTable(currentType);
 }
 
 function parseDate(str){
-  const [d,m] = str.split(".").map(Number);
-  return new Date(2025, m-1, d);
+let [d,m] = str.split(".").map(Number);
+return new Date(2025,m-1,d);
 }
 
 function initDates(){
 
-  const container = document.getElementById("dateButtons");
-  container.innerHTML = "";
+const box=document.getElementById("dateButtons");
+box.innerHTML="";
 
-  let dates = [...new Set(DATA.battles.map(b => b.date))];
+let dates=[...new Set(DATA.battles.map(b=>b.date))];
 
-  dates.sort((a,b)=>parseDate(a)-parseDate(b));
+dates.sort((a,b)=>parseDate(a)-parseDate(b));
 
-  dates.forEach((date,index)=>{
+dates.forEach((date,index)=>{
 
-    const btn = document.createElement("button");
-    btn.innerText = date;
+let btn=document.createElement("button");
+btn.innerText=date;
 
-    btn.onclick = () => {
+btn.onclick=()=>{
 
-      currentDate = date;
+currentDate=date;
 
-      document.querySelectorAll(".date-buttons button")
-      .forEach(b=>b.classList.remove("active"));
+document.querySelectorAll(".date-buttons button")
+.forEach(b=>b.classList.remove("active"));
 
-      btn.classList.add("active");
+btn.classList.add("active");
 
-      loadTable(currentType);
-    };
+loadTable(currentType);
 
-    container.appendChild(btn);
+};
 
-    if(index===0){
-      btn.classList.add("active");
-      currentDate=date;
-    }
+box.appendChild(btn);
 
-  });
+if(index===0){
+btn.classList.add("active");
+currentDate=date;
+}
 
-  /* КНОПКА ВСЕ БОИ — ДОБАВЛЯЕТСЯ В САМЫЙ КОНЕЦ */
+});
 
-  const allBtn = document.createElement("button");
-  allBtn.innerText = "ВСЕ БОИ";
+/* кнопка ВСЕ БОИ ПОСЛЕДНЯЯ */
 
-  allBtn.onclick = () => {
+let allBtn=document.createElement("button");
+allBtn.innerText="ВСЕ БОИ";
 
-    currentDate = null;
+allBtn.onclick=()=>{
 
-    document.querySelectorAll(".date-buttons button")
-    .forEach(b=>b.classList.remove("active"));
+currentDate=null;
 
-    allBtn.classList.add("active");
+document.querySelectorAll(".date-buttons button")
+.forEach(b=>b.classList.remove("active"));
 
-    loadTable(currentType);
-  };
+allBtn.classList.add("active");
 
-  container.appendChild(allBtn);
+loadTable(currentType);
+
+};
+
+box.appendChild(allBtn);
 
 }
 
 function getPenRate(name,battles){
 
-  let shots=0,hits=0,pen=0;
+let shots=0,hits=0,pen=0;
 
-  battles.forEach(b=>{
-    let p=b.players[name];
-    if(!p) return;
+battles.forEach(b=>{
 
-    shots+=p.shots;
-    hits+=p.hits;
-    pen+=p.piercings;
-  });
+let p=b.players[name];
+if(!p) return;
 
-  return hits ? pen/hits : 0;
+shots+=p.shots;
+hits+=p.hits;
+pen+=p.piercings;
+
+});
+
+return hits ? pen/hits : 0;
+
 }
 
 function loadTable(type,event){
 
-  currentType = type;
+currentType=type;
 
-  if(event){
-    document.querySelectorAll(".mode")
-    .forEach(b=>b.classList.remove("active"));
-    event.target.classList.add("active");
-  }
+if(event){
 
-  let battles = DATA.battles.filter(
-    b=>!currentDate || b.date===currentDate
-  );
+document.querySelectorAll(".mode")
+.forEach(b=>b.classList.remove("active"));
 
-  if(battles.length===0){
-    document.getElementById("table").innerHTML =
-    "<p style='text-align:center'>Нет боёв</p>";
-    return;
-  }
+event.target.classList.add("active");
 
-  let players={};
+}
 
-  battles.forEach((battle,idx)=>{
+let battles=DATA.battles.filter(
+b=>!currentDate || b.date===currentDate
+);
 
-    for(let name in battle.players){
+if(battles.length===0){
+document.getElementById("table").innerHTML="<p>Нет боёв</p>";
+return;
+}
 
-      let p=battle.players[name];
+let players={};
 
-      if(!players[name]) players[name]={};
+battles.forEach((battle,idx)=>{
 
-      let value=0;
+for(let name in battle.players){
 
-      if(type==="damage") value=p.damage;
-      if(type==="damage_received") value=p.damage_received;
-      if(type==="hits") value=`${p.shots}/${p.hits}/${p.piercings}`;
-      if(type==="assist") value=p.assist_track+p.assist_radio;
+let p=battle.players[name];
 
-      players[name][idx]={
-        tank:p.tank,
-        value:value,
-        assist_track:p.assist_track,
-        assist_radio:p.assist_radio,
-        alive:p.alive
-      };
-    }
+if(!players[name]) players[name]={};
 
-  });
+let value=0;
 
-  let averages={};
+if(type==="damage") value=p.damage;
+if(type==="damage_received") value=p.damage_received;
+if(type==="hits") value=`${p.shots}/${p.hits}/${p.piercings}`;
+if(type==="assist") value=p.assist_track+p.assist_radio;
 
-  for(let name in players){
+players[name][idx]={
+tank:p.tank,
+value:value,
+assist_track:p.assist_track,
+assist_radio:p.assist_radio,
+alive:p.alive
+};
 
-    let sum=0,count=0;
+}
 
-    battles.forEach((b,i)=>{
+});
 
-      let cell=players[name][i];
-      if(!cell) return;
+let averages={};
 
-      if(typeof cell.value==="number"){
-        sum+=cell.value;
-        count++;
-      }
+for(let name in players){
 
-    });
+let sum=0,count=0;
 
-    averages[name]=count?Math.round(sum/count):0;
-  }
+battles.forEach((b,i)=>{
 
-  let sorted=Object.keys(players);
+let cell=players[name][i];
+if(!cell) return;
 
-  if(type==="hits"){
-    sorted.sort((a,b)=>getPenRate(b,battles)-getPenRate(a,battles));
-  }else{
-    sorted.sort((a,b)=>averages[b]-averages[a]);
-  }
+if(typeof cell.value==="number"){
+sum+=cell.value;
+count++;
+}
 
-  let html="<table>";
+});
 
-  html+="<tr>";
-  html+="<th>Ник</th>";
+averages[name]=count ? Math.round(sum/count) : 0;
 
-  if(type==="hits" && avgPosition==="left")
-  html+="<th>% пробития</th>";
+}
 
-  if(type!=="hits" && avgPosition==="left")
-  html+="<th>Среднее</th>";
+let sorted=Object.keys(players);
 
-  battles.forEach(b=>{
-    let cls=b.win?"win":"lose";
-    html+=`<th class="${cls}">${b.map}</th>`;
-  });
+if(type==="hits")
+sorted.sort((a,b)=>getPenRate(b,battles)-getPenRate(a,battles));
+else
+sorted.sort((a,b)=>averages[b]-averages[a]);
 
-  if(type==="hits" && avgPosition==="right")
-  html+="<th>% пробития</th>";
+let html="<table>";
 
-  if(type!=="hits" && avgPosition==="right")
-  html+="<th>Среднее</th>";
+html+="<tr><th>Ник</th>";
 
-  html+="</tr>";
+if(type==="hits" && avgPosition==="left")
+html+="<th>% пробития</th>";
 
-  sorted.forEach(name=>{
+if(type!=="hits" && avgPosition==="left")
+html+="<th>Среднее</th>";
 
-    html+="<tr>";
-    html+=`<td>${name}</td>`;
+battles.forEach(b=>{
+let cls=b.win ? "win":"lose";
+html+=`<th class="${cls}">${b.map}</th>`;
+});
 
-    if(type==="hits" && avgPosition==="left")
-    html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
+if(type==="hits" && avgPosition==="right")
+html+="<th>% пробития</th>";
 
-    if(type!=="hits" && avgPosition==="left")
-    html+=`<td>${averages[name]}</td>`;
+if(type!=="hits" && avgPosition==="right")
+html+="<th>Среднее</th>";
 
-    battles.forEach((b,i)=>{
+html+="</tr>";
 
-      let cell=players[name][i];
+sorted.forEach(name=>{
 
-      if(!cell){
-        html+="<td></td>";
-        return;
-      }
+html+="<tr>";
+html+=`<td>${name}</td>`;
 
-      let tankClass = cell.alive ? "alive" : "dead";
+if(type==="hits" && avgPosition==="left")
+html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
 
-      let displayValue=cell.value;
+if(type!=="hits" && avgPosition==="left")
+html+=`<td>${averages[name]}</td>`;
 
-      if(type==="assist"){
-        displayValue=
-        `${cell.value}<br><small>track:${cell.assist_track} / radio:${cell.assist_radio}</small>`;
-      }
+battles.forEach((b,i)=>{
 
-      html+=`<td>
-      <span class="${tankClass}">${cell.tank}</span><br>
-      <span>${displayValue}</span>
-      </td>`;
+let cell=players[name][i];
 
-    });
+if(!cell){
+html+="<td></td>";
+return;
+}
 
-    if(type==="hits" && avgPosition==="right")
-    html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
+let tankClass = cell.alive ? "alive":"dead";
 
-    if(type!=="hits" && avgPosition==="right")
-    html+=`<td>${averages[name]}</td>`;
+let displayValue = cell.value;
 
-    html+="</tr>";
+if(type==="assist"){
+displayValue=`${cell.value}<br><small>track:${cell.assist_track} / radio:${cell.assist_radio}</small>`;
+}
 
-  });
+html+=`<td>
+<span class="${tankClass}">${cell.tank}</span><br>
+<span>${displayValue}</span>
+</td>`;
 
-  html+="</table>";
+});
 
-  document.getElementById("table").innerHTML = html;
+if(type==="hits" && avgPosition==="right")
+html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
+
+if(type!=="hits" && avgPosition==="right")
+html+=`<td>${averages[name]}</td>`;
+
+html+="</tr>";
+
+});
+
+html+="</table>";
+
+document.getElementById("table").innerHTML=html;
+
 }
