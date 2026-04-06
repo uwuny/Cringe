@@ -23,11 +23,15 @@ left:0;
 z-index:0;
 }
 
+/* контент */
+
 .page{
 position:relative;
 z-index:1;
 padding-top:20px;
 }
+
+/* заголовок */
 
 .matrix-title{
 text-align:center;
@@ -55,59 +59,6 @@ cursor:pointer;
 button.active{background:#4a6ed1;}
 .date-buttons button.active{background:#00aa55;}
 
-/* танки */
-
-.alive{
-color:#00ff66;
-font-weight:bold;
-}
-
-.dead{
-color:#ff4444;
-font-weight:bold;
-}
-
-/* таблица */
-
-#tableWrapper{
-overflow-x:auto;
-width:100%;
-margin-top:10px;
-}
-
-table{
-border-collapse:collapse;
-background:#1a1a1a;
-}
-
-td,th{
-border:1px solid #444;
-padding:6px;
-text-align:center;
-white-space:nowrap;
-}
-
-tr:hover td{
-background:#262626;
-}
-
-td.hover-col{
-background:#333;
-}
-
-.win{background:#2e5e2e;}
-.lose{background:#5e2e2e;}
-
-/* закреп ник */
-
-.nick{
-position:sticky;
-left:0;
-background:#111;
-z-index:3;
-font-weight:bold;
-}
-
 /* боковые картинки */
 
 .side-layer{
@@ -125,8 +76,43 @@ position:absolute;
 width:200px;
 }
 
-.side-left{left:-220px;}
-.side-right{right:-220px;}
+.side-left{ left:-220px; }
+.side-right{ right:-220px; }
+
+/* таблица */
+
+#tableWrapper{
+display:flex;
+justify-content:flex-start;
+overflow-x:auto;
+margin-top:10px;
+}
+
+table{
+border-collapse:collapse;
+background:#1a1a1a;
+}
+
+td,th{
+border:1px solid #444;
+padding:4px;
+text-align:center;
+}
+
+.win{background:#2e5e2e;}
+.lose{background:#5e2e2e;}
+
+/* цвета танков */
+
+.alive{
+color:#00ff66;
+font-weight:bold;
+}
+
+.dead{
+color:#ff4444;
+font-weight:bold;
+}
 
 /* футер */
 
@@ -208,26 +194,25 @@ width:500px;
 
 /* MATRIX */
 
-const canvas=document.getElementById("matrix");
-const ctx=canvas.getContext("2d");
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
 
-canvas.height=window.innerHeight;
-canvas.width=window.innerWidth;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-let letters="01";
-letters=letters.split("");
+const letters = "アイウエオカキクケコサシスセソ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const chars = letters.split("");
 
-let fontSize=14;
-let columns=canvas.width/fontSize;
+const fontSize = 16;
+const columns = canvas.width / fontSize;
 
-let drops=[];
+let drops = [];
 
-for(let x=0;x<columns;x++)
-drops[x]=1;
+for(let x=0;x<columns;x++) drops[x]=1;
 
 function draw(){
 
-ctx.fillStyle="rgba(0,0,0,0.05)";
+ctx.fillStyle="rgba(0,0,0,0.08)";
 ctx.fillRect(0,0,canvas.width,canvas.height);
 
 ctx.fillStyle="#0F0";
@@ -235,11 +220,11 @@ ctx.font=fontSize+"px monospace";
 
 for(let i=0;i<drops.length;i++){
 
-let text=letters[Math.floor(Math.random()*letters.length)];
+let text = chars[Math.floor(Math.random()*chars.length)];
 
 ctx.fillText(text,i*fontSize,drops[i]*fontSize);
 
-if(drops[i]*fontSize>canvas.height && Math.random()>0.975)
+if(drops[i]*fontSize > canvas.height && Math.random() > 0.975)
 drops[i]=0;
 
 drops[i]++;
@@ -248,7 +233,7 @@ drops[i]++;
 
 }
 
-setInterval(draw,35);
+setInterval(draw,33);
 
 </script>
 
