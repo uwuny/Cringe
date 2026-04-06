@@ -1,11 +1,18 @@
 let DATA = null
 let avgPosition = "right"
 let currentType = "damage"
+let currentDate = null
 
 fetch("battle_data.json")
 .then(r=>r.json())
 .then(data=>{
 DATA = data
+
+initDateButtons()
+
+// по умолчанию первая дата
+currentDate = getSortedDates()[0]
+
 loadTable("damage")
 })
 
@@ -13,6 +20,54 @@ function toggleAverage(){
 avgPosition = avgPosition === "right" ? "left" : "right"
 loadTable(currentType)
 }
+
+
+// 🔥 получить отсортированные даты
+function getSortedDates(){
+
+let dates = new Set()
+
+DATA.battles.forEach(b=>{
+dates.add(b.date || "Без даты")
+})
+
+return Array.from(dates).sort((a,b)=>{
+let [d1,m1] = a.split(".").map(Number)
+let [d2,m2] = b.split(".").map(Number)
+return new Date(2025,m2-1,d2) - new Date(2025,m1-1,d1)
+})
+}
+
+
+// 🔥 создать кнопки дат
+function initDateButtons(){
+
+let container = document.getElementById("dateButtons")
+let dates = getSortedDates()
+
+let html = ""
+
+dates.forEach(date=>{
+html += `<button onclick="selectDate('${date}', event)">${date}</button>`
+})
+
+container.innerHTML = html
+}
+
+
+// 🔥 выбор даты
+function selectDate(date,event){
+
+currentDate = date
+
+document.querySelectorAll(".date-buttons button")
+.forEach(b=>b.classList.remove("active"))
+
+event.target.classList.add("active")
+
+loadTable(currentType)
+}
+
 
 function getPenRate(name,battles){
 
@@ -34,8 +89,18 @@ return pen/hits
 }
 
 
-// 🔥 НОВОЕ — генерация одной таблицы
-function renderTable(battles,type){
+// 🔥 ОСНОВНАЯ функция
+function loadTable(type,event){
+
+currentType = type
+
+document.querySelectorAll("button.mode").forEach(b=>b.classList.remove("active"))
+if(event) event.target.classList.add("active")
+
+// ✅ фильтр по дате
+let battles = DATA.battles.filter(b=>{
+return (b.date || "Без даты") === currentDate
+})
 
 let players = {}
 
@@ -163,57 +228,5 @@ html+="</tr>"
 
 html+="</table>"
 
-return html
-}
-
-
-// 🔥 ГЛАВНАЯ функция
-function loadTable(type,event){
-
-currentType = type
-
-document.querySelectorAll("button.mode").forEach(b=>b.classList.remove("active"))
-if(event) event.target.classList.add("active")
-
-let battles = DATA.battles
-
-// ✅ группировка по датам
-let battlesByDate = {}
-
-battles.forEach(b=>{
-let d = b.date || "Без даты"
-if(!battlesByDate[d]) battlesByDate[d] = []
-battlesByDate[d].push(b)
-})
-
-// ✅ сортировка дат (новые сверху)
-let sortedDates = Object.keys(battlesByDate).sort((a,b)=>{
-let [d1,m1] = a.split(".").map(Number)
-let [d2,m2] = b.split(".").map(Number)
-return new Date(2025,m2-1,d2) - new Date(2025,m1-1,d1)
-})
-
-let finalHTML = ""
-
-// 🔥 вывод
-sortedDates.forEach(date=>{
-
-finalHTML += `
-<h2 style="
-text-align:center;
-color:#00ff66;
-margin-top:30px;
-font-family:monospace;
-text-shadow:0 0 10px #00ff66;
-letter-spacing:3px;
-">
-${date}
-</h2>
-`
-
-finalHTML += renderTable(battlesByDate[date], type)
-
-})
-
-document.getElementById("table").innerHTML = finalHTML
+document.getElementById("table").innerHTML = html
 }
