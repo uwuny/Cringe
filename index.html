@@ -2,197 +2,97 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Статистика боёв</title>
-<link rel="icon" type="image/png" href="Fawicon.png">
+<title>Статистика</title>
 
 <style>
+body{background:#000;color:#fff;margin:0;font-family:Arial}
+.page{position:relative;z-index:1}
 
-body{
-  background:#000;
-  color:white;
-  font-family:Arial,sans-serif;
-  margin:0;
-  padding:0;
-  overflow-x:hidden;
-}
-
-#matrixCanvas{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  z-index:0;
-  opacity:0.35;
-}
-
-.page{
-  position:relative;
-  z-index:1;
-  padding-top:20px;
-}
-
-/* Заголовок */
 .matrix-title{
-  text-align:center;
-  font-family:monospace;
-  font-size:64px;
-  color:#00ff66;
-  margin:20px 0 10px 0;
-  letter-spacing:6px;
-  text-shadow:0 0 5px #00ff66,0 0 15px #00ff66,0 0 30px #00ff66;
+text-align:center;
+font-size:60px;
+color:#00ff66;
+text-shadow:0 0 20px #00ff66;
 }
 
-/* Кнопки */
-.buttons, .date-buttons{
-  text-align:center;
-}
+.buttons,.date-buttons{text-align:center}
 
 button{
-  background:#2b2b2b;
-  color:white;
-  border:1px solid #444;
-  padding:6px 12px;
-  margin:4px;
-  border-radius:6px;
-  font-size:14px;
-  cursor:pointer;
-  transition:0.15s;
+background:#2b2b2b;
+color:#fff;
+border:1px solid #444;
+padding:6px 12px;
+margin:4px;
+border-radius:6px;
+cursor:pointer;
 }
 
-button:hover{
-  background:#3a3a3a;
-  border-color:#666;
+button.active{background:#4a6ed1}
+.date-buttons button.active{background:#00aa55}
+
+.side-layer{
+position:absolute;
+top:5px;
+left:50%;
+transform:translateX(-50%);
+width:1000px;
+pointer-events:none;
 }
 
-button.active{
-  background:#4a6ed1;
-  border-color:#6f8fff;
-}
+.side-img{position:absolute;width:200px}
+.side-left{left:-220px}
+.side-right{right:-220px}
 
-/* Даты */
-.date-buttons{
-  margin-top:10px;
-  margin-bottom:15px;
-}
+#tableWrapper{display:flex;justify-content:center}
+table{border-collapse:collapse;background:#1a1a1a}
+td,th{border:1px solid #444;padding:4px}
+.win{background:#2e5e2e}
+.lose{background:#5e2e2e}
 
-.date-buttons button.active{
-  background:#00aa55;
-  border-color:#00ff66;
-}
-
-/* Таблица */
-#tableWrapper{
-  display:flex;
-  justify-content:center;
-  overflow-x:auto;
-}
-
-table{
-  border-collapse:collapse;
-  margin-top:10px;
-  background:#1a1a1a;
-}
-
-td, th{
-  border:1px solid #444;
-  padding:4px 6px;
-  text-align:center;
-  background:#1e1e1e;
-}
-
-th{background:#262626;}
-
-tr:hover td{background:#2a2a2a;}
-
-td:first-child, th:first-child{
-  position:sticky;
-  left:0;
-  z-index:2;
-}
-
-.win{background:#2e5e2e;}
-.lose{background:#5e2e2e;}
-.alive{color:#6bd16b;}
-.dead{color:#d16b6b;}
-
+.footer{text-align:center;margin-top:40px}
+.video-center{width:500px}
+.video-left{position:absolute;left:20px;width:500px}
 </style>
 </head>
 
 <body>
 
-<canvas id="matrixCanvas"></canvas>
-
 <div class="page">
+
+<div class="side-layer">
+<img src="left_image.png" class="side-img side-left">
+<img src="right_image.png" class="side-img side-right">
+</div>
 
 <h1 class="matrix-title">СТАТИСТИКА</h1>
 
-<!-- Режимы -->
 <div class="buttons">
-  <button class="mode" onclick="loadTable('damage',event)">Урон</button>
-  <button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
-  <button class="mode" onclick="loadTable('hits',event)">Попадания</button>
-  <button class="mode" onclick="loadTable('assist',event)">Ассист</button>
-  <button onclick="toggleAverage()">Среднее слева / справа</button>
+<button class="mode" onclick="loadTable('damage',event)">Урон</button>
+<button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
+<button class="mode" onclick="loadTable('hits',event)">Попадания</button>
+<button class="mode" onclick="loadTable('assist',event)">Ассист</button>
+<button onclick="toggleAverage()">Среднее</button>
 </div>
 
-<!-- 🔥 ДАТЫ -->
 <div class="date-buttons" id="dateButtons"></div>
 
-<!-- Таблица -->
 <div id="tableWrapper">
-  <div id="table"></div>
+<div id="table"></div>
+</div>
+
+<div class="footer">
+<video class="video-left" autoplay muted loop>
+<source src="Down.webm">
+</video>
+
+<video class="video-center" autoplay muted loop>
+<source src="Left.mp4">
+</video>
 </div>
 
 </div>
 
 <script src="tables.js"></script>
-
-<script>
-
-// matrix фон (оставил как у тебя)
-
-const canvas=document.getElementById("matrixCanvas")
-const ctx=canvas.getContext("2d")
-
-canvas.width=window.innerWidth
-canvas.height=window.innerHeight
-
-const letters="アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-const chars=letters.split("")
-
-const fontSize=14
-const columns=canvas.width/fontSize
-const drops=[]
-
-for(let i=0;i<columns;i++){drops[i]=1}
-
-function draw(){
-
-ctx.fillStyle="rgba(0,0,0,0.05)"
-ctx.fillRect(0,0,canvas.width,canvas.height)
-
-ctx.fillStyle="#00ff66"
-ctx.font=fontSize+"px monospace"
-
-for(let i=0;i<drops.length;i++){
-
-const text=chars[Math.floor(Math.random()*chars.length)]
-ctx.fillText(text,i*fontSize,drops[i]*fontSize)
-
-if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
-drops[i]=0
-}
-
-drops[i]++
-
-}
-
-}
-
-setInterval(draw,40)
-
-</script>
 
 </body>
 </html>
