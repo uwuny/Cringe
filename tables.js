@@ -20,7 +20,11 @@ function toggleAverage() {
 
 // Создание кнопок дат
 function initDates() {
-  const dateButtons = document.getElementById("dateButtons");
+  const dateButtons = document.createElement("div");
+  dateButtons.className = "date-buttons";
+  dateButtons.id = "dateButtons";
+  document.querySelector(".page").insertBefore(dateButtons, document.getElementById("tableWrapper"));
+
   const dates = [...new Set(DATA.battles.map(b => b.date))].sort();
   
   dates.forEach(date => {
@@ -35,14 +39,13 @@ function initDates() {
     dateButtons.appendChild(btn);
   });
   
-  // По умолчанию выбираем первую дату
   if(dates.length > 0){
     currentDate = dates[0];
     dateButtons.querySelector("button").classList.add("active");
   }
 }
 
-// Рассчитываем пробитие %
+// Функция расчета % пробитий
 function getPenRate(name, battles){
   let shots=0, hits=0, pen=0;
   battles.forEach(b=>{
@@ -55,7 +58,7 @@ function getPenRate(name, battles){
   return hits ? pen/hits : 0;
 }
 
-// Основная функция
+// Основная функция построения таблицы
 function loadTable(type, event){
   currentType = type;
   if(event) event.target.classList.add("active");
@@ -64,11 +67,12 @@ function loadTable(type, event){
 
   // Фильтруем по дате
   let battles = DATA.battles.filter(b => !currentDate || b.date === currentDate);
-  if(battles.length === 0) { 
+  if(battles.length === 0) {
     document.getElementById("table").innerHTML = "<p style='text-align:center'>Нет боёв за эту дату</p>";
     return;
   }
 
+  // Собираем игроков
   let players = {};
   battles.forEach((battle, idx)=>{
     for(let name in battle.players){
@@ -111,7 +115,7 @@ function loadTable(type, event){
     sorted.sort((a,b)=>averages[b]-averages[a]);
   }
 
-  // Строим HTML
+  // HTML таблицы
   let html="<table>";
   html+="<tr><th>Ник</th>";
   if(type==="hits" && avgPosition==="left") html+="<th>% пробития</th>";
@@ -138,7 +142,12 @@ function loadTable(type, event){
       if(type==="assist"){
         displayValue = `${cell.value}<br><small>track:${cell.assist_track} / radio:${cell.assist_radio}</small>`;
       }
-      html+=`<td><span class="${tankClass}">${cell.tank}</span><br>${displayValue}</td>`;
+
+      // Логика раскраски цифр в названии и значениях (как в изначальном)
+      html+=`<td>
+        <span class="${tankClass}">${cell.tank}</span><br>
+        <span class="${tankClass}">${displayValue}</span>
+      </td>`;
     });
 
     if(type==="hits" && avgPosition==="right") html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
@@ -148,15 +157,5 @@ function loadTable(type, event){
   });
 
   html+="</table>";
-
   document.getElementById("table").innerHTML = html;
-
-  // Скролл
-  const wrapper = document.getElementById("tableWrapper");
-  const table = wrapper.querySelector("table");
-  if(table && table.offsetWidth > wrapper.clientWidth){
-    wrapper.classList.add("scroll");
-  }else{
-    wrapper.classList.remove("scroll");
-  }
 }
