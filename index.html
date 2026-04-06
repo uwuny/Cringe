@@ -5,7 +5,6 @@
 <title>Статистика</title>
 
 <style>
-
 body{
   background:#000;
   color:white;
@@ -102,9 +101,9 @@ th:first-child, td:first-child{
   min-width:150px;
 }
 
-/* Hover подсветка */
+/* Стандартный hover подсветка */
 td:hover, th:hover{
-  background:rgba(74,110,209,0.4);
+  background-color: rgba(255,255,255,0.1);
 }
 
 .win{background:#2e5e2e;}
@@ -194,7 +193,7 @@ const letters="アイウエオカキクケコサシスセソ0123456789ABCDEFGHIJ
 const chars=letters.split("");
 
 const fontSize=16;
-const columns=canvas.width/fontSize;
+const columns=Math.floor(canvas.width/fontSize);
 
 let drops=[];
 for(let x=0;x<columns;x++) drops[x]=1;
@@ -214,7 +213,6 @@ function draw(){
   }
 }
 
-/* медленнее на 15% */
 setInterval(draw,38);
 </script>
 
