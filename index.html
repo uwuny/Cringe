@@ -20,16 +20,12 @@ body{
   padding-top:20px;
 }
 
-/* Заголовок */
-
 .matrix-title{
   text-align:center;
   font-size:60px;
   color:#00ff66;
   text-shadow:0 0 20px #00ff66;
 }
-
-/* Кнопки */
 
 .buttons,.date-buttons{
   text-align:center;
@@ -49,7 +45,7 @@ button.active{background:#4a6ed1;}
 .date-buttons button.active{background:#00aa55;}
 
 
-/* Цвет танков */
+/* цвет танков */
 
 .alive{
   color:#00ff66;
@@ -62,7 +58,7 @@ button.active{background:#4a6ed1;}
 }
 
 
-/* Таблица */
+/* таблица */
 
 #tableWrapper{
   overflow-x:auto;
@@ -82,11 +78,21 @@ td,th{
   white-space:nowrap;
 }
 
+/* hover подсветка */
+
+td:hover{
+  background:#333;
+}
+
+tr:hover td{
+  background:#262626;
+}
+
 .win{background:#2e5e2e;}
 .lose{background:#5e2e2e;}
 
 
-/* фиксированный столбец ников */
+/* фикс ник */
 
 .nick{
   position:sticky;
@@ -97,7 +103,7 @@ td,th{
 }
 
 
-/* боковые картинки */
+/* картинки */
 
 .side-layer{
   position:absolute;
@@ -116,7 +122,6 @@ td,th{
 
 .side-left{ left:-220px; }
 .side-right{ right:-220px; }
-
 
 
 .footer{
@@ -177,17 +182,17 @@ td,th{
 
 <div class="footer">
 
-  <div class="video-area">
+<div class="video-area">
 
-    <video class="video-left" autoplay muted loop playsinline>
-      <source src="Down.webm" type="video/webm">
-    </video>
+<video class="video-left" autoplay muted loop playsinline>
+<source src="Down.webm" type="video/webm">
+</video>
 
-    <video class="video-center" autoplay muted loop playsinline>
-      <source src="Left.mp4" type="video/mp4">
-    </video>
+<video class="video-center" autoplay muted loop playsinline>
+<source src="Left.mp4" type="video/mp4">
+</video>
 
-  </div>
+</div>
 
 </div>
 
