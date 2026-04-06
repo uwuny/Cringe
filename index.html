@@ -7,23 +7,6 @@
 
 <style>
 
-.date-buttons{
-  text-align:center;
-  margin-bottom:15px;
-}
-
-.date-buttons button{
-  background:#1f1f1f;
-  border:1px solid #444;
-  color:#ccc;
-}
-
-.date-buttons button.active{
-  background:#00aa55;
-  color:white;
-  border-color:#00ff66;
-}
-  
 body{
   background:#000;
   color:white;
@@ -49,26 +32,6 @@ body{
   padding-top:20px;
 }
 
-/* Боковые картинки */
-.side-layer{
-  position:absolute;
-  top:5px;
-  left:50%;
-  transform:translateX(-50%);
-  width:1000px;
-  pointer-events:none;
-  z-index:2;
-}
-
-.side-img{
-  position:absolute;
-  width:204px;
-  height:auto;
-}
-
-.side-left{ left:-220px; }
-.side-right{ right:-220px; }
-
 /* Заголовок */
 .matrix-title{
   text-align:center;
@@ -81,7 +44,10 @@ body{
 }
 
 /* Кнопки */
-.buttons{text-align:center;margin-bottom:10px;}
+.buttons, .date-buttons{
+  text-align:center;
+}
+
 button{
   background:#2b2b2b;
   color:white;
@@ -93,8 +59,27 @@ button{
   cursor:pointer;
   transition:0.15s;
 }
-button:hover{background:#3a3a3a;border-color:#666;}
-button.active{background:#4a6ed1;border-color:#6f8fff;}
+
+button:hover{
+  background:#3a3a3a;
+  border-color:#666;
+}
+
+button.active{
+  background:#4a6ed1;
+  border-color:#6f8fff;
+}
+
+/* Даты */
+.date-buttons{
+  margin-top:10px;
+  margin-bottom:15px;
+}
+
+.date-buttons button.active{
+  background:#00aa55;
+  border-color:#00ff66;
+}
 
 /* Таблица */
 #tableWrapper{
@@ -107,7 +92,6 @@ table{
   border-collapse:collapse;
   margin-top:10px;
   background:#1a1a1a;
-  box-shadow:0 0 20px rgba(0,255,100,0.1);
 }
 
 td, th{
@@ -121,75 +105,16 @@ th{background:#262626;}
 
 tr:hover td{background:#2a2a2a;}
 
-td:first-child{
-  font-weight:bold;
+td:first-child, th:first-child{
   position:sticky;
   left:0;
-  z-index:3;
-  background:#1e1e1e;
-}
-
-th:first-child{
-  position:sticky;
-  left:0;
-  z-index:4;
-  background:#262626;
+  z-index:2;
 }
 
 .win{background:#2e5e2e;}
 .lose{background:#5e2e2e;}
 .alive{color:#6bd16b;}
 .dead{color:#d16b6b;}
-
-/* Footer */
-
-.footer{
-  margin-top:40px;
-  padding-top:15px;
-  text-align:center;
-  border-top:1px solid #333;
-  position:relative;
-}
-
-/* Текст */
-
-.credit-text{
-  color:#ffffff;
-  font-weight:bold;
-  font-family:century gothic,sans-serif;
-  font-size:14px;
-  text-shadow:0 0 3px rgba(255,255,255,0.5);
-  margin-bottom:20px;
-}
-
-/* Блок видео */
-
-.video-area{
-  position:relative;
-  margin-top:10px;
-  padding-bottom:100px;
-}
-
-/* Центральное видео (MP4) */
-
-.video-center{
-  width:550px;
-  display:block;
-  margin:0 auto;
-  pointer-events:none;
-  filter:drop-shadow(0 0 10px #00ff66);
-}
-
-/* Левое видео (WEBM) */
-
-.video-left{
-  position:absolute;
-  left:20px;
-  top:0;
-  width:550px;
-  pointer-events:none;
-  filter:drop-shadow(0 0 10px #00ff66);
-}
 
 </style>
 </head>
@@ -200,55 +125,32 @@ th:first-child{
 
 <div class="page">
 
-<div class="side-layer">
-<img src="left_image.png" class="side-img side-left">
-<img src="right_image.png" class="side-img side-right">
-</div>
-
 <h1 class="matrix-title">СТАТИСТИКА</h1>
 
+<!-- Режимы -->
 <div class="buttons">
-<button class="mode" onclick="loadTable('damage',event)">Урон</button>
-<button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
-<button class="mode" onclick="loadTable('hits',event)">Попадания</button>
-<button class="mode" onclick="loadTable('assist',event)">Ассист</button>
-<button onclick="toggleAverage()">Среднее слева / справа</button>
+  <button class="mode" onclick="loadTable('damage',event)">Урон</button>
+  <button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
+  <button class="mode" onclick="loadTable('hits',event)">Попадания</button>
+  <button class="mode" onclick="loadTable('assist',event)">Ассист</button>
+  <button onclick="toggleAverage()">Среднее слева / справа</button>
+</div>
+
+<!-- 🔥 ДАТЫ -->
 <div class="date-buttons" id="dateButtons"></div>
-</div>
 
+<!-- Таблица -->
 <div id="tableWrapper">
-<div id="table"></div>
+  <div id="table"></div>
 </div>
-
-<footer class="footer">
-
-<div class="credit-text">
-© 2026 McQueen — Статистика боёв
-</div>
-
-<div class="video-area">
-
-<!-- Левое видео WEBM -->
-
-<video class="video-left" autoplay muted loop playsinline>
-<source src="Down.webm" type="video/webm">
-</video>
-
-<!-- Центральное видео MP4 -->
-
-<video class="video-center" autoplay muted loop playsinline>
-<source src="Left.mp4" type="video/mp4">
-</video>
-
-</div>
-
-</footer>
 
 </div>
 
 <script src="tables.js"></script>
 
 <script>
+
+// matrix фон (оставил как у тебя)
 
 const canvas=document.getElementById("matrixCanvas")
 const ctx=canvas.getContext("2d")
@@ -276,13 +178,10 @@ ctx.font=fontSize+"px monospace"
 for(let i=0;i<drops.length;i++){
 
 const text=chars[Math.floor(Math.random()*chars.length)]
-
 ctx.fillText(text,i*fontSize,drops[i]*fontSize)
 
 if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
-
 drops[i]=0
-
 }
 
 drops[i]++
@@ -297,6 +196,3 @@ setInterval(draw,40)
 
 </body>
 </html>
-
-
-
