@@ -220,19 +220,6 @@ function initDates(){
   box.appendChild(allBtn);
 }
 
-function getPenRate(name,battles){
-  let hits=0,pen=0;
-
-  battles.forEach(b=>{
-    let p=b.players[name];
-    if(!p) return;
-    hits+=p.hits;
-    pen+=p.piercings;
-  });
-
-  return hits ? pen/hits : 0;
-}
-
 function loadTable(type,event){
 
   currentType=type;
@@ -310,7 +297,7 @@ function loadTable(type,event){
           ${cell.value}
           <br>
           <small style="opacity:0.7">
-            track: ${cell.assist_track} / radio: ${cell.assist_radio}
+            каток: ${cell.assist_track} / свет: ${cell.assist_radio}
           </small>
         `;
       }
