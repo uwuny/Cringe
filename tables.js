@@ -13,18 +13,14 @@ loadTable(currentType);
 
 
 function toggleAverage(){
-
 avgPosition=avgPosition==="right"?"left":"right";
 loadTable(currentType);
-
 }
 
 
 function parseDate(str){
-
 let [d,m]=str.split(".").map(Number);
 return new Date(2025,m-1,d);
-
 }
 
 
@@ -35,24 +31,6 @@ const box=document.getElementById("dateButtons");
 let dates=[...new Set(DATA.battles.map(b=>b.date))];
 
 dates.sort((a,b)=>parseDate(a)-parseDate(b));
-
-let allBtn=document.createElement("button");
-allBtn.textContent="ВСЕ БОИ";
-
-allBtn.onclick=()=>{
-
-currentDate=null;
-
-document.querySelectorAll(".date-buttons button")
-.forEach(b=>b.classList.remove("active"));
-
-allBtn.classList.add("active");
-
-loadTable(currentType);
-
-};
-
-box.appendChild(allBtn);
 
 dates.forEach(date=>{
 
@@ -76,7 +54,29 @@ box.appendChild(btn);
 
 });
 
+/* кнопка все бои теперь последняя */
+
+let allBtn=document.createElement("button");
+
+allBtn.textContent="ВСЕ БОИ";
+
+allBtn.onclick=()=>{
+
+currentDate=null;
+
+document.querySelectorAll(".date-buttons button")
+.forEach(b=>b.classList.remove("active"));
+
 allBtn.classList.add("active");
+
+loadTable(currentType);
+
+};
+
+box.appendChild(allBtn);
+
+box.querySelector("button").classList.add("active");
+currentDate=dates[0];
 
 }
 
@@ -220,7 +220,6 @@ html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
 if(type!=="hits" && avgPosition==="left")
 html+=`<td>${averages[name]}</td>`;
 
-
 battles.forEach((b,i)=>{
 
 let cell=players[name][i];
@@ -245,7 +244,6 @@ html+=`<td>
 
 });
 
-
 if(type==="hits" && avgPosition==="right")
 html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
 
@@ -265,8 +263,6 @@ applyHover();
 }
 
 
-
-/* подсветка колонки */
 
 function applyHover(){
 
