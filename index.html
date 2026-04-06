@@ -25,7 +25,7 @@ canvas{
 .page{
   position:relative;
   z-index:1;
-  padding-top:20px;
+  padding-top:10px;
 }
 
 /* TITLE */
@@ -34,11 +34,18 @@ canvas{
   font-size:60px;
   color:#00ff66;
   text-shadow:0 0 20px #00ff66;
+  margin-bottom:5px;
 }
 
 /* BUTTONS */
-.buttons,.date-buttons{
+.buttons{
   text-align:center;
+  margin-bottom:10px;
+}
+
+.date-buttons{
+  text-align:center;
+  margin-bottom:10px;
 }
 
 button{
@@ -49,40 +56,15 @@ button{
   margin:4px;
   border-radius:6px;
   cursor:pointer;
-  transition:0.2s;
-}
-
-button:hover{
-  background:#3a3a3a;
 }
 
 button.active{background:#4a6ed1;}
 .date-buttons button.active{background:#00aa55;}
 
-/* SIDE IMAGES */
-.side-layer{
-  position:absolute;
-  top:5px;
-  left:50%;
-  transform:translateX(-50%);
-  width:1000px;
-  pointer-events:none;
-  z-index:2;
-}
-
-.side-img{
-  position:absolute;
-  width:200px;
-}
-
-.side-left{ left:-220px; }
-.side-right{ right:-220px; }
-
 /* TABLE */
 #tableWrapper{
   width:100%;
   overflow-x:auto;
-  margin-top:10px;
 }
 
 table{
@@ -97,71 +79,43 @@ th, td{
   border:1px solid #444;
   padding:6px;
   text-align:center;
-  word-wrap:break-word;
-  transition:0.2s;
+  transition:0.15s;
 }
 
-/* ФИКС ШИРИНЫ СТОЛБЦА "НИКИ" */
+/* НИКИ фикс */
 th:first-child, td:first-child{
   width:180px;
   min-width:180px;
   max-width:180px;
 }
 
-/* MATRIX HOVER (строка) */
-tr:hover td{
-  background: rgba(0,255,102,0.15);
-  box-shadow: inset 0 0 10px rgba(0,255,102,0.4);
+/* HOVER */
+tr.hover-row td{
+  background: rgba(255,255,255,0.05);
 }
 
-/* Доп. hover на ячейку */
-td:hover, th:hover{
-  background: rgba(0,255,102,0.25);
+td.hover-col, th.hover-col{
+  background: rgba(255,255,255,0.05);
 }
 
-/* RESULT COLORS */
+td.hover-cell{
+  background: rgba(255,255,255,0.12);
+}
+
+/* RESULT */
 .win{background:#2e5e2e;}
 .lose{background:#5e2e2e;}
 
 .alive{color:#00ff66; font-weight:bold;}
 .dead{color:#ff4444; font-weight:bold;}
-
-/* FOOTER */
-.footer{
-  text-align:center;
-  margin-top:40px;
-  position:relative;
-}
-
-.video-area{
-  position:relative;
-  margin-top:20px;
-}
-
-.video-center{
-  width:500px;
-  display:block;
-  margin:0 auto;
-}
-
-.video-left{
-  position:absolute;
-  left:20px;
-  top:0;
-  width:500px;
-}
 </style>
 </head>
+
 <body>
 
 <canvas id="matrix"></canvas>
 
 <div class="page">
-
-<div class="side-layer">
-  <img src="left_image.png" class="side-img side-left">
-  <img src="right_image.png" class="side-img side-right">
-</div>
 
 <h1 class="matrix-title">СТАТИСТИКА</h1>
 
@@ -179,17 +133,6 @@ td:hover, th:hover{
   <div id="table"></div>
 </div>
 
-<div class="footer">
-  <div class="video-area">
-    <video class="video-left" autoplay muted loop playsinline>
-      <source src="Down.webm" type="video/webm">
-    </video>
-    <video class="video-center" autoplay muted loop playsinline>
-      <source src="Left.mp4" type="video/mp4">
-    </video>
-  </div>
-</div>
-
 </div>
 
 <script src="tables.js"></script>
@@ -202,37 +145,31 @@ const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
-const letters="アイウエオカキクケコサシスセソ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const letters="アイウエオ1234567890";
 const chars=letters.split("");
 
 const fontSize=16;
 const columns=Math.floor(canvas.width/fontSize);
 
-let drops=[];
-for(let x=0;x<columns;x++) drops[x]=1;
+let drops=Array(columns).fill(1);
 
 function draw(){
-  ctx.fillStyle="rgba(0,0,0,0.12)";
+  ctx.fillStyle="rgba(0,0,0,0.1)";
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
   ctx.fillStyle="#00ff66";
   ctx.font=fontSize+"px monospace";
 
-  for(let i=0;i<drops.length;i++){
+  drops.forEach((y,i)=>{
     let text=chars[Math.floor(Math.random()*chars.length)];
-    ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-
-    if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
-      drops[i]=0;
-    }
-
+    ctx.fillText(text,i*fontSize,y*fontSize);
+    if(y*fontSize>canvas.height && Math.random()>0.97) drops[i]=0;
     drops[i]++;
-  }
+  });
 }
 
-setInterval(draw,38);
+setInterval(draw,40);
 
-/* RESIZE FIX */
 window.addEventListener("resize", ()=>{
   canvas.width=window.innerWidth;
   canvas.height=window.innerHeight;
