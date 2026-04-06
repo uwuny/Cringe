@@ -194,6 +194,10 @@ width:500px;
 
 /* MATRIX */
 
+<script>
+
+/* MATRIX */
+
 const canvas = document.getElementById("matrix");
 const ctx = canvas.getContext("2d");
 
@@ -211,6 +215,34 @@ let drops = [];
 for(let x=0;x<columns;x++) drops[x]=1;
 
 function draw(){
+
+/* более мягкий шлейф */
+ctx.fillStyle="rgba(0,0,0,0.12)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+/* более тусклый зелёный */
+ctx.fillStyle="#0a5";
+ctx.font=fontSize+"px monospace";
+
+for(let i=0;i<drops.length;i++){
+
+let text = chars[Math.floor(Math.random()*chars.length)];
+
+ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+if(drops[i]*fontSize > canvas.height && Math.random() > 0.975)
+drops[i]=0;
+
+drops[i]++;
+
+}
+
+}
+
+/* медленнее примерно на 15% */
+setInterval(draw,38);
+
+</script>
 
 ctx.fillStyle="rgba(0,0,0,0.08)";
 ctx.fillRect(0,0,canvas.width,canvas.height);
