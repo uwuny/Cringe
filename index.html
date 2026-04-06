@@ -49,6 +49,11 @@ button{
   margin:4px;
   border-radius:6px;
   cursor:pointer;
+  transition:0.2s;
+}
+
+button:hover{
+  background:#3a3a3a;
 }
 
 button.active{background:#4a6ed1;}
@@ -93,19 +98,28 @@ th, td{
   padding:6px;
   text-align:center;
   word-wrap:break-word;
+  transition:0.2s;
 }
 
-/* Столбец с никами всегда на 10% и минимум 150px */
+/* ФИКС ШИРИНЫ СТОЛБЦА "НИКИ" */
 th:first-child, td:first-child{
-  width:10%;
-  min-width:150px;
+  width:180px;
+  min-width:180px;
+  max-width:180px;
 }
 
-/* Стандартный hover подсветка */
+/* MATRIX HOVER (строка) */
+tr:hover td{
+  background: rgba(0,255,102,0.15);
+  box-shadow: inset 0 0 10px rgba(0,255,102,0.4);
+}
+
+/* Доп. hover на ячейку */
 td:hover, th:hover{
-  background-color: rgba(255,255,255,0.1);
+  background: rgba(0,255,102,0.25);
 }
 
+/* RESULT COLORS */
 .win{background:#2e5e2e;}
 .lose{background:#5e2e2e;}
 
@@ -136,7 +150,6 @@ td:hover, th:hover{
   top:0;
   width:500px;
 }
-
 </style>
 </head>
 <body>
@@ -202,18 +215,28 @@ function draw(){
   ctx.fillStyle="rgba(0,0,0,0.12)";
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  ctx.fillStyle="#0a5";
+  ctx.fillStyle="#00ff66";
   ctx.font=fontSize+"px monospace";
 
   for(let i=0;i<drops.length;i++){
     let text=chars[Math.floor(Math.random()*chars.length)];
     ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-    if(drops[i]*fontSize>canvas.height && Math.random()>0.975) drops[i]=0;
+
+    if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
+      drops[i]=0;
+    }
+
     drops[i]++;
   }
 }
 
 setInterval(draw,38);
+
+/* RESIZE FIX */
+window.addEventListener("resize", ()=>{
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+});
 </script>
 
 </body>
