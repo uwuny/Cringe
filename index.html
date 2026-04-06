@@ -82,7 +82,7 @@ th, td{
   transition:0.15s;
 }
 
-/* НИКИ фикс */
+/* НИКИ */
 th:first-child, td:first-child{
   width:180px;
   min-width:180px;
@@ -150,7 +150,6 @@ td.hover-cell{
   <div id="table"></div>
 </div>
 
-<!-- FOOTER -->
 <div class="bottom-line"></div>
 <div class="footer-text">Created by McQueen</div>
 
@@ -279,30 +278,7 @@ function loadTable(type,event){
     }
   });
 
-  let averages={};
-
-  for(let name in players){
-    let sum=0,count=0;
-
-    battles.forEach((b,i)=>{
-      let cell=players[name][i];
-      if(!cell) return;
-
-      if(typeof cell.value==="number"){
-        sum+=cell.value;
-        count++;
-      }
-    });
-
-    averages[name]=count ? Math.round(sum/count) : 0;
-  }
-
   let sorted=Object.keys(players);
-
-  if(type==="hits")
-    sorted.sort((a,b)=>getPenRate(b,battles)-getPenRate(a,battles));
-  else
-    sorted.sort((a,b)=>averages[b]-averages[a]);
 
   let html="<table>";
   html+="<tr><th>Ник</th>";
@@ -327,9 +303,21 @@ function loadTable(type,event){
 
       let tankClass = cell.alive ? "alive":"dead";
 
+      let displayValue = cell.value;
+
+      if(type==="assist"){
+        displayValue = `
+          ${cell.value}
+          <br>
+          <small style="opacity:0.7">
+            track: ${cell.assist_track} / radio: ${cell.assist_radio}
+          </small>
+        `;
+      }
+
       html+=`<td>
         <span class="${tankClass}">${cell.tank}</span><br>
-        <span>${cell.value}</span>
+        <span>${displayValue}</span>
       </td>`;
     });
 
