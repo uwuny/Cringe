@@ -13,25 +13,21 @@ loadTable(currentType);
 });
 
 
-
 function toggleAverage(){
 avgPosition=avgPosition==="right"?"left":"right";
 loadTable(currentType);
 }
 
 
-
 function parseDate(str){
 
 let parts=str.split(".");
-
 let day=parseInt(parts[0]);
 let month=parseInt(parts[1]);
 
 return new Date(2025,month-1,day);
 
 }
-
 
 
 function initDates(){
@@ -41,6 +37,30 @@ const dateButtons=document.getElementById("dateButtons");
 let dates=[...new Set(DATA.battles.map(b=>b.date))];
 
 dates.sort((a,b)=>parseDate(a)-parseDate(b));
+
+
+/* кнопка ВСЕ БОИ */
+
+let allBtn=document.createElement("button");
+
+allBtn.innerText="ВСЕ БОИ";
+
+allBtn.onclick=()=>{
+
+currentDate=null;
+
+document.querySelectorAll(".date-buttons button")
+.forEach(b=>b.classList.remove("active"));
+
+allBtn.classList.add("active");
+
+loadTable(currentType);
+
+};
+
+dateButtons.appendChild(allBtn);
+
+
 
 dates.forEach(date=>{
 
@@ -65,15 +85,10 @@ dateButtons.appendChild(btn);
 
 });
 
-if(dates.length>0){
 
-currentDate=dates[0];
-dateButtons.querySelector("button").classList.add("active");
+allBtn.classList.add("active");
 
 }
-
-}
-
 
 
 function getPenRate(name,battles){
@@ -122,7 +137,6 @@ return;
 }
 
 
-
 let players={};
 
 battles.forEach((battle,idx)=>{
@@ -159,7 +173,6 @@ alive:p.alive
 }
 
 });
-
 
 
 let averages={};
@@ -214,10 +227,10 @@ html+="<tr>";
 html+='<th class="nick">Ник</th>';
 
 if(type==="hits" && avgPosition==="left")
-html+="<th>%</th>";
+html+="<th>% пробития</th>";
 
 if(type!=="hits" && avgPosition==="left")
-html+="<th>Сред</th>";
+html+="<th>Среднее</th>";
 
 battles.forEach(b=>{
 
@@ -228,10 +241,10 @@ html+=`<th class="${cls}">${b.map}</th>`;
 });
 
 if(type==="hits" && avgPosition==="right")
-html+="<th>%</th>";
+html+="<th>% пробития</th>";
 
 if(type!=="hits" && avgPosition==="right")
-html+="<th>Сред</th>";
+html+="<th>Среднее</th>";
 
 html+="</tr>";
 
