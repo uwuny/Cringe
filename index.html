@@ -148,7 +148,10 @@ td.hover-cell{
 
 <script>
 let DATA = null;
-let avgPosition = "right";
+
+/* ВАЖНО: теперь по умолчанию слева */
+let avgPosition = "left";
+
 let currentType = "damage";
 let currentDate = null;
 
@@ -268,7 +271,6 @@ function loadTable(type,event){
     }
   });
 
-  /* СРЕДНЕЕ */
   let averages={};
 
   for(let name in players){
