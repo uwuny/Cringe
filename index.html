@@ -116,6 +116,47 @@ td.hover-cell{
   font-size:14px;
   margin-bottom:20px;
 }
+
+/* ТАБЫ */
+.main-tabs{
+  text-align:center;
+  margin-bottom:15px;
+}
+
+.main-tabs button.active{
+  background:#00aa55;
+}
+
+/* ОБОРУДОВАНИЕ */
+.equip-buttons{
+  margin-top:20px;
+  text-align:center;
+}
+
+.equipment-wrapper{
+  margin-top:30px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.equipment-row{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+}
+
+/* фиксированный отступ между рядами */
+.equipment-row + .equipment-row{
+  margin-top:40px;
+}
+
+.equipment-row img{
+  width:200px;
+  border-radius:8px;
+  box-shadow:0 0 10px rgba(0,255,100,0.4);
+}
+  
 </style>
 </head>
 
@@ -127,6 +168,12 @@ td.hover-cell{
 
 <h1 class="matrix-title">СТАТИСТИКА</h1>
 
+<div class="main-tabs">
+  <button class="tab active" onclick="switchTab('stats', event)">Статистика</button>
+  <button class="tab" onclick="switchTab('equipment', event)">Оборудование</button>
+</div>
+<div id="statsPage">
+  
 <div class="buttons">
   <button class="mode" onclick="loadTable('damage',event)">Урон</button>
   <button class="mode" onclick="loadTable('damage_received',event)">Получено</button>
@@ -140,7 +187,19 @@ td.hover-cell{
 <div id="tableWrapper">
   <div id="table"></div>
 </div>
+  
+</div> <!-- statsPage -->
 
+<div id="equipmentPage" style="display:none; text-align:center;">
+
+  <div class="equip-buttons">
+    <button onclick="loadEquipment('orso')">Orso</button>
+  </div>
+
+  <div id="equipmentContent"></div>
+
+</div>
+  
 <div class="bottom-line"></div>
 <div class="footer-text">Created by McQueen</div>
 
@@ -148,6 +207,23 @@ td.hover-cell{
 
 <script>
 let DATA = null;
+
+function switchTab(tab, event){
+
+  document.querySelectorAll(".tab")
+    .forEach(b=>b.classList.remove("active"));
+
+  event.target.classList.add("active");
+
+  if(tab==="stats"){
+    document.getElementById("statsPage").style.display="block";
+    document.getElementById("equipmentPage").style.display="none";
+  } else {
+    document.getElementById("statsPage").style.display="none";
+    document.getElementById("equipmentPage").style.display="block";
+  }
+}
+  
 
 /* ВАЖНО: теперь по умолчанию слева */
 let avgPosition = "left";
@@ -405,6 +481,47 @@ function enableHover(){
   });
 }
 
+const EQUIPMENT = {
+  orso: {
+    name: "Orso",
+    row1: [
+      "images/ORSO_01.png",
+      "images/ORSO_02.png"
+    ],
+    row2: [
+      "images/ORSO_11.png",
+      "images/ORSO_12.png"
+    ]
+  }
+};
+
+function loadEquipment(key){
+
+  let data = EQUIPMENT[key];
+  if(!data) return;
+
+  let html = `<h2>${data.name}</h2>`;
+  html += `<div class="equipment-wrapper">`;
+
+  /* верхний ряд */
+  html += `<div class="equipment-row">`;
+  data.row1.forEach(img=>{
+    html += `<img src="${img}">`;
+  });
+  html += `</div>`;
+
+  /* нижний ряд */
+  html += `<div class="equipment-row">`;
+  data.row2.forEach(img=>{
+    html += `<img src="${img}">`;
+  });
+  html += `</div>`;
+
+  html += `</div>`;
+
+  document.getElementById("equipmentContent").innerHTML = html;
+}
+  
 /* MATRIX */
 const canvas=document.getElementById("matrix");
 const ctx=canvas.getContext("2d");
