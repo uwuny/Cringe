@@ -13,6 +13,7 @@ body{
   overflow-x:auto;
 }
 
+/* MATRIX */
 canvas{
   position:fixed;
   top:0;
@@ -20,12 +21,14 @@ canvas{
   z-index:0;
 }
 
+/* PAGE */
 .page{
   position:relative;
   z-index:1;
   padding-top:10px;
 }
 
+/* TITLE */
 .matrix-title{
   text-align:center;
   font-size:60px;
@@ -34,6 +37,7 @@ canvas{
   margin-bottom:5px;
 }
 
+/* BUTTONS */
 .buttons{
   text-align:center;
   margin-bottom:10px;
@@ -57,6 +61,7 @@ button{
 button.active{background:#4a6ed1;}
 .date-buttons button.active{background:#00aa55;}
 
+/* TABLE */
 #tableWrapper{
   width:100%;
   overflow-x:auto;
@@ -77,19 +82,14 @@ th, td{
   transition:0.15s;
 }
 
+/* НИКИ фикс */
 th:first-child, td:first-child{
   width:180px;
   min-width:180px;
   max-width:180px;
-
-  /* закреп первой колонки */
-  position:sticky;
-  left:0;
-  background:#1a1a1a;
-  z-index:2;
 }
 
-/* hover */
+/* HOVER */
 tr.hover-row td{
   background: rgba(255,255,255,0.05);
 }
@@ -102,47 +102,12 @@ td.hover-cell{
   background: rgba(255,255,255,0.12);
 }
 
+/* RESULT */
 .win{background:#2e5e2e;}
 .lose{background:#5e2e2e;}
 
 .alive{color:#00ff66; font-weight:bold;}
 .dead{color:#ff4444; font-weight:bold;}
-
-/* кликабельные ники */
-.player-name{
-  cursor:pointer;
-  color:#4aa3ff;
-}
-
-.player-name:hover{
-  text-decoration:underline;
-}
-
-/* график */
-#chart{
-  width:90%;
-  margin:30px auto;
-  display:block;
-  background:#111;
-  border:1px solid #333;
-  border-radius:10px;
-  padding:10px;
-}
-
-.bottom-line{
-  width:90%;
-  height:1px;
-  background:#00ff66;
-  margin:40px auto 10px auto;
-  box-shadow:0 0 8px #00ff66;
-}
-
-.footer-text{
-  text-align:center;
-  color:rgba(255,255,255,0.9);
-  font-size:14px;
-  margin-bottom:20px;
-}
 </style>
 </head>
 
@@ -168,44 +133,25 @@ td.hover-cell{
   <div id="table"></div>
 </div>
 
-<!-- 🔥 ГРАФИК -->
-<canvas id="chart" height="100"></canvas>
-
-<div class="bottom-line"></div>
-<div class="footer-text">Created by McQueen</div>
-
 </div>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- ТВОЙ JS -->
 <script src="tables.js"></script>
 
-<!-- MATRIX ЭФФЕКТ -->
 <script>
+/* MATRIX */
 const canvas=document.getElementById("matrix");
 const ctx=canvas.getContext("2d");
 
-function resize(){
-  canvas.width=window.innerWidth;
-  canvas.height=window.innerHeight;
-}
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 
-resize();
-window.addEventListener("resize",resize);
+const letters="アイウエオ1234567890";
+const chars=letters.split("");
 
-const chars="アイウエオ1234567890".split("");
 const fontSize=16;
-let columns;
-let drops;
+const columns=Math.floor(canvas.width/fontSize);
 
-function initMatrix(){
-  columns=Math.floor(canvas.width/fontSize);
-  drops=Array(columns).fill(1);
-}
-
-initMatrix();
+let drops=Array(columns).fill(1);
 
 function draw(){
   ctx.fillStyle="rgba(0,0,0,0.1)";
@@ -217,16 +163,17 @@ function draw(){
   drops.forEach((y,i)=>{
     let text=chars[Math.floor(Math.random()*chars.length)];
     ctx.fillText(text,i*fontSize,y*fontSize);
-
-    if(y*fontSize>canvas.height && Math.random()>0.97){
-      drops[i]=0;
-    }
-
+    if(y*fontSize>canvas.height && Math.random()>0.97) drops[i]=0;
     drops[i]++;
   });
 }
 
 setInterval(draw,40);
+
+window.addEventListener("resize", ()=>{
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+});
 </script>
 
 </body>
