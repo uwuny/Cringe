@@ -34,17 +34,6 @@ canvas{
   margin-bottom:5px;
 }
 
-/* ТАБЫ */
-.main-tabs{
-  text-align:center;
-  margin-bottom:15px;
-}
-
-.main-tabs button.active{
-  background:#00aa55;
-}
-
-/* КНОПКИ */
 .buttons{
   text-align:center;
   margin-bottom:10px;
@@ -68,7 +57,6 @@ button{
 button.active{background:#4a6ed1;}
 .date-buttons button.active{background:#00aa55;}
 
-/* ТАБЛИЦА */
 #tableWrapper{
   width:100%;
   overflow-x:auto;
@@ -86,13 +74,16 @@ th, td{
   border:1px solid #444;
   padding:6px;
   text-align:center;
+  transition:0.15s;
 }
 
 th:first-child, td:first-child{
   width:180px;
+  min-width:180px;
+  max-width:180px;
 }
 
-/* HOVER */
+/* hover */
 tr.hover-row td{
   background: rgba(255,255,255,0.05);
 }
@@ -111,40 +102,6 @@ td.hover-cell{
 .alive{color:#00ff66; font-weight:bold;}
 .dead{color:#ff4444; font-weight:bold;}
 
-/* ОБОРУДОВАНИЕ */
-.equip-buttons{
-  margin-top:20px;
-  text-align:center;
-}
-
-/* КОНТЕЙНЕР */
-.equipment-wrapper{
-  margin-top:30px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
-/* ЛИНИЯ */
-.equipment-row{
-  display:flex;
-  justify-content:center;
-  gap:20px;
-}
-
-/* ФИКСИРОВАННОЕ РАССТОЯНИЕ МЕЖДУ РЯДАМИ */
-.equipment-row + .equipment-row{
-  margin-top:40px;
-}
-
-/* КАРТИНКИ */
-.equipment-row img{
-  width:200px;
-  border-radius:8px;
-  box-shadow:0 0 10px rgba(0,255,100,0.4);
-}
-
-/* НИЗ */
 .bottom-line{
   width:90%;
   height:1px;
@@ -155,6 +112,7 @@ td.hover-cell{
 
 .footer-text{
   text-align:center;
+  color:rgba(255,255,255,0.9);
   font-size:14px;
   margin-bottom:20px;
 }
@@ -168,14 +126,6 @@ td.hover-cell{
 <div class="page">
 
 <h1 class="matrix-title">СТАТИСТИКА</h1>
-
-<div class="main-tabs">
-  <button class="tab active" onclick="switchTab('stats', event)">Статистика</button>
-  <button class="tab" onclick="switchTab('equipment', event)">Оборудование</button>
-</div>
-
-<!-- СТАТИСТИКА -->
-<div id="statsPage">
 
 <div class="buttons">
   <button class="mode" onclick="loadTable('damage',event)">Урон</button>
@@ -191,72 +141,268 @@ td.hover-cell{
   <div id="table"></div>
 </div>
 
-</div>
-
-<!-- ОБОРУДОВАНИЕ -->
-<div id="equipmentPage" style="display:none; text-align:center;">
-
-  <div class="equip-buttons">
-    <button onclick="loadEquipment('orso')">Orso</button>
-  </div>
-
-  <div id="equipmentContent"></div>
-
-</div>
-
 <div class="bottom-line"></div>
 <div class="footer-text">Created by McQueen</div>
 
 </div>
 
 <script>
+let DATA = null;
 
-/* ТАБЫ */
-function switchTab(tab, event){
-  document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
-  event.target.classList.add("active");
+/* ВАЖНО: теперь по умолчанию слева */
+let avgPosition = "left";
 
-  document.getElementById("statsPage").style.display = tab==="stats" ? "block" : "none";
-  document.getElementById("equipmentPage").style.display = tab==="equipment" ? "block" : "none";
+let currentType = "damage";
+let currentDate = null;
+
+fetch("battle_data.json")
+.then(r=>r.json())
+.then(data=>{
+  DATA=data;
+  initDates();
+  loadTable(currentType);
+});
+
+function toggleAverage(){
+  avgPosition = avgPosition==="right" ? "left" : "right";
+  loadTable(currentType);
 }
 
-/* ОБОРУДОВАНИЕ */
-const EQUIPMENT = {
-  orso: {
-    name: "Orso",
-    row1: [
-      "images/ORSO_01.png",
-      "images/ORSO_02.png"
-    ],
-    row2: [
-      "images/ORSO_11.png",
-      "images/ORSO_12.png"
-    ]
+function parseDate(str){
+  let [d,m] = str.split(".").map(Number);
+  return new Date(2025,m-1,d);
+}
+
+function initDates(){
+  const box=document.getElementById("dateButtons");
+  box.innerHTML="";
+
+  let dates=[...new Set(DATA.battles.map(b=>b.date))];
+  dates.sort((a,b)=>parseDate(a)-parseDate(b));
+
+  dates.forEach((date,index)=>{
+    let btn=document.createElement("button");
+    btn.innerText=date;
+
+    btn.onclick=()=>{
+      currentDate=date;
+      document.querySelectorAll(".date-buttons button")
+        .forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      loadTable(currentType);
+    };
+
+    box.appendChild(btn);
+
+    if(index===0){
+      btn.classList.add("active");
+      currentDate=date;
+    }
+  });
+
+  let allBtn=document.createElement("button");
+  allBtn.innerText="ВСЕ БОИ";
+
+  allBtn.onclick=()=>{
+    currentDate=null;
+    document.querySelectorAll(".date-buttons button")
+      .forEach(b=>b.classList.remove("active"));
+    allBtn.classList.add("active");
+    loadTable(currentType);
+  };
+
+  box.appendChild(allBtn);
+}
+
+function getPenRate(name,battles){
+  let hits=0,pen=0;
+
+  battles.forEach(b=>{
+    let p=b.players[name];
+    if(!p) return;
+    hits+=p.hits;
+    pen+=p.piercings;
+  });
+
+  return hits ? pen/hits : 0;
+}
+
+function loadTable(type,event){
+
+  currentType=type;
+
+  if(event){
+    document.querySelectorAll(".mode")
+      .forEach(b=>b.classList.remove("active"));
+    event.target.classList.add("active");
   }
-};
 
-function loadEquipment(key){
-  let data = EQUIPMENT[key];
-  if(!data) return;
+  let battles=DATA.battles.filter(
+    b=>!currentDate || b.date===currentDate
+  );
 
-  let html = `<h2>${data.name}</h2>`;
-  html += `<div class="equipment-wrapper">`;
+  if(!battles.length){
+    document.getElementById("table").innerHTML="Нет боёв";
+    return;
+  }
 
-  html += `<div class="equipment-row">`;
-  data.row1.forEach(img=>{
-    html += `<img src="${img}">`;
+  let players={};
+
+  battles.forEach((battle,idx)=>{
+    for(let name in battle.players){
+
+      let p=battle.players[name];
+      if(!players[name]) players[name]={};
+
+      let value=0;
+
+      if(type==="damage") value=p.damage;
+      if(type==="damage_received") value=p.damage_received;
+      if(type==="hits") value=`${p.shots}/${p.hits}/${p.piercings}`;
+      if(type==="assist") value=p.assist_track+p.assist_radio;
+
+      players[name][idx]={
+        tank:p.tank,
+        value:value,
+        assist_track:p.assist_track,
+        assist_radio:p.assist_radio,
+        alive:p.alive
+      };
+    }
   });
-  html += `</div>`;
 
-  html += `<div class="equipment-row">`;
-  data.row2.forEach(img=>{
-    html += `<img src="${img}">`;
+  let averages={};
+
+  for(let name in players){
+    let sum=0,count=0;
+
+    battles.forEach((b,i)=>{
+      let cell=players[name][i];
+      if(!cell) return;
+
+      if(typeof cell.value==="number"){
+        sum+=cell.value;
+        count++;
+      }
+    });
+
+    averages[name]=count ? Math.round(sum/count) : 0;
+  }
+
+  let sorted=Object.keys(players);
+
+  if(type==="hits")
+    sorted.sort((a,b)=>getPenRate(b,battles)-getPenRate(a,battles));
+  else
+    sorted.sort((a,b)=>averages[b]-averages[a]);
+
+  let html="<table>";
+  html+="<tr><th>Ник</th>";
+
+  if(type==="hits" && avgPosition==="left") html+="<th>%</th>";
+  if(type!=="hits" && avgPosition==="left") html+="<th>Среднее</th>";
+
+  battles.forEach(b=>{
+    html+=`<th class="${b.win?"win":"lose"}">${b.map}</th>`;
   });
-  html += `</div>`;
 
-  html += `</div>`;
+  if(type==="hits" && avgPosition==="right") html+="<th>%</th>";
+  if(type!=="hits" && avgPosition==="right") html+="<th>Среднее</th>";
 
-  document.getElementById("equipmentContent").innerHTML = html;
+  html+="</tr>";
+
+  sorted.forEach(name=>{
+    html+="<tr>";
+    html+=`<td>${name}</td>`;
+
+    if(type==="hits" && avgPosition==="left")
+      html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
+
+    if(type!=="hits" && avgPosition==="left")
+      html+=`<td>${averages[name]}</td>`;
+
+    battles.forEach((b,i)=>{
+      let cell=players[name][i];
+
+      if(!cell){
+        html+="<td></td>";
+        return;
+      }
+
+      let tankClass = cell.alive ? "alive":"dead";
+
+      let displayValue = cell.value;
+
+      if(type==="assist"){
+        displayValue = `
+          ${cell.value}
+          <br>
+          <small style="opacity:0.7">
+            каток: ${cell.assist_track} / свет: ${cell.assist_radio}
+          </small>
+        `;
+      }
+
+      html+=`<td>
+        <span class="${tankClass}">${cell.tank}</span><br>
+        ${displayValue}
+      </td>`;
+    });
+
+    if(type==="hits" && avgPosition==="right")
+      html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
+
+    if(type!=="hits" && avgPosition==="right")
+      html+=`<td>${averages[name]}</td>`;
+
+    html+="</tr>";
+  });
+
+  html+="</table>";
+
+  document.getElementById("table").innerHTML=html;
+
+  enableHover();
+}
+
+/* hover */
+function enableHover(){
+  const table=document.querySelector("table");
+  if(!table) return;
+
+  const cells=table.querySelectorAll("td");
+
+  cells.forEach(cell=>{
+    cell.addEventListener("mouseenter",()=>{
+      const row=cell.parentElement;
+      const index=cell.cellIndex;
+
+      row.classList.add("hover-row");
+
+      table.querySelectorAll("tr").forEach(tr=>{
+        if(tr.children[index]){
+          tr.children[index].classList.add("hover-col");
+        }
+      });
+
+      cell.classList.add("hover-cell");
+    });
+
+    cell.addEventListener("mouseleave",()=>{
+      const row=cell.parentElement;
+      const index=cell.cellIndex;
+
+      row.classList.remove("hover-row");
+
+      table.querySelectorAll("tr").forEach(tr=>{
+        if(tr.children[index]){
+          tr.children[index].classList.remove("hover-col");
+        }
+      });
+
+      cell.classList.remove("hover-cell");
+    });
+  });
 }
 
 /* MATRIX */
@@ -288,7 +434,6 @@ function draw(){
 }
 
 setInterval(draw,40);
-
 </script>
 
 </body>
