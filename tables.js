@@ -1,20 +1,49 @@
-let DATA = null;
-let avgPosition = "right";
+let DATA = { battles: [] };
+
+let avgPosition = "left";
 let currentType = "damage";
 let currentDate = null;
 
-fetch("battle_data.json")
-.then(r=>r.json())
-.then(data=>{
-  DATA=data;
+let chart = null;
+
+/* =========================
+   ЗАГРУЗКА ВСЕХ JSON
+========================= */
+
+fetch("battle_index.json")
+.then(r => r.json())
+.then(files => {
+  return Promise.all(
+    files.map(file => fetch(file).then(r => r.json()))
+  );
+})
+.then(allData => {
+
+  allData.forEach(fileData => {
+    if(fileData.battles){
+      DATA.battles.push(...fileData.battles);
+    }
+  });
+
   initDates();
   loadTable(currentType);
+})
+.catch(()=>{
+  document.getElementById("table").innerHTML = "Ошибка загрузки данных";
 });
+
+/* =========================
+   СРЕДНЕЕ
+========================= */
 
 function toggleAverage(){
   avgPosition = avgPosition==="right" ? "left" : "right";
   loadTable(currentType);
 }
+
+/* =========================
+   ДАТЫ
+========================= */
 
 function parseDate(str){
   let [d,m] = str.split(".").map(Number);
@@ -34,8 +63,10 @@ function initDates(){
 
     btn.onclick=()=>{
       currentDate=date;
+
       document.querySelectorAll(".date-buttons button")
         .forEach(b=>b.classList.remove("active"));
+
       btn.classList.add("active");
       loadTable(currentType);
     };
@@ -53,14 +84,20 @@ function initDates(){
 
   allBtn.onclick=()=>{
     currentDate=null;
+
     document.querySelectorAll(".date-buttons button")
       .forEach(b=>b.classList.remove("active"));
+
     allBtn.classList.add("active");
     loadTable(currentType);
   };
 
   box.appendChild(allBtn);
 }
+
+/* =========================
+   ПРОБИТИЯ
+========================= */
 
 function getPenRate(name,battles){
   let hits=0,pen=0;
@@ -75,6 +112,10 @@ function getPenRate(name,battles){
   return hits ? pen/hits : 0;
 }
 
+/* =========================
+   ТАБЛИЦА
+========================= */
+
 function loadTable(type,event){
 
   currentType=type;
@@ -82,6 +123,7 @@ function loadTable(type,event){
   if(event){
     document.querySelectorAll(".mode")
       .forEach(b=>b.classList.remove("active"));
+
     event.target.classList.add("active");
   }
 
@@ -113,8 +155,6 @@ function loadTable(type,event){
       players[name][idx]={
         tank:p.tank,
         value:value,
-        assist_track:p.assist_track,
-        assist_radio:p.assist_radio,
         alive:p.alive
       };
     }
@@ -169,7 +209,9 @@ function loadTable(type,event){
 
   sorted.forEach(name=>{
     html+="<tr>";
-    html+=`<td>${name}</td>`;
+
+    /* 🔥 КЛИКАБЕЛЬНЫЙ НИК */
+    html+=`<td class="player-name" onclick="showPlayerStats('${name}')">${name}</td>`;
 
     if(type==="hits" && avgPosition==="left")
       html+=`<td>${Math.round(getPenRate(name,battles)*100)}%</td>`;
@@ -209,7 +251,76 @@ function loadTable(type,event){
   enableHover();
 }
 
-/* 🔥 HOVER ЛОГИКА */
+/* =========================
+   ГРАФИК
+========================= */
+
+function showPlayerStats(name){
+
+  let battles = DATA.battles.filter(
+    b=>!currentDate || b.date===currentDate
+  );
+
+  let values = [];
+  let labels = [];
+
+  battles.forEach(b=>{
+    let p = b.players[name];
+    if(!p) return;
+
+    let value = 0;
+
+    if(currentType==="damage") value = p.damage;
+    if(currentType==="damage_received") value = p.damage_received;
+    if(currentType==="assist") value = p.assist_track + p.assist_radio;
+
+    if(currentType==="hits"){
+      value = Math.round((p.piercings / p.hits) * 100) || 0;
+    }
+
+    values.push(value);
+    labels.push(b.date);
+  });
+
+  drawChart(name, labels, values);
+}
+
+function drawChart(name, labels, data){
+
+  const ctx = document.getElementById("chart").getContext("2d");
+
+  if(chart) chart.destroy();
+
+  chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: name,
+        data: data,
+        borderWidth: 2,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: { color: "white" }
+        }
+      },
+      scales: {
+        x: { ticks: { color: "white" } },
+        y: { ticks: { color: "white" } }
+      }
+    }
+  });
+}
+
+/* =========================
+   HOVER
+========================= */
+
 function enableHover(){
   const table=document.querySelector("table");
   if(!table) return;
@@ -217,7 +328,6 @@ function enableHover(){
   const cells=table.querySelectorAll("td");
 
   cells.forEach(cell=>{
-
     cell.addEventListener("mouseenter",()=>{
       const row=cell.parentElement;
       const index=cell.cellIndex;
@@ -247,6 +357,5 @@ function enableHover(){
 
       cell.classList.remove("hover-cell");
     });
-
   });
 }
