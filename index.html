@@ -152,9 +152,22 @@ td.hover-cell{
 }
 
 .equipment-row img{
-  width:200px;
+  max-width:100%;
+  height:auto;
   border-radius:8px;
   box-shadow:0 0 10px rgba(0,255,100,0.4);
+}
+
+/* верхние изображения — фиксированный размер */
+.top-row img{
+  width:600px;
+  height:450px;
+  object-fit:cover;
+}
+
+/* нижние — настраиваешь вручную */
+.bottom-row img{
+  height:auto;
 }
   
 </style>
@@ -504,14 +517,14 @@ function loadEquipment(key){
   html += `<div class="equipment-wrapper">`;
 
   /* верхний ряд */
-  html += `<div class="equipment-row">`;
+  html += `<div class="equipment-row top-row">`;
   data.row1.forEach(img=>{
     html += `<img src="${img}">`;
   });
   html += `</div>`;
 
   /* нижний ряд */
-  html += `<div class="equipment-row">`;
+  html += `<div class="equipment-row bottom-row">`;
   data.row2.forEach(img=>{
     html += `<img src="${img}">`;
   });
