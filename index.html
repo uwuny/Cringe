@@ -895,7 +895,8 @@ function loadEquipment(key, event){
 
   let data = EQUIPMENT[key];
   if(!data) return;
-
+  
+  let html = `<h2>${data.name}</h2>`;
   html += `<div class="equipment-wrapper">`;
 
   html += `<div class="equipment-row top-row">`;
