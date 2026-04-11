@@ -127,6 +127,14 @@ td.hover-cell{
   background:#00aa55;
 }
 
+.equip-buttons button.active{
+  background:#00aa55;
+}
+
+.equip-btn.active{
+  background:#00aa55;
+}
+
 /* ОБОРУДОВАНИЕ */
 .equip-buttons{
   margin-top:20px;
@@ -219,39 +227,39 @@ td.hover-cell{
 <div id="equipmentPage" style="display:none; text-align:center;">
 
   <div class="equip-buttons">
-    <button onclick="loadEquipment('orso')">Orso</button>
-    <button onclick="loadEquipment('Wilk')">Wilk/CS-63</button>
-    <button onclick="loadEquipment('Concept')">Concept No. 5</button>
-    <button onclick="loadEquipment('278')">Об. 278</button>
-    <button onclick="loadEquipment('100')">ТЭТ-100</button>
-    <button onclick="loadEquipment('50B')">АМХ 50B</button>
-    <button onclick="loadEquipment('T57')">T57 Heavy</button>
-    <button onclick="loadEquipment('5A')">WZ-111 5A</button>
-    <button onclick="loadEquipment('113')">113</button>
-    <button onclick="loadEquipment('260')">Об. 260</button>
-    <button onclick="loadEquipment('907')">Об. 907</button>
-    <button onclick="loadEquipment('Chieftain')">T95/FV4201 Chieftain</button>
-    <button onclick="loadEquipment('Gendarme')">Gendarme</button>
-    <button onclick="loadEquipment('277')">Об. 277</button>
-    <button onclick="loadEquipment('279')">Об. 279(р)</button>
-    <button onclick="loadEquipment('116')">116 F3</button>
-    <button onclick="loadEquipment('74')">BZ-74-1</button>
-    <button onclick="loadEquipment('Zubr')">Zubr</button>
-    <button onclick="loadEquipment('140')">Об. 140</button>
-    <button onclick="loadEquipment('62А')">Т-62А</button>
-    <button onclick="loadEquipment('Merkava')">Merkava LP</button>
-    <button onclick="loadEquipment('75')">BZ-75</button>
-    <button onclick="loadEquipment('4')">ИС-4</button>
-    <button onclick="loadEquipment('Feuerbar')">Feuerbar</button>
-    <button onclick="loadEquipment('T95E6')">T95E6</button>
-    <button onclick="loadEquipment('Murat')">Projet Murat</button>
-    <button onclick="loadEquipment('114')">114 SP2</button>
-    <button onclick="loadEquipment('780')">Об. 780</button>
-    <button onclick="loadEquipment('StuGMaus')">StuG Maus</button>
-    <button onclick="loadEquipment('DZT')">DZT-159</button>
-    <button onclick="loadEquipment('T110E4')">T110E4</button>
-    <button onclick="loadEquipment('T110E5')">T110E5</button>
-    <button onclick="loadEquipment('113G')">WZ-113G FT</button>
+    <button class="equip-btn" onclick="loadEquipment('orso', event)">Orso</button>
+    <button class="equip-btn" onclick="loadEquipment('Wilk', event)">Wilk/CS-63</button>
+    <button class="equip-btn" onclick="loadEquipment('Concept', event)">Concept No. 5</button>
+    <button class="equip-btn" onclick="loadEquipment('278', event)">Об. 278</button>
+    <button class="equip-btn" onclick="loadEquipment('100', event)">ТЭТ-100</button>
+    <button class="equip-btn" onclick="loadEquipment('50B', event)">АМХ 50B</button>
+    <button class="equip-btn" onclick="loadEquipment('T57', event)">T57 Heavy</button>
+    <button class="equip-btn" onclick="loadEquipment('5A', event)">WZ-111 5A</button>
+    <button class="equip-btn" onclick="loadEquipment('113', event)">113</button>
+    <button class="equip-btn" onclick="loadEquipment('260', event)">Об. 260</button>
+    <button class="equip-btn" onclick="loadEquipment('907', event)">Об. 907</button>
+    <button class="equip-btn" onclick="loadEquipment('Chieftain', event)">T95/FV4201 Chieftain</button>
+    <button class="equip-btn" onclick="loadEquipment('Gendarme', event)">Gendarme</button>
+    <button class="equip-btn" onclick="loadEquipment('277', event)">Об. 277</button>
+    <button class="equip-btn" onclick="loadEquipment('279', event)">Об. 279(р)</button>
+    <button class="equip-btn" onclick="loadEquipment('116', event)">116 F3</button>
+    <button class="equip-btn" onclick="loadEquipment('74', event)">BZ-74-1</button>
+    <button class="equip-btn" onclick="loadEquipment('Zubr', event)">Zubr</button>
+    <button class="equip-btn" onclick="loadEquipment('140', event)">Об. 140</button>
+    <button class="equip-btn" onclick="loadEquipment('62А', event)">Т-62А</button>
+    <button class="equip-btn" onclick="loadEquipment('Merkava', event)">Merkava LP</button>
+    <button class="equip-btn" onclick="loadEquipment('75', event)">BZ-75</button>
+    <button class="equip-btn" onclick="loadEquipment('4', event)">ИС-4</button>
+    <button class="equip-btn" onclick="loadEquipment('Feuerbar', event)">Feuerbar</button>
+    <button class="equip-btn" onclick="loadEquipment('T95E6', event)">T95E6</button>
+    <button class="equip-btn" onclick="loadEquipment('Murat', event)">Projet Murat</button>
+    <button class="equip-btn" onclick="loadEquipment('114', event)">114 SP2</button>
+    <button class="equip-btn" onclick="loadEquipment('780', event)">Об. 780</button>
+    <button class="equip-btn" onclick="loadEquipment('StuGMaus', event)">StuG Maus</button>
+    <button class="equip-btn" onclick="loadEquipment('DZT', event)">DZT-159</button>
+    <button class="equip-btn" onclick="loadEquipment('T110E4', event)">T110E4</button>
+    <button class="equip-btn" onclick="loadEquipment('T110E5', event)">T110E5</button>
+    <button class="equip-btn" onclick="loadEquipment('113G', event)">WZ-113G FT</button>
   </div>
 
   <div id="equipmentContent"></div>
@@ -874,7 +882,16 @@ const EQUIPMENT = {
   
 };
 
-function loadEquipment(key){
+function loadEquipment(key, event){
+
+  /* снимаем актив со всех */
+  document.querySelectorAll(".equip-btn")
+    .forEach(b => b.classList.remove("active"));
+
+  /* ставим актив на нажатую */
+  if(event){
+    event.target.classList.add("active");
+  }
 
   let data = EQUIPMENT[key];
   if(!data) return;
@@ -882,14 +899,12 @@ function loadEquipment(key){
   let html = `<h2>${data.name}</h2>`;
   html += `<div class="equipment-wrapper">`;
 
-  /* верхний ряд */
   html += `<div class="equipment-row top-row">`;
   data.row1.forEach(img=>{
     html += `<img src="${img}">`;
   });
   html += `</div>`;
 
-  /* нижний ряд */
   html += `<div class="equipment-row bottom-row">`;
   data.row2.forEach(img=>{
     html += `<img src="${img}">`;
@@ -930,6 +945,15 @@ function draw(){
 }
 
 setInterval(draw,40);
+
+window.addEventListener("DOMContentLoaded", () => {
+  const firstBtn = document.querySelector(".equip-btn");
+
+  if(firstBtn){
+    firstBtn.click();
+  }
+});
+
 </script>
 
 </body>
