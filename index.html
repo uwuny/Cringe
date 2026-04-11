@@ -127,12 +127,9 @@ td.hover-cell{
   background:#00aa55;
 }
 
-.equip-buttons button.active{
-  background:#00aa55;
-}
-
 .equip-btn.active{
-  background:#00aa55;
+  background:#00ff66;
+  box-shadow:0 0 10px #00ff66;
 }
 
 /* ОБОРУДОВАНИЕ */
@@ -173,18 +170,20 @@ td.hover-cell{
 }
 
 .bottom-row img{
-  width:min(1440px, 95vw);
-  height:630px;
+  width:1440px;
+  height:635px;
   object-fit:cover;
 
-  /* обводка ТОЛЬКО тут */
+  /* обводка только для них */
   box-shadow:0 0 10px rgba(0,255,100,0.4);
   border-radius:8px;
 }
 
 .bottom-row{
+  display:flex;
   flex-direction:column;
   align-items:center;
+  gap:30px;
 }
 
 .bottom-row img:last-child{
@@ -246,7 +245,7 @@ td.hover-cell{
     <button class="equip-btn" onclick="loadEquipment('74', event)">BZ-74-1</button>
     <button class="equip-btn" onclick="loadEquipment('Zubr', event)">Zubr</button>
     <button class="equip-btn" onclick="loadEquipment('140', event)">Об. 140</button>
-    <button class="equip-btn" onclick="loadEquipment('62А', event)">Т-62А</button>
+    <button class="equip-btn" onclick="loadEquipment('62A', event)">Т-62А</button>
     <button class="equip-btn" onclick="loadEquipment('Merkava', event)">Merkava LP</button>
     <button class="equip-btn" onclick="loadEquipment('75', event)">BZ-75</button>
     <button class="equip-btn" onclick="loadEquipment('4', event)">ИС-4</button>
@@ -896,7 +895,7 @@ function loadEquipment(key, event){
   let data = EQUIPMENT[key];
   if(!data) return;
   
-  let html = `<h2>${data.name}</h2>`;
+  let html = "";
   html += `<div class="equipment-wrapper">`;
 
   html += `<div class="equipment-row top-row">`;
