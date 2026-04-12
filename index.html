@@ -202,6 +202,19 @@ td.hover-cell{
   display:block; /* убирает "просадку" картинки */
 }
 
+.assist-icons{
+  opacity:0.8;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+
+.assist-icons img{
+  width:14px;
+  height:14px;
+  object-fit:contain;
+}
+
 </style>
 </head>
 
@@ -487,14 +500,16 @@ function loadTable(type,event){
       let displayValue = cell.value;
 
       if(type==="assist"){
-        displayValue = `
-          ${cell.value}
-          <br>
-          <small style="opacity:0.7">
-            каток: ${cell.assist_track} / свет: ${cell.assist_radio}
-          </small>
-        `;
-      }
+          displayValue = `
+            ${cell.value}
+            <br>
+            <small class="assist-icons">
+              <img src="icons/track.png"> ${cell.assist_track}
+              &nbsp;|&nbsp;
+              <img src="icons/spot.png"> ${cell.assist_radio}
+            </small>
+          `;
+        }
 
       html+=`<td>
         <span class="${tankClass}">${cell.tank}</span><br>
