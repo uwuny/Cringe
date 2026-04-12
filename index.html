@@ -184,15 +184,15 @@ td.hover-cell{
   height:150px;
   object-fit:cover;
 
-  box-shadow:0 0 10px rgba(0,255,100,0.4);
   border-radius:6px;
 }
 
 .bottom-row{
   display:flex;
-  flex-direction:column;
+  justify-content:center;
   align-items:center;
-  gap:30px;
+  gap:15px;
+  flex-wrap:wrap; /* если не влезут — перенесутся */
 }
 
 .bottom-row img:last-child{
