@@ -8,18 +8,19 @@
   
 <style>
 body{
-  background:#000;
-  color:white;
   margin:0;
   font-family:Arial;
+  color:white;
   overflow-x:auto;
+
+  background: url('background.png') center center no-repeat;
+  background-size: cover;
 }
 
-canvas{
-  position:fixed;
-  top:0;
-  left:0;
-  z-index:0;
+@media (min-width: 768px){
+  body{
+    background-attachment: fixed;
+  }
 }
 
 .page{
@@ -216,7 +217,6 @@ td.hover-cell{
 
 <body>
 
-<canvas id="matrix"></canvas>
 
 <div class="page">
 
@@ -624,34 +624,6 @@ function loadEquipment(key, event){
   document.getElementById("equipmentContent").innerHTML = html;
 }
 
-const canvas=document.getElementById("matrix");
-const ctx=canvas.getContext("2d");
-
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-const chars="アイウエオ1234567890".split("");
-const fontSize=16;
-const columns=Math.floor(canvas.width/fontSize);
-
-let drops=Array(columns).fill(1);
-
-function draw(){
-  ctx.fillStyle="rgba(0,0,0,0.1)";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  ctx.fillStyle="#00ff66";
-  ctx.font=fontSize+"px monospace";
-
-  drops.forEach((y,i)=>{
-    let text=chars[Math.floor(Math.random()*chars.length)];
-    ctx.fillText(text,i*fontSize,y*fontSize);
-    if(y*fontSize>canvas.height && Math.random()>0.97) drops[i]=0;
-    drops[i]++;
-  });
-}
-
-setInterval(draw,40);
 
 window.addEventListener("DOMContentLoaded", () => {
   const firstBtn = document.querySelector(".equip-btn");
