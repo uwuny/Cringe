@@ -65,6 +65,25 @@ body.theme-blue{
   margin-bottom:5px;
 }
 
+/* светлые темы */
+body.theme-light .matrix-title,
+body.theme-milk .matrix-title{
+  color:#222;
+  text-shadow:none;
+}
+
+/* военная */
+body.theme-military .matrix-title{
+  color:#9fbf9f;
+  text-shadow:0 0 10px rgba(0,0,0,0.5);
+}
+
+/* синяя */
+body.theme-blue .matrix-title{
+  color:#a8c0ff;
+  text-shadow:0 0 10px rgba(0,0,0,0.5);
+}
+
 .buttons{
   text-align:center;
   margin-bottom:10px;
@@ -84,6 +103,22 @@ button{
   border-radius:6px;
   cursor:pointer;
 }
+
+
+/* светлые темы */
+body.theme-light button,
+body.theme-milk button{
+  background:#e0e0e0;
+  color:#111;
+  border:1px solid #bbb;
+}
+
+/* hover для светлых */
+body.theme-light button:hover,
+body.theme-milk button:hover{
+  background:#d5d5d5;
+}
+  
 
 button.active{
   background:#4a6ed1;
@@ -150,11 +185,24 @@ td.hover-cell{
 
 .footer-text{
   text-align:center;
-  color:rgba(255,255,255,0.9);
   font-size:14px;
   margin-bottom:20px;
 }
 
+body.theme-dark .footer-text{
+  color:rgba(255,255,255,0.9);
+}
+
+body.theme-light .footer-text,
+body.theme-milk .footer-text{
+  color:#333;
+}
+
+body.theme-military .footer-text,
+body.theme-blue .footer-text{
+  color:#cfd8e3;
+}
+  
 .main-tabs{
   text-align:center;
   margin-bottom:15px;
