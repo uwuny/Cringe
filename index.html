@@ -327,10 +327,21 @@ let avgPosition = "left";
 let currentType = "damage";
 let currentDate = null;
 
-fetch("battle_data.json")
-.then(r=>r.json())
-.then(data=>{
-  DATA=data;
+const DATA_FILES = [
+  "data/battle_data.json",
+  "data/2.json"
+  // сюда просто добавляешь новые файлы
+];
+
+Promise.all(
+  DATA_FILES.map(file => fetch(file).then(r => r.json()))
+)
+.then(allData => {
+
+  DATA = {
+    battles: allData.flatMap(d => d.battles)
+  };
+
   initDates();
   loadTable(currentType);
 });
