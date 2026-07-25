@@ -198,6 +198,31 @@ function readStateFromHash() {
   };
 }
 
+function stageHasBattles(seasonKey, stageKey) {
+  const prevSeason = currentSeason;
+  const prevStage = currentStage;
+  currentSeason = seasonKey;
+  currentStage = stageKey;
+  const found = DATA.battles.some(battleMatchesStage);
+  currentSeason = prevSeason;
+  currentStage = prevStage;
+  return found;
+}
+
+function selectLatestStageWithBattles() {
+  for (let s = SEASONS.length - 1; s >= 0; s--) {
+    const season = SEASONS[s];
+    for (let i = season.stages.length - 1; i >= 0; i--) {
+      if (stageHasBattles(season.key, season.stages[i].key)) {
+        currentSeason = season.key;
+        currentStage = season.stages[i].key;
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 function applyHashState(hashState) {
   if (hashState?.season && SEASONS.some((s) => s.key === hashState.season)) {
     currentSeason = hashState.season;
@@ -213,8 +238,10 @@ function applyHashState(hashState) {
     syncAverageToggle();
   }
 
-  renderStatButtons();
-  renderSeasonButtons();
+  if (!hashState?.stage) selectLatestStageWithBattles();
+
+  syncStatButtons();
+  syncSeasonButtons();
   renderStageButtons();
 
   const preferredDate = hashState?.date === "all" ? null : (hashState?.date || undefined);
@@ -265,7 +292,7 @@ function openBattleHtml(battle) {
   const replayFile =
     normalizeReplayFilename(battle.filename) ?? normalizeReplayFilename(battle.html_file);
   if (!replayFile) {
-    alert("У этого боя нет поля filename/html_file в JSON.");
+    console.warn("[stats] У боя нет поля filename/html_file — открывать нечего.", battle);
     return;
   }
   window.open(`${HTML_REPLAYS_DIR}/${encodeURIComponent(replayFile)}`, "_blank");
@@ -279,7 +306,7 @@ function openBattleHtmlByIndex(index) {
 function renderStatButtons() {
   const wrap = document.getElementById("statButtons");
   wrap.innerHTML = STAT_TYPES.map((stat) => `
-    <button type="button" class="stat-btn btn-runborder${stat.key === currentType ? " active" : ""}" data-stat="${stat.key}">
+    <button type="button" class="stat-btn btn-runborder" data-stat="${stat.key}" aria-pressed="false">
       <svg class="stat-btn__icon" viewBox="0 0 56 56" aria-hidden="true">${STAT_ICON_MARKUP[stat.svgIcon] ?? ""}</svg>
       <span>${escapeHtml(stat.label)}</span>
     </button>
@@ -288,12 +315,22 @@ function renderStatButtons() {
   wrap.querySelectorAll("[data-stat]").forEach((btn) => {
     btn.addEventListener("click", () => loadTable(btn.dataset.stat));
   });
+
+  syncStatButtons();
+}
+
+function syncStatButtons() {
+  document.querySelectorAll("#statButtons [data-stat]").forEach((btn) => {
+    const isActive = btn.dataset.stat === currentType;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-pressed", String(isActive));
+  });
 }
 
 function renderSeasonButtons() {
   const wrap = document.getElementById("seasonButtons");
   wrap.innerHTML = SEASONS.map((season) => `
-    <button type="button" class="season-btn btn-runborder${season.key === currentSeason ? " active" : ""}" data-season="${season.key}">
+    <button type="button" class="season-btn btn-runborder" data-season="${season.key}" aria-pressed="false">
       ${escapeHtml(season.label)}
     </button>
   `).join("");
@@ -301,22 +338,34 @@ function renderSeasonButtons() {
   wrap.querySelectorAll("[data-season]").forEach((btn) => {
     btn.addEventListener("click", () => switchSeason(btn.dataset.season));
   });
+
+  syncSeasonButtons();
+}
+
+function syncSeasonButtons() {
+  document.querySelectorAll("#seasonButtons [data-season]").forEach((btn) => {
+    const isActive = btn.dataset.season === currentSeason;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-pressed", String(isActive));
+  });
 }
 
 function switchSeason(seasonKey) {
+  if (seasonKey === currentSeason) return;
   currentSeason = seasonKey;
   currentStage = getSeason(seasonKey).stages[0].key;
-  renderSeasonButtons();
+  syncSeasonButtons();
   renderStageButtons();
   initDates();
   loadTable(currentType);
+  writeStateToHash();
 }
 
 function renderStageButtons() {
   const wrap = document.getElementById("stageButtons");
   const season = getSeason(currentSeason);
   wrap.innerHTML = season.stages.map((stage) => `
-    <button type="button" class="stage-btn btn-runborder${stage.key === currentStage ? " active" : ""}" data-stage="${stage.key}">
+    <button type="button" class="stage-btn btn-runborder" data-stage="${stage.key}" aria-pressed="false">
       ${STAGE_ICON_MARKUP[stage.key]
         ? `<svg class="stage-btn__icon" viewBox="${STAGE_ICON_MARKUP[stage.key].viewBox}" aria-hidden="true">${STAGE_ICON_MARKUP[stage.key].markup}</svg>`
         : `<img class="stage-btn__icon" src="${stage.icon}" alt="">`}
@@ -327,13 +376,25 @@ function renderStageButtons() {
   wrap.querySelectorAll("[data-stage]").forEach((btn) => {
     btn.addEventListener("click", () => switchStage(btn.dataset.stage));
   });
+
+  syncStageButtons();
+}
+
+function syncStageButtons() {
+  document.querySelectorAll("#stageButtons [data-stage]").forEach((btn) => {
+    const isActive = btn.dataset.stage === currentStage;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-pressed", String(isActive));
+  });
 }
 
 function switchStage(stageKey) {
+  if (stageKey === currentStage) return;
   currentStage = stageKey;
-  renderStageButtons();
+  syncStageButtons();
   initDates();
   loadTable(currentType);
+  writeStateToHash();
 }
 
 function initDates(preferredDate) {
@@ -518,7 +579,7 @@ function renderClanHeaderRow(battles, summary) {
       cell += `<a class="clan-link" href="${href}" target="_blank" rel="noopener">${escapeHtml(clanTag.toUpperCase())}</a>`;
     }
     if (hasElo(battle.elo)) {
-      cell += `<br><span class="elo-value">${battle.elo}</span>`;
+      cell += `<br><span class="elo-value">${escapeHtml(battle.elo)}</span>`;
     }
     return `<th class="clan-header">${cell}</th>`;
   }).join("");
@@ -556,7 +617,7 @@ function renderPlayerCell(type, cell) {
     ? `${cell.value}<br><small class="assist-icons"><img src="icons/track.png" alt="Засвет с гусеницы"> ${cell.assist_track} &nbsp;|&nbsp; <img src="icons/spot.png" alt="Засвет по рации"> ${cell.assist_radio}</small>`
     : cell.value;
 
-  return `<td>${tankLabel}<br>${value}</td>`;
+  return `<td>${tankLabel}<br>${escapeHtml(value)}</td>`;
 }
 
 function renderPlayerRow(type, name, players, battles, averages, survivalRates, rowIndex = 0) {
@@ -567,7 +628,7 @@ function renderPlayerRow(type, name, players, battles, averages, survivalRates, 
 
 function loadTable(type) {
   currentType = type;
-  renderStatButtons();
+  syncStatButtons();
 
   writeStateToHash();
 
@@ -667,7 +728,7 @@ Promise.allSettled(
   });
 
   if (failed.length) {
-    console.warn(`[stats] Пропущено файлов данных: ${failed.length}\n  ` + failed.join("\n  "));
+    console.info(`[stats] Загружено ${loaded.length} из ${DATA_FILES.length} файлов данных; остальные ещё не созданы.`);
   }
 
   if (!loaded.length) {
@@ -678,5 +739,7 @@ Promise.allSettled(
   }
 
   DATA = { battles: loaded.flatMap((d) => d.battles || []) };
+  renderStatButtons();
+  renderSeasonButtons();
   applyHashState(readStateFromHash());
 });
