@@ -1747,9 +1747,8 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
 .maps-panel { align-items: flex-start; }
 
 .maps-panel .control-group { align-self: stretch; }
-.control-group--maps { flex: 4 1 360px; min-width: 260px; }
-.control-group--modes { flex: 1 1 160px; min-width: 150px; max-width: 240px; }
-.control-group--info { flex: 1 1 190px; min-width: 175px; max-width: 260px; }
+.control-group--maps { flex: 3 1 420px; min-width: 280px; }
+.control-group--modes { flex: 1 1 200px; min-width: 170px; max-width: 280px; }
 
 .maps-search-row { display: block; }
 
@@ -1914,29 +1913,6 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
   color: var(--color-accent);
 }
 
-.map-info {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-content: start;
-  gap: 5px 8px;
-  margin: var(--space-2) 0 0;
-  font-size: 11px;
-  line-height: 1.3;
-}
-
-.map-info dt {
-  color: var(--color-text-faint);
-  overflow-wrap: anywhere;
-}
-
-.map-info dd {
-  margin: 0;
-  color: var(--color-text);
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  overflow-wrap: anywhere;
-}
-
 .map-poi {
   position: absolute;
   display: flex;
@@ -1964,8 +1940,7 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
 
 @media (max-width: 720px) {
   .control-group--maps,
-  .control-group--modes,
-  .control-group--info {
+  .control-group--modes {
     flex: 0 0 auto;
     max-width: none;
   }
@@ -2070,11 +2045,6 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
         <span class="control-group__label" id="mapModeLabel">Режим</span>
         <div class="control-group__buttons map-mode-list" id="mapModeButtons"
              role="group" aria-labelledby="mapModeLabel"></div>
-      </div>
-
-      <div class="control-group control-group--info" id="mapInfoGroup" hidden>
-        <span class="control-group__label" id="mapInfoLabel">Информация</span>
-        <dl class="map-info" id="mapInfoList" aria-labelledby="mapInfoLabel"></dl>
       </div>
     </div>
 
