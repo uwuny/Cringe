@@ -25,6 +25,7 @@ const readField = (obj, key) => String(getField(obj, key) ?? "").trim();
 
 const tabPanels = {
   stats: document.getElementById("statsPage"),
+  maps: document.getElementById("mapsPage"),
   equipment: document.getElementById("equipmentPage"),
 };
 
@@ -39,6 +40,7 @@ function switchTab(tab) {
     panel.hidden = name !== tab;
   }
 
+  if (tab === "maps") initMapsTab();
   if (tab === "equipment" && !EQUIPMENT_DB) loadEquipmentDB();
 }
 
@@ -248,7 +250,7 @@ function applyHashState(hashState) {
   initDates(preferredDate);
   loadTable(currentType);
 
-  if (hashState?.tab === "equipment" || hashState?.tab === "stats") {
+  if (hashState?.tab && tabPanels[hashState.tab]) {
     switchTab(hashState.tab);
   }
 }
