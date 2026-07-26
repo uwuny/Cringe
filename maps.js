@@ -52,7 +52,6 @@ const MAP_LIST = [
 ];
 
 const MODE_IMAGES = {
-  assault2: new Set(["01_karelia", "02_malinovka", "14_siegfried_line", "222_er_clime", "60_asia_miao"]),
   comp7: new Set(["01_karelia", "02_malinovka", "06_ensk", "10_hills", "114_czech", "17_munchen", "217_er_alaska", "28_desert", "29_el_hallouf", "95_lost_city_ctf"]),
   domination3: new Set(["10_hills", "114_czech", "19_monastery", "36_fishing_bay", "95_lost_city_ctf"]),
 };
@@ -61,7 +60,7 @@ const MODES = [
   { key: "ctf", name: "Стандартный бой" },
   { key: "domination", name: "Встречный бой" },
   { key: "comp7", name: "Натиск" },
-  { key: "assault2", name: "Штурм" },
+  { key: "assault", name: "Штурм" },
   { key: "domination3", name: "Столкновение" },
 ];
 
@@ -95,13 +94,17 @@ function normalizeSearch(value) {
   return String(value ?? "").trim().toLowerCase().replace(/ё/g, "е");
 }
 
+function baseMapImageUrl(mapKey) {
+  return mapByKey.get(mapKey)?.reserve
+    ? `${MAPS_RESERVE_DIR}/${mapKey}.png`
+    : `${MAPS_DIR}/${mapKey}.png`;
+}
+
 function mapImageUrl(mapKey, modeKey) {
   if (MODE_IMAGES[modeKey] && MODE_IMAGES[modeKey].has(mapKey)) {
     return `${MAPS_RESERVE_DIR}/${modeKey}/${mapKey}.png`;
   }
-  return mapByKey.get(mapKey)?.reserve
-    ? `${MAPS_RESERVE_DIR}/${mapKey}.png`
-    : `${MAPS_DIR}/${mapKey}.png`;
+  return baseMapImageUrl(mapKey);
 }
 
 const PACKED_MAGIC = 0x62a14e45;
@@ -382,8 +385,6 @@ function renderMapStage() {
   if (!mode) {
     stage.hidden = true;
     empty.hidden = false;
-    const info = document.getElementById("mapInfoGroup");
-    if (info) info.hidden = true;
     return;
   }
 
@@ -391,6 +392,8 @@ function renderMapStage() {
   stage.hidden = false;
 
   const image = document.getElementById("mapImage");
+  const fallback = baseMapImageUrl(currentMapKey);
+  image.dataset.fallback = fallback;
   image.src = mapImageUrl(currentMapKey, mode.key);
   image.alt = `${mapDisplayName(currentMapKey)} — ${mapModeName(mode.key)}`;
 
@@ -422,49 +425,6 @@ function renderMapStage() {
 
   document.getElementById("mapStageTitle").textContent = mapDisplayName(currentMapKey);
   document.getElementById("mapStageMode").textContent = mapModeName(mode.key);
-  renderMapInfo(mode);
-}
-
-function formatDuration(seconds) {
-  if (!Number.isFinite(seconds)) return null;
-  const minutes = Math.floor(seconds / 60);
-  const rest = seconds % 60;
-  return rest ? `${minutes}:${String(rest).padStart(2, "0")}` : `${minutes} мин`;
-}
-
-function collectMapInfo(mode) {
-  const rows = [];
-  const push = (label, value) => {
-    if (value !== null && value !== undefined && value !== "") rows.push([label, value]);
-  };
-
-  const width = Math.round(mode.bounds.maxX - mode.bounds.minX);
-  const height = Math.round(mode.bounds.maxZ - mode.bounds.minZ);
-
-  push("Размер", `${width} × ${height} м`);
-  push("Длительность", formatDuration(mode.roundLength));
-  push("В команде", mode.maxPlayersInTeam ? `${mode.maxPlayersInTeam} танков` : null);
-
-  return rows;
-}
-
-function renderMapInfo(mode) {
-  const group = document.getElementById("mapInfoGroup");
-  const list = document.getElementById("mapInfoList");
-  if (!group || !list) return;
-
-  const rows = collectMapInfo(mode);
-  list.replaceChildren();
-
-  for (const [label, value] of rows) {
-    const term = document.createElement("dt");
-    term.textContent = label;
-    const detail = document.createElement("dd");
-    detail.textContent = value;
-    list.append(term, detail);
-  }
-
-  group.hidden = rows.length === 0;
 }
 
 function syncModeButtons() {
@@ -580,6 +540,13 @@ function initMapsTab() {
   mapsInitialized = true;
 
   renderMapList();
+
+  const image = document.getElementById("mapImage");
+  image.addEventListener("error", function () {
+    const fallback = this.dataset.fallback;
+    if (!fallback || this.src.endsWith(fallback)) return;
+    this.src = fallback;
+  });
 
   const search = document.getElementById("mapSearch");
   search.addEventListener("input", () => renderMapList(search.value));
