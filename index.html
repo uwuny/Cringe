@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/tokens.css?v=3">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" href="favicon.png">
 
@@ -672,7 +672,8 @@ svg.stage-btn__icon {
 }
 
 table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background: transparent;
   width: max-content;
   min-width: 100%;
@@ -680,12 +681,17 @@ table {
 }
 
 th, td {
-  border: 1px solid var(--color-border);
+  border: 0;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
   padding: 6px;
   text-align: center;
   vertical-align: middle;
   transition: background-color var(--duration-fast) var(--ease-out);
 }
+
+th:last-child, td:last-child { border-right: 0; }
+tr:last-child th, tr:last-child td { border-bottom: 0; }
 
 th:first-child, td:first-child {
   width: 180px;
@@ -1529,6 +1535,28 @@ table tr:nth-child(-n + 2) th.lose {
   background: linear-gradient(var(--color-lose), var(--color-lose)), var(--table-sticky-bg);
 }
 
+table tr.hover-row th:first-child:not(.win):not(.lose),
+table tr.hover-row td:first-child:not(.win):not(.lose),
+table th:first-child.hover-col:not(.win):not(.lose),
+table td:first-child.hover-col:not(.win):not(.lose),
+table tr:nth-child(-n + 2).hover-row th:not(.win):not(.lose),
+table tr:nth-child(-n + 2).hover-row td:not(.win):not(.lose),
+table tr:nth-child(-n + 2) th.hover-col:not(.win):not(.lose),
+table tr:nth-child(-n + 2) td.hover-col:not(.win):not(.lose) {
+  background:
+    linear-gradient(var(--color-surface-hover), var(--color-surface-hover)),
+    var(--table-sticky-bg);
+}
+
+table th:first-child.hover-cell:not(.win):not(.lose),
+table td:first-child.hover-cell:not(.win):not(.lose),
+table tr:nth-child(-n + 2) th.hover-cell:not(.win):not(.lose),
+table tr:nth-child(-n + 2) td.hover-cell:not(.win):not(.lose) {
+  background:
+    linear-gradient(var(--color-surface-hover-strong), var(--color-surface-hover-strong)),
+    var(--table-sticky-bg);
+}
+
 table th:first-child::after,
 table td:first-child::after {
   content: '';
@@ -1620,12 +1648,18 @@ td, th { font-variant-numeric: tabular-nums; }
 
 .main-tabs { position: relative; }
 
+.main-tabs {
+  --tab-count: 3;
+  --tab-gap: var(--space-2);
+  --tab-width: calc((100% - var(--space-5) * 2 - var(--tab-gap) * (var(--tab-count) - 1)) / var(--tab-count));
+}
+
 .main-tabs::before {
   content: '';
   position: absolute;
   top: var(--space-4);
   left: var(--space-5);
-  width: calc((100% - var(--space-5) * 2 - var(--space-2)) / 2);
+  width: var(--tab-width);
   height: 44px;
   border-radius: 18px;
   background: rgb(var(--color-accent-rgb) / 15%);
@@ -1636,7 +1670,11 @@ td, th { font-variant-numeric: tabular-nums; }
 }
 
 .main-tabs:has(.tab:nth-of-type(2).active)::before {
-  transform: translateX(calc(100% + var(--space-2)));
+  transform: translateX(calc(100% + var(--tab-gap)));
+}
+
+.main-tabs:has(.tab:nth-of-type(3).active)::before {
+  transform: translateX(calc(200% + var(--tab-gap) * 2));
 }
 
 .main-tabs .tab {
@@ -1706,6 +1744,236 @@ td, th { font-variant-numeric: tabular-nums; }
 
 td, th { transition: background-color var(--duration-fast) var(--ease-out); }
 
+.maps-panel { align-items: flex-start; }
+
+.maps-panel .control-group { align-self: stretch; }
+.control-group--maps { flex: 4 1 360px; min-width: 260px; }
+.control-group--modes { flex: 1 1 160px; min-width: 150px; max-width: 240px; }
+.control-group--info { flex: 1 1 190px; min-width: 175px; max-width: 260px; }
+
+.maps-search-row { display: block; }
+
+.maps-search {
+  width: 100%;
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--color-text);
+  background: rgb(0 0 0 / 22%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  outline: none;
+  transition: border-color var(--duration-med) var(--ease-out),
+              box-shadow var(--duration-med) var(--ease-out);
+}
+
+.maps-search::placeholder { color: var(--color-text-faint); }
+
+.maps-search:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgb(var(--color-accent-rgb) / 18%);
+}
+
+.maps-search::-webkit-search-cancel-button { filter: invert(1) opacity(0.5); }
+
+.map-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-auto-rows: min-content;
+  align-content: start;
+  gap: 6px;
+  max-height: min(232px, 42vh);
+  overflow-y: auto;
+  margin-top: var(--space-2);
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 35%) transparent;
+}
+
+.map-list::-webkit-scrollbar { width: 8px; }
+.map-list::-webkit-scrollbar-track { background: transparent; }
+.map-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgb(255 255 255 / 45%), rgb(255 255 255 / 22%));
+  border-radius: var(--radius-sm);
+}
+
+.map-list-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  text-wrap: balance;
+  cursor: pointer;
+  transition: color var(--duration-med) var(--ease-out),
+              background var(--duration-med) var(--ease-out),
+              border-color var(--duration-med) var(--ease-out),
+              scale var(--duration-fast) var(--ease-out);
+}
+
+.map-list-btn:active { scale: 0.97; }
+
+.map-mode-list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.map-mode-btn {
+  margin: 0;
+  padding: 9px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: center;
+  transition: color var(--duration-med) var(--ease-out),
+              background var(--duration-med) var(--ease-out),
+              border-color var(--duration-med) var(--ease-out),
+              scale var(--duration-fast) var(--ease-out);
+}
+
+.map-mode-btn:active { scale: 0.96; }
+
+.maps-hint, .maps-empty {
+  font-size: 12px;
+  color: var(--color-text-faint);
+}
+
+.maps-empty {
+  margin: var(--space-6) auto;
+  text-align: center;
+}
+
+.map-stage {
+  margin: 0 auto var(--space-6);
+  max-width: min(920px, 100%);
+  animation: rise-in 420ms var(--ease-out) backwards;
+}
+
+.map-stage__frame {
+  position: relative;
+  aspect-ratio: 1;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--glass-bg);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 rgb(255 255 255 / 8%);
+}
+
+.map-stage__image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.map-stage__markers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.map-marker {
+  position: absolute;
+  width: 8.5%;
+  height: auto;
+  translate: -50% -50%;
+  pointer-events: auto;
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 55%));
+  animation: marker-in 320ms var(--ease-spring) backwards;
+}
+
+@keyframes marker-in {
+  from { opacity: 0; scale: 0.5; }
+  to   { opacity: 1; scale: 1; }
+}
+
+.map-stage__caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.map-stage__title { font-size: 17px; font-weight: 700; }
+.map-stage__mode {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-accent);
+}
+
+.map-info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-content: start;
+  gap: 5px 8px;
+  margin: var(--space-2) 0 0;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.map-info dt {
+  color: var(--color-text-faint);
+  overflow-wrap: anywhere;
+}
+
+.map-info dd {
+  margin: 0;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.map-poi {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5.4%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  border: 2px solid #ecdcc0;
+  background: rgb(236 220 192 / 16%);
+  color: #ecdcc0;
+  font-size: clamp(8px, 1.1vw, 12px);
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 55%), 0 0 0 1px rgb(0 0 0 / 45%);
+  pointer-events: auto;
+  animation: marker-in 320ms var(--ease-spring) backwards;
+}
+
+.map-poi__icon {
+  width: 74%;
+  height: 74%;
+  object-fit: contain;
+}
+
+@media (max-width: 720px) {
+  .control-group--maps,
+  .control-group--modes,
+  .control-group--info {
+    flex: 0 0 auto;
+    max-width: none;
+  }
+  .map-list { grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); max-height: 180px; }
+  .map-marker { width: 11%; }
+  .map-stage__title { font-size: 15px; }
+}
+
 </style>
 
 <body>
@@ -1727,6 +1995,7 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
 
     <nav class="main-tabs" aria-label="Разделы">
       <button type="button" class="tab" data-tab="stats" aria-pressed="false">Статистика</button>
+      <button type="button" class="tab" data-tab="maps" aria-pressed="false">Карты</button>
       <button type="button" class="tab" data-tab="equipment" aria-pressed="false">Оборудование</button>
     </nav>
   </div>
@@ -1783,6 +2052,44 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
     </div>
 
     <div id="tableWrapper"><div id="table"></div></div>
+  </section>
+
+  <section id="mapsPage" aria-label="Карты" hidden>
+
+    <div class="control-panel maps-panel">
+      <div class="control-group control-group--maps">
+        <span class="control-group__label" id="mapSearchLabel">Карта</span>
+        <div class="control-group__buttons maps-search-row">
+          <input type="search" id="mapSearch" class="maps-search" autocomplete="off"
+                 placeholder="Начните вводить название…" aria-labelledby="mapSearchLabel">
+        </div>
+        <div class="map-list" id="mapList" role="group" aria-labelledby="mapSearchLabel"></div>
+      </div>
+
+      <div class="control-group control-group--modes" id="mapModeGroup" hidden>
+        <span class="control-group__label" id="mapModeLabel">Режим</span>
+        <div class="control-group__buttons map-mode-list" id="mapModeButtons"
+             role="group" aria-labelledby="mapModeLabel"></div>
+      </div>
+
+      <div class="control-group control-group--info" id="mapInfoGroup" hidden>
+        <span class="control-group__label" id="mapInfoLabel">Информация</span>
+        <dl class="map-info" id="mapInfoList" aria-labelledby="mapInfoLabel"></dl>
+      </div>
+    </div>
+
+    <p class="maps-empty" id="mapsEmpty">Выберите карту, затем режим боя</p>
+
+    <figure class="map-stage" id="mapStage" hidden>
+      <div class="map-stage__frame">
+        <img class="map-stage__image" id="mapImage" alt="">
+        <div class="map-stage__markers" id="mapMarkers"></div>
+      </div>
+      <figcaption class="map-stage__caption">
+        <span class="map-stage__title" id="mapStageTitle"></span>
+        <span class="map-stage__mode" id="mapStageMode"></span>
+      </figcaption>
+    </figure>
   </section>
 
   <section id="equipmentPage" aria-label="Оборудование" hidden>
@@ -1997,7 +2304,8 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
 
 </div>
 
-<script src="tables.js"></script>
+<script src="tables.js?v=3"></script>
+<script src="maps.js?v=3"></script>
 
 <script>
 "use strict";
