@@ -616,10 +616,10 @@ function renderPlayerCell(type, cell) {
   if (type === "survival") return `<td>${tankLabel}</td>`;
 
   const value = type === "assist"
-    ? `${cell.value}<br><small class="assist-icons"><img src="icons/track.png" alt="Засвет с гусеницы"> ${cell.assist_track} &nbsp;|&nbsp; <img src="icons/spot.png" alt="Засвет по рации"> ${cell.assist_radio}</small>`
-    : cell.value;
+    ? `${escapeHtml(cell.value)}<br><small class="assist-icons"><img src="icons/track.png" alt="Засвет с гусеницы"> ${escapeHtml(cell.assist_track)} &nbsp;|&nbsp; <img src="icons/spot.png" alt="Засвет по рации"> ${escapeHtml(cell.assist_radio)}</small>`
+    : escapeHtml(cell.value);
 
-  return `<td>${tankLabel}<br>${escapeHtml(value)}</td>`;
+  return `<td>${tankLabel}<br>${value}</td>`;
 }
 
 function renderPlayerRow(type, name, players, battles, averages, survivalRates, rowIndex = 0) {
