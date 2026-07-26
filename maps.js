@@ -76,6 +76,8 @@ const POI_NAMES = {
   4: "Минное поле",
 };
 
+const RANDOM_MODE_ORDER = ["ctf"];
+
 const MODE_ORDER = MODES.map((mode) => mode.key);
 const MODE_NAMES = Object.fromEntries(MODES.map((mode) => [mode.key, mode.name]));
 
@@ -427,6 +429,12 @@ function renderMapStage() {
   document.getElementById("mapStageMode").textContent = mapModeName(mode.key);
 }
 
+function defaultModeKey(def) {
+  if (!def || !def.modes.length) return null;
+  const random = RANDOM_MODE_ORDER.find((key) => def.modes.some((mode) => mode.key === key));
+  return random ?? def.modes[0].key;
+}
+
 function syncModeButtons() {
   document.querySelectorAll("#mapModeButtons [data-mode]").forEach((button) => {
     const isActive = button.dataset.mode === currentModeKey;
@@ -498,6 +506,7 @@ async function selectMap(mapKey) {
 
   if (currentMapKey !== mapKey) return;
 
+  currentModeKey = defaultModeKey(currentMapDef);
   renderModeButtons();
   renderMapStage();
 }
