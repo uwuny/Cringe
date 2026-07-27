@@ -1,57 +1,57 @@
 "use strict";
 
-const MAPS_DIR = "maps";
-const MAPS_RESERVE_DIR = "maps/reserves";
+const MAPS_DIR = "maps/reserves";
 const MAP_DEFS_DIR = "maps/definitions";
 const MAP_ICONS_DIR = "MapElement";
 const POI_ICONS = { 3: "Poi_smoke.png", 4: "Poi_mines.png" };
 
 const MAP_LIST = [
-  { key: "19_monastery", name: "Монастырь", reserve: true },
-  { key: "31_airfield", name: "Аэродром", reserve: true },
-  { key: "506_battle_for_moscow", name: "Битва за Москву", reserve: true },
-  { key: "59_asia_great_wall", name: "Граница империи", reserve: true },
-  { key: "23_westfeld", name: "Вестфилд", reserve: true },
-  { key: "95_lost_city_ctf", name: "Затерянный город", reserve: false },
-  { key: "60_asia_miao", name: "Жемчужная река", reserve: false },
-  { key: "03_campania_big", name: "Провинция", reserve: true },
-  { key: "01_karelia", name: "Карелия", reserve: false },
-  { key: "37_caucasus", name: "Кавказ", reserve: true },
-  { key: "503_kaliningrad", name: "Калининград", reserve: false },
-  { key: "07_lakeville", name: "Ласвилль", reserve: false },
-  { key: "38_mannerheim_line", name: "Линия Маннергейма", reserve: false },
-  { key: "14_siegfried_line", name: "Линия Зигфрида", reserve: false },
-  { key: "02_malinovka", name: "Малиновка", reserve: false },
-  { key: "90_minsk", name: "Минск", reserve: false },
-  { key: "11_murovanka", name: "Мурованка", reserve: true },
-  { key: "17_munchen", name: "Уайдпарк", reserve: true },
-  { key: "101_dday", name: "Оверлорд", reserve: true },
-  { key: "112_eiffel_tower_ctf", name: "Париж", reserve: true },
-  { key: "28_desert", name: "Песчаная река", reserve: false },
-  { key: "127_japort", name: "Старая гавань", reserve: false },
-  { key: "05_prohorovka", name: "Прохоровка", reserve: false },
-  { key: "34_redshire", name: "Редшир", reserve: false },
-  { key: "10_hills", name: "Рудники", reserve: false },
-  { key: "08_ruinberg", name: "Руинберг", reserve: false },
-  { key: "36_fishing_bay", name: "Рыбацкая бухта", reserve: false },
-  { key: "35_steppes", name: "Степи", reserve: false },
-  { key: "99_poland", name: "Студзянки", reserve: true },
-  { key: "47_canada_a", name: "Тихий берег", reserve: false },
-  { key: "63_tundra", name: "Тундра", reserve: true },
-  { key: "18_cliff", name: "Утёс", reserve: false },
-  { key: "33_fjord", name: "Фьорды", reserve: true },
-  { key: "44_north_america", name: "Лайв Окс", reserve: false },
-  { key: "45_north_america", name: "Хайвей", reserve: false },
-  { key: "83_kharkiv", name: "Харьков", reserve: true },
-  { key: "04_himmelsdorf", name: "Химмельсдорф", reserve: false },
-  { key: "114_czech", name: "Промзона", reserve: true },
-  { key: "115_sweden", name: "Штиль", reserve: true },
-  { key: "29_el_hallouf", name: "Эль-Халлуф", reserve: true },
-  { key: "06_ensk", name: "Энск", reserve: true },
-  { key: "13_erlenberg", name: "Эрленберг", reserve: false },
+  { key: "19_monastery", name: "Монастырь" },
+  { key: "31_airfield", name: "Аэродром" },
+  { key: "506_battle_for_moscow", name: "Битва за Москву" },
+  { key: "59_asia_great_wall", name: "Граница империи" },
+  { key: "23_westfeld", name: "Вестфилд" },
+  { key: "95_lost_city_ctf", name: "Затерянный город" },
+  { key: "60_asia_miao", name: "Жемчужная река" },
+  { key: "03_campania_big", name: "Провинция" },
+  { key: "01_karelia", name: "Карелия" },
+  { key: "37_caucasus", name: "Кавказ" },
+  { key: "503_kaliningrad", name: "Калининград" },
+  { key: "07_lakeville", name: "Ласвилль" },
+  { key: "38_mannerheim_line", name: "Линия Маннергейма" },
+  { key: "14_siegfried_line", name: "Линия Зигфрида" },
+  { key: "02_malinovka", name: "Малиновка" },
+  { key: "90_minsk", name: "Минск" },
+  { key: "11_murovanka", name: "Мурованка" },
+  { key: "17_munchen", name: "Уайдпарк" },
+  { key: "101_dday", name: "Оверлорд" },
+  { key: "112_eiffel_tower_ctf", name: "Париж" },
+  { key: "28_desert", name: "Песчаная река" },
+  { key: "127_japort", name: "Старая гавань" },
+  { key: "05_prohorovka", name: "Прохоровка" },
+  { key: "34_redshire", name: "Редшир" },
+  { key: "10_hills", name: "Рудники" },
+  { key: "08_ruinberg", name: "Руинберг" },
+  { key: "36_fishing_bay", name: "Рыбацкая бухта" },
+  { key: "35_steppes", name: "Степи" },
+  { key: "99_poland", name: "Студзянки" },
+  { key: "47_canada_a", name: "Тихий берег" },
+  { key: "63_tundra", name: "Тундра" },
+  { key: "18_cliff", name: "Утёс" },
+  { key: "33_fjord", name: "Фьорды" },
+  { key: "44_north_america", name: "Лайв Окс" },
+  { key: "45_north_america", name: "Хайвей" },
+  { key: "83_kharkiv", name: "Харьков" },
+  { key: "04_himmelsdorf", name: "Химмельсдорф" },
+  { key: "114_czech", name: "Промзона" },
+  { key: "115_sweden", name: "Штиль" },
+  { key: "29_el_hallouf", name: "Эль-Халлуф" },
+  { key: "06_ensk", name: "Энск" },
+  { key: "13_erlenberg", name: "Эрленберг" },
 ];
 
 const MODE_IMAGES = {
+  assault2: new Set(["01_karelia", "02_malinovka", "14_siegfried_line", "222_er_clime", "60_asia_miao"]),
   comp7: new Set(["01_karelia", "02_malinovka", "06_ensk", "10_hills", "114_czech", "17_munchen", "217_er_alaska", "28_desert", "29_el_hallouf", "95_lost_city_ctf"]),
   domination3: new Set(["10_hills", "114_czech", "19_monastery", "36_fishing_bay", "95_lost_city_ctf"]),
 };
@@ -61,6 +61,7 @@ const MODES = [
   { key: "domination", name: "Встречный бой" },
   { key: "comp7", name: "Натиск" },
   { key: "assault", name: "Штурм" },
+  { key: "assault2", name: "Атака/Оборона" },
   { key: "domination3", name: "Столкновение" },
 ];
 
@@ -76,7 +77,7 @@ const POI_NAMES = {
   4: "Минное поле",
 };
 
-const RANDOM_MODE_ORDER = ["ctf"];
+const RANDOM_MODE_ORDER = ["ctf", "domination", "assault", "assault2"];
 
 const MODE_ORDER = MODES.map((mode) => mode.key);
 const MODE_NAMES = Object.fromEntries(MODES.map((mode) => [mode.key, mode.name]));
@@ -88,6 +89,7 @@ let mapsInitialized = false;
 let currentMapKey = null;
 let currentModeKey = null;
 let currentMapDef = null;
+let pendingMapsState = {};
 
 const mapModeName = (key) => MODE_NAMES[key] ?? key;
 const mapDisplayName = (key) => mapByKey.get(key)?.name ?? key;
@@ -96,18 +98,12 @@ function normalizeSearch(value) {
   return String(value ?? "").trim().toLowerCase().replace(/ё/g, "е");
 }
 
-function baseMapImageUrl(mapKey) {
-  return mapByKey.get(mapKey)?.reserve
-    ? `${MAPS_RESERVE_DIR}/${mapKey}.png`
-    : `${MAPS_DIR}/${mapKey}.png`;
-}
+const baseMapImageUrl = (mapKey) => `${MAPS_DIR}/${mapKey}.png`;
 
-function mapImageUrl(mapKey, modeKey) {
-  if (MODE_IMAGES[modeKey] && MODE_IMAGES[modeKey].has(mapKey)) {
-    return `${MAPS_RESERVE_DIR}/${modeKey}/${mapKey}.png`;
-  }
-  return baseMapImageUrl(mapKey);
-}
+const mapImageUrl = (mapKey, modeKey) =>
+  MODE_IMAGES[modeKey]?.has(mapKey)
+    ? `${MAPS_DIR}/${modeKey}/${mapKey}.png`
+    : baseMapImageUrl(mapKey);
 
 const PACKED_MAGIC = 0x62a14e45;
 
@@ -447,6 +443,7 @@ function selectMode(modeKey) {
   currentModeKey = modeKey;
   syncModeButtons();
   renderMapStage();
+  writeStateToHash();
 }
 
 function renderModeButtons() {
@@ -483,12 +480,13 @@ function syncMapListSelection() {
   });
 }
 
-async function selectMap(mapKey) {
+async function selectMap(mapKey, preferredMode = null) {
   currentMapKey = mapKey;
   currentModeKey = null;
   currentMapDef = null;
   syncMapListSelection();
   renderMapStage();
+  writeStateToHash();
 
   const group = document.getElementById("mapModeGroup");
   group.hidden = false;
@@ -506,9 +504,31 @@ async function selectMap(mapKey) {
 
   if (currentMapKey !== mapKey) return;
 
-  currentModeKey = defaultModeKey(currentMapDef);
+  currentModeKey = currentMapDef.modes.some((mode) => mode.key === preferredMode)
+    ? preferredMode
+    : defaultModeKey(currentMapDef);
   renderModeButtons();
   renderMapStage();
+  writeStateToHash();
+}
+
+function mapsHashParams() {
+  const { map, mode } = currentMapKey ? { map: currentMapKey, mode: currentModeKey } : pendingMapsState;
+  return { ...(map && { map }), ...(map && mode && { mode }) };
+}
+
+function applyMapsHashState({ map, mode } = {}) {
+  pendingMapsState = mapByKey.has(map) ? { map, mode } : {};
+  if (!mapsInitialized || !pendingMapsState.map) return;
+
+  if (map !== currentMapKey) {
+    selectMap(map, mode);
+    return;
+  }
+
+  if (mode && mode !== currentModeKey && currentMapDef?.modes.some((item) => item.key === mode)) {
+    selectMode(mode);
+  }
 }
 
 function renderMapList(query = "") {
@@ -565,4 +585,6 @@ function initMapsTab() {
     const first = document.querySelector("#mapList [data-map]");
     if (first) selectMap(first.dataset.map);
   });
+
+  applyMapsHashState(readStateFromHash() ?? {});
 }
