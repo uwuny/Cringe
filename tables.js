@@ -181,6 +181,7 @@ function writeStateToHash() {
       stage: currentStage,
       date: currentDate ?? "all",
       avg: avgPosition,
+      ...mapsHashParams(),
     });
     history.replaceState(null, "", "#" + params.toString());
   }, 250);
@@ -197,6 +198,8 @@ function readStateFromHash() {
     stage: params.get("stage"),
     date: params.get("date"),
     avg: params.get("avg"),
+    map: params.get("map"),
+    mode: params.get("mode"),
   };
 }
 
@@ -253,6 +256,8 @@ function applyHashState(hashState) {
   if (hashState?.tab && tabPanels[hashState.tab]) {
     switchTab(hashState.tab);
   }
+
+  applyMapsHashState(hashState ?? {});
 }
 
 window.addEventListener("hashchange", () => {
