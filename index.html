@@ -2274,8 +2274,8 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
 
 </div>
 
-<script src="tables.js?v=3"></script>
-<script src="maps.js?v=3"></script>
+<script src="tables.js?v=4"></script>
+<script src="maps.js?v=4"></script>
 
 <script>
 "use strict";
@@ -2657,7 +2657,7 @@ function renderModBlock(mod) {
 
 document.addEventListener("DOMContentLoaded", () => {
   const hashTab = readStateFromHash()?.tab;
-  switchTab(hashTab === "equipment" ? "equipment" : "stats");
+  switchTab(tabPanels[hashTab] ? hashTab : "stats");
 });
 </script>
 
