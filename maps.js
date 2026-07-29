@@ -514,7 +514,10 @@ async function selectMap(mapKey, preferredMode = null) {
 
 function mapsHashParams() {
   const { map, mode } = currentMapKey ? { map: currentMapKey, mode: currentModeKey } : pendingMapsState;
-  return { ...(map && { map }), ...(map && mode && { mode }) };
+  if (!map) return {};
+
+  const isDefault = mode && map === currentMapKey && mode === defaultModeKey(currentMapDef);
+  return { map, ...(mode && !isDefault && { mode }) };
 }
 
 function applyMapsHashState({ map, mode } = {}) {
