@@ -856,8 +856,17 @@ th:has(> .map-link) {
   flex-wrap: wrap;
   justify-content: center;
   align-items: flex-end;
-  gap: 15px;
-  margin: 15px 0;
+  gap: var(--space-4) var(--space-5);
+  width: 95%;
+  max-width: 1200px;
+  margin: var(--space-4) auto var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--glass-shadow), inset 0 1px 0 rgb(255 255 255 / 12%);
   position: relative;
   z-index: 500;
 }
@@ -873,17 +882,107 @@ th:has(> .map-link) {
   height: 16px;
   line-height: 16px;
   margin-bottom: var(--space-2);
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 700;
   color: var(--color-text-faint);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  text-align: center;
+  align-self: stretch;
+}
+
+.equip-filters[hidden],
+.filter-group[hidden],
+.back-button-bar[hidden] {
+  display: none;
 }
 
 .back-button-bar {
-  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-3);
   margin: 0;
   padding: 0;
 }
+
+.back-button-bar #backToTableBtn {
+  grid-column: 1;
+  justify-self: start;
+}
+
+.back-button-bar .equip-mode-switch {
+  grid-column: 2;
+  justify-self: center;
+}
+
+.equip-mode-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  margin-bottom: var(--space-5);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  background: var(--card-bg);
+  backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+  box-shadow: var(--shadow-border), inset 0 1px 0 rgb(255 255 255 / 10%);
+}
+
+.equip-mode-switch::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc(50% - 4px);
+  border-radius: var(--radius-full);
+  background: var(--color-accent-dim);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 14%);
+  transition: transform var(--duration-med) var(--ease-spring);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.equip-mode-switch:has(.equip-mode:nth-of-type(2).active)::before {
+  transform: translateX(calc(100% + 2px));
+}
+
+.equip-mode {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 116px;
+  height: 36px;
+  padding: 0 var(--space-4);
+  margin: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--duration-med) var(--ease-out), scale var(--duration-fast) var(--ease-out);
+}
+
+.equip-mode:hover { color: var(--text); }
+
+.equip-mode.active {
+  background: transparent;
+  box-shadow: none;
+  color: #c8f2d4;
+}
+
+.equip-mode:active { scale: 0.97; }
 
 #backToTableBtn {
   background: linear-gradient(180deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 3%));
@@ -921,6 +1020,8 @@ th:has(> .map-link) {
   max-width: 1200px;
   margin: 3px auto 20px;
   border-collapse: collapse;
+  min-width: 0;
+  table-layout: fixed;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
@@ -935,8 +1036,16 @@ th:has(> .map-link) {
 .tank-table td {
   border: 1px solid var(--color-border-subtle);
   padding: 10px 15px;
-  text-align: center;
+  text-align: left;
   transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+}
+
+.tank-table th {
+  text-align: center;
+}
+
+.tank-table td:last-child {
+  text-align: center;
 }
 
 .tank-table th {
@@ -989,11 +1098,60 @@ th:has(> .map-link) {
   font-size: 15px;
 }
 
-.tank-table th:nth-child(1), .tank-table td:nth-child(1) { width: 25%; }
-.tank-table th:nth-child(2), .tank-table td:nth-child(2) { width: 15%; }
+.tank-table th:nth-child(1), .tank-table td:nth-child(1) { width: 29%; }
+.tank-table th:nth-child(2), .tank-table td:nth-child(2) { width: 18%; }
 .tank-table th:nth-child(3), .tank-table td:nth-child(3) { width: 15%; }
-.tank-table th:nth-child(4), .tank-table td:nth-child(4) { width: 30%; }
-.tank-table th:nth-child(5), .tank-table td:nth-child(5) { width: 15%; }
+.tank-table th:nth-child(4), .tank-table td:nth-child(4) { width: 26%; }
+.tank-table th:nth-child(5), .tank-table td:nth-child(5) { width: 12%; }
+
+.rating-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  background: rgb(255 255 255 / 6%);
+  border: 1px solid var(--glass-border);
+  color: var(--color-text-muted);
+}
+
+.rating-badge[data-rating="3"] {
+  color: #e8c368;
+  border-color: rgb(232 195 104 / 35%);
+  background: rgb(232 195 104 / 12%);
+}
+
+.rating-badge[data-rating="4"],
+.rating-badge[data-rating="5"],
+.rating-badge[data-rating="5+"] {
+  color: var(--color-accent);
+  border-color: rgb(var(--color-accent-rgb) / 40%);
+  background: rgb(var(--color-accent-rgb) / 14%);
+}
+
+.rating-badge[data-rating="5+"] {
+  box-shadow: 0 0 12px rgb(var(--color-accent-rgb) / 30%);
+}
+
+.tank-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: calc(-1 * var(--space-4)) 0 var(--space-5);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-faint);
+  opacity: 0;
+  animation: fade-in-up var(--duration-slow) var(--ease-out) 40ms forwards;
+}
 
 .empty-state {
   text-align: center;
@@ -1024,29 +1182,100 @@ th:has(> .map-link) {
   animation: fade-in-up var(--duration-slow) var(--ease-out) forwards;
 }
 
-.tank-main-image {
-  position: relative;
-  width: fit-content;
+.tank-stage {
+  --stage-scale: 1;
+  --mod-size: calc(120px * var(--stage-scale));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
   margin: 0 auto 40px;
   opacity: 0;
   animation: fade-in-up var(--duration-slow) var(--ease-out) 60ms forwards;
 }
 
-.tank-main-image img {
-  max-width: 100%;
+.tank-frame {
+  position: relative;
+  width: 100%;
+  max-width: min(840px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.tank-hero__img {
+  width: min(600px, 100%);
   height: auto;
-  max-height: 450px;
+  max-height: 60vh;
   object-fit: contain;
+}
+
+.tank-frame--fallback { gap: var(--space-3); }
+
+.tank-hero__img.is-fallback {
+  width: 150px;
+  max-height: none;
+  opacity: 0.45;
+}
+
+.tank-frame--fallback::after {
+  content: "картинка танка ещё не добавлена";
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.mods-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--mod-size) * 0.45) calc(var(--mod-size) * 0.3);
+  margin-top: calc(var(--mod-size) * 0.5);
+  pointer-events: none;
+}
+
+.mods-wrapper:empty { display: none; }
+
+.equip-empty {
+  margin: 0 auto var(--space-6);
+  padding: var(--space-5);
+  font-size: 15px;
 }
 
 .equip-build {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
-  padding: 1rem 0;
+  gap: var(--space-4);
+  position: relative;
+  isolation: isolate;
+  padding: var(--space-5) var(--space-5) var(--space-6);
+  border-radius: 34px;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 8%), rgb(255 255 255 / 2%) 40%, transparent 70%),
+    var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 rgb(255 255 255 / 16%),
+    inset 0 -20px 30px -24px var(--glass-shade);
   opacity: 0;
   animation: fade-in-up var(--duration-slow) var(--ease-out) forwards;
+}
+
+.equip-build::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(90% 60% at 28% 0%, rgb(255 255 255 / 10%) 0%, transparent 62%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .equipment-builds .equip-build:nth-child(1) { animation-delay: 100ms; }
@@ -1054,14 +1283,14 @@ th:has(> .map-link) {
 .equipment-builds .equip-build:nth-child(3) { animation-delay: 180ms; }
 
 .build-label {
-  font-size: 14px;
+  font-size: 12px;
   color: var(--color-accent);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   font-family: var(--font-display);
   font-weight: 700;
   text-shadow: 0 0 10px rgb(var(--color-accent-rgb) / 40%);
-  margin-bottom: var(--space-2);
+  margin: 0;
 }
 
 .equip-items {
@@ -1075,33 +1304,62 @@ th:has(> .map-link) {
   width: 140px;
   height: 140px;
   position: relative;
+  isolation: isolate;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--glass-bg);
-  border-radius: var(--radius-md);
+  border-radius: 30px;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 3%) 46%, rgb(255 255 255 / 1%)),
+    var(--glass-bg);
   border: 1px solid var(--glass-border);
-  backdrop-filter: blur(var(--glass-blur-sm)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-sm)) saturate(160%);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%);
-  transition: border-color var(--duration-med) var(--ease-out), box-shadow var(--duration-med) var(--ease-out), background-color var(--duration-med) var(--ease-out);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .slot:hover {
-    border-color: var(--glass-border-strong);
-    background: var(--glass-bg-strong);
-    box-shadow: var(--glass-shadow-sm), inset 0 1px 0 rgb(255 255 255 / 18%);
-  }
+  backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+  box-shadow:
+    var(--glass-shadow-sm),
+    inset 0 1px 0 rgb(255 255 255 / 18%),
+    inset 0 -14px 22px -16px var(--glass-shade);
+  transition:
+    border-color var(--duration-med) var(--ease-out),
+    box-shadow var(--duration-med) var(--ease-out),
+    background-color var(--duration-med) var(--ease-out),
+    translate var(--duration-med) var(--ease-out);
 }
 
 .slot::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: var(--radius-md);
-  background: radial-gradient(ellipse at 30% 30%, rgb(var(--color-accent-rgb) / 8%) 0%, transparent 65%);
+  border-radius: inherit;
+  background: radial-gradient(115% 85% at 22% 0%, rgb(255 255 255 / 14%) 0%, transparent 58%);
   pointer-events: none;
+  z-index: -1;
+}
+
+.slot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 6%);
+  pointer-events: none;
+}
+
+.slot--empty {
+  background: rgb(255 255 255 / 3%);
+  border-style: dashed;
+  box-shadow: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .slot:hover {
+    border-color: var(--glass-border-strong);
+    box-shadow:
+      var(--glass-shadow),
+      inset 0 1px 0 rgb(255 255 255 / 24%),
+      inset 0 -14px 22px -16px var(--glass-shade);
+    translate: 0 -2px;
+  }
 }
 
 .slot-icon {
@@ -1120,39 +1378,23 @@ th:has(> .map-link) {
   object-fit: contain;
 }
 
-.corner {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  pointer-events: none;
-  z-index: 2;
+.equipment-builds {
+  width: 95%;
+  max-width: 1200px;
+  margin: 0 auto var(--space-6);
 }
 
-.corner.tl { top: -1px; left: -1px; border-top: 2px solid var(--color-accent); border-left: 2px solid var(--color-accent); border-radius: var(--radius-sm) 0 0 0; }
-.corner.tr { top: -1px; right: -1px; border-top: 2px solid var(--color-accent); border-right: 2px solid var(--color-accent); border-radius: 0 var(--radius-sm) 0 0; }
-.corner.bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--color-accent); border-left: 2px solid var(--color-accent); border-radius: 0 0 0 var(--radius-sm); }
-.corner.br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--color-accent); border-right: 2px solid var(--color-accent); border-radius: 0 0 var(--radius-sm) 0; }
-
-.slot-bottom-line {
-  position: absolute;
-  bottom: 0;
-  left: 20px;
-  right: 20px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgb(var(--color-accent-rgb) / 40%), transparent);
-  pointer-events: none;
-  z-index: 2;
-}
-
-.equipment-builds[data-count="1"] .equip-build {
-  margin: 0 auto;
+.equipment-builds[data-count="1"] {
+  display: flex;
+  justify-content: center;
 }
 
 .equipment-builds[data-count="2"] {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  gap: 30px;
+  align-items: flex-start;
+  gap: var(--space-6);
 }
 
 .equipment-builds[data-count="3"] {
@@ -1178,28 +1420,18 @@ th:has(> .map-link) {
   }
 }
 
-.mods-wrapper {
-  position: absolute;
-  inset: 0;
+.mod-block {
+  position: relative;
+  flex: none;
+  width: calc(var(--mod-size) * 2);
+  height: var(--mod-size);
   pointer-events: none;
 }
 
-.mod-block {
-  position: absolute;
-  width: 240px;
-  height: 120px;
-}
-
-.mod-block:nth-child(1) { top: 20px; left: -260px; }
-.mod-block:nth-child(2) { top: 185px; left: -345px; }
-.mod-block:nth-child(3) { top: 350px; left: -270px; }
-.mod-block:nth-child(4) { top: 20px; right: -210px; }
-.mod-block:nth-child(5) { top: 185px; right: -320px; }
-
 .mod-base {
   position: absolute;
-  width: 120px;
-  height: 120px;
+  width: var(--mod-size);
+  height: var(--mod-size);
   top: 0;
   z-index: 1;
   object-fit: contain;
@@ -1207,7 +1439,7 @@ th:has(> .map-link) {
 }
 
 .mod-base.left { left: 0; }
-.mod-base.right { left: 120px; }
+.mod-base.right { left: var(--mod-size); }
 
 .mod-overlay {
   position: absolute;
@@ -1218,31 +1450,38 @@ th:has(> .map-link) {
 }
 
 .mod-overlay.active {
-  width: 142px;
-  height: 142px;
+  width: calc(var(--mod-size) * 142 / 120);
+  height: calc(var(--mod-size) * 142 / 120);
   z-index: 3;
   opacity: 1;
 }
 
-.mod-overlay.active.left { left: -11px; top: -11px; }
-.mod-overlay.active.right { left: 109px; top: -11px; }
+.mod-overlay.active.left {
+  left: calc(var(--mod-size) * -11 / 120);
+  top: calc(var(--mod-size) * -11 / 120);
+}
+
+.mod-overlay.active.right {
+  left: calc(var(--mod-size) * 109 / 120);
+  top: calc(var(--mod-size) * -11 / 120);
+}
 
 .mod-overlay.disabled {
-  width: 120px;
-  height: 120px;
+  width: var(--mod-size);
+  height: var(--mod-size);
   z-index: 2;
   opacity: 0.75;
 }
 
 .mod-overlay.disabled.left { left: 0; top: 0; }
-.mod-overlay.disabled.right { left: 120px; top: 0; }
+.mod-overlay.disabled.right { left: var(--mod-size); top: 0; }
 
 .mod-level {
   position: absolute;
-  width: 38px;
-  height: 36px;
+  width: calc(var(--mod-size) * 38 / 120);
+  height: calc(var(--mod-size) * 36 / 120);
   left: 50%;
-  top: -18px;
+  top: calc(var(--mod-size) * -18 / 120);
   transform: translateX(-50%);
   z-index: 5;
   object-fit: contain;
@@ -1257,33 +1496,61 @@ th:has(> .map-link) {
   z-index: 6;
 }
 
-.mod-icon.checkmark { width: 64px; height: 32px; }
-.mod-icon.checkmark.left { left: 28px; bottom: -16px; }
-.mod-icon.checkmark.right { left: 148px; bottom: -16px; }
+.mod-icon.checkmark {
+  width: calc(var(--mod-size) * 64 / 120);
+  height: calc(var(--mod-size) * 32 / 120);
+}
 
-.mod-icon.blocked { width: 14px; height: 14px; }
-.mod-icon.blocked.left { left: 53px; bottom: -7px; }
-.mod-icon.blocked.right { left: 173px; bottom: -7px; }
+.mod-icon.checkmark.left {
+  left: calc(var(--mod-size) * 28 / 120);
+  bottom: calc(var(--mod-size) * -16 / 120);
+}
+
+.mod-icon.checkmark.right {
+  left: calc(var(--mod-size) * 148 / 120);
+  bottom: calc(var(--mod-size) * -16 / 120);
+}
+
+.mod-icon.blocked {
+  width: calc(var(--mod-size) * 14 / 120);
+  height: calc(var(--mod-size) * 14 / 120);
+}
+
+.mod-icon.blocked.left {
+  left: calc(var(--mod-size) * 53 / 120);
+  bottom: calc(var(--mod-size) * -7 / 120);
+}
+
+.mod-icon.blocked.right {
+  left: calc(var(--mod-size) * 173 / 120);
+  bottom: calc(var(--mod-size) * -7 / 120);
+}
 
 .cell-content {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  justify-content: center;
+  gap: var(--space-3);
+  justify-content: flex-start;
   width: 100%;
 }
 
 .cell-content .icon-img {
   height: 24px;
-  width: auto;
-  flex-shrink: 0;
+  flex: none;
   object-fit: contain;
+  object-position: left center;
   image-rendering: crisp-edges;
 }
+
+.tank-table td:nth-child(1) .icon-img { width: 78px; }
+.tank-table td:nth-child(2) .icon-img { width: 30px; }
+.tank-table td:nth-child(3) .icon-img { width: 22px; }
 
 .cell-content span {
   text-align: left;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .custom-dropdown {
@@ -1296,46 +1563,66 @@ th:has(> .map-link) {
   z-index: 1000;
 }
 
-.dropdown-nation { width: 200px; flex: none; }
+.dropdown-nation { width: 215px; flex: none; }
 .dropdown-class { width: 150px; flex: none; }
 .dropdown-role { width: 320px; flex: none; }
 .dropdown-level { width: 90px; flex: none; }
+.dropdown-rating { width: 120px; flex: none; }
 
 .dropdown-selected {
-  background: var(--glass-bg);
+  position: relative;
+  background: var(--card-bg);
   color: #fff;
   border: 1px solid var(--glass-border);
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2) 28px;
   border-radius: var(--radius-md);
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   min-height: 42px;
   gap: var(--space-2);
   margin: 0;
-  backdrop-filter: blur(var(--glass-blur-sm)) saturate(160%);
-  -webkit-backdrop-filter: blur(var(--glass-blur-sm)) saturate(160%);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%);
-  transition: border-color var(--duration-med) var(--ease-out), box-shadow var(--duration-med) var(--ease-out), background-color var(--duration-med) var(--ease-out);
+  backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+  box-shadow: var(--shadow-border);
+  transition:
+    border-color var(--duration-med) var(--ease-out),
+    box-shadow var(--duration-med) var(--ease-out),
+    background-color var(--duration-med) var(--ease-out);
 }
 
 .dropdown-selected:hover {
-  background: var(--glass-bg-strong);
   border-color: var(--glass-border-strong);
-  box-shadow: var(--glass-shadow-sm), inset 0 1px 0 rgb(255 255 255 / 16%);
+  background: var(--glass-bg-strong);
+  box-shadow: var(--shadow-border-hover);
+}
+
+.custom-dropdown.open .dropdown-selected {
+  border-color: rgb(var(--color-accent-rgb) / 45%);
+  box-shadow: 0 6px 20px rgb(var(--color-accent-rgb) / 16%), var(--shadow-inset);
 }
 
 .dropdown-selected .dropdown-icon {
   width: 24px;
   height: 24px;
+  flex: none;
   object-fit: contain;
 }
 
 .dropdown-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  translate: 0 -50%;
   font-size: 10px;
-  color: #888;
-  transition: transform var(--duration-fast) var(--ease-out);
+  color: var(--color-text-faint);
+  transition: rotate var(--duration-med) var(--ease-out), color var(--duration-med) var(--ease-out);
+}
+
+.custom-dropdown.open .dropdown-arrow {
+  rotate: 180deg;
+  color: var(--color-accent);
 }
 
 .custom-dropdown.open .dropdown-arrow {
@@ -1344,22 +1631,20 @@ th:has(> .map-link) {
 
 .dropdown-options {
   position: absolute;
-  top: calc(100% + 1px);
+  top: calc(100% + 6px);
   left: 0;
   right: 0;
   margin: 0;
-  padding: 0;
-  background: rgb(20 20 20 / 70%);
-  border: 1px solid var(--glass-border);
-  border-top: none;
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: var(--space-1);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 8%), transparent 50%),
+    rgba(28, 28, 30, 0.96);
+  border: 1px solid var(--glass-border-strong);
+  border-radius: var(--radius-lg);
   z-index: 9999;
-  max-height: 350px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgb(255 255 255 / 35%) transparent;
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  overflow: hidden;
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   box-shadow: var(--glass-shadow);
 
   visibility: hidden;
@@ -1372,21 +1657,29 @@ th:has(> .map-link) {
     visibility 0s linear var(--duration-base);
 }
 
-.dropdown-options::-webkit-scrollbar {
+.dropdown-scroll {
+  max-height: 340px;
+  overflow-y: auto;
+  margin: 5px 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 35%) transparent;
+}
+
+.dropdown-scroll::-webkit-scrollbar {
   width: 8px;
 }
 
-.dropdown-options::-webkit-scrollbar-track {
+.dropdown-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.dropdown-options::-webkit-scrollbar-thumb {
+.dropdown-scroll::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, rgb(255 255 255 / 45%), rgb(255 255 255 / 22%));
   border-radius: 4px;
   transition: background-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
 }
 
-.dropdown-options::-webkit-scrollbar-thumb:hover {
+.dropdown-scroll::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, rgb(255 255 255 / 60%), rgb(255 255 255 / 32%));
   box-shadow: 0 0 6px rgb(255 255 255 / 25%);
 }
@@ -1402,28 +1695,44 @@ th:has(> .map-link) {
 }
 
 .dropdown-option {
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-2);
-  transition: background-color var(--duration-fast) var(--ease-out);
+  text-align: center;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    scale var(--duration-fast) var(--ease-out);
 }
 
 .dropdown-option:hover,
 .dropdown-option:focus-visible {
-  background: var(--color-surface-alt);
+  background: rgb(255 255 255 / 10%);
+}
+
+.dropdown-option:active {
+  scale: 0.98;
 }
 
 .dropdown-option.active {
-  background: var(--color-accent-soft);
-  color: #fff;
+  background: rgb(var(--color-accent-rgb) / 16%);
+  color: var(--color-accent);
+  font-weight: 600;
 }
 
 .dropdown-option .dropdown-icon {
   width: 24px;
-  height: 24px;
+  height: 22px;
+  flex: none;
   object-fit: contain;
+}
+
+.dropdown-option .dropdown-text {
+  flex: 0 1 auto;
 }
 
 .dropdown-option .dropdown-text {
@@ -1435,6 +1744,91 @@ th:has(> .map-link) {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+@media (min-width: 1200px) {
+  .tank-stage[data-mods="5"] {
+    --stage-scale: 0.85;
+    display: block;
+    padding-bottom: calc(48px * var(--stage-scale));
+  }
+
+  .tank-stage[data-mods="5"] .tank-frame {
+    width: calc(600px * var(--stage-scale));
+    max-width: none;
+    height: calc(450px * var(--stage-scale));
+    margin: 0 auto;
+  }
+
+  .tank-stage[data-mods="5"] .tank-hero__img {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+  }
+
+  .tank-stage[data-mods="5"] .tank-hero__img.is-fallback {
+    width: calc(200px * var(--stage-scale));
+    height: auto;
+  }
+
+  .tank-stage[data-mods="5"] .mods-wrapper {
+    position: absolute;
+    inset: 0;
+    display: block;
+    margin: 0;
+  }
+
+  .tank-stage[data-mods="5"] .mod-block { position: absolute; }
+
+  .tank-stage[data-mods="5"] .mod-block:nth-child(1) {
+    top: calc(20px * var(--stage-scale));
+    left: calc(-260px * var(--stage-scale));
+  }
+
+  .tank-stage[data-mods="5"] .mod-block:nth-child(2) {
+    top: calc(185px * var(--stage-scale));
+    left: calc(-345px * var(--stage-scale));
+  }
+
+  .tank-stage[data-mods="5"] .mod-block:nth-child(3) {
+    top: calc(350px * var(--stage-scale));
+    left: calc(-270px * var(--stage-scale));
+  }
+
+  .tank-stage[data-mods="5"] .mod-block:nth-child(4) {
+    top: calc(20px * var(--stage-scale));
+    right: calc(-210px * var(--stage-scale));
+  }
+
+  .tank-stage[data-mods="5"] .mod-block:nth-child(5) {
+    top: calc(185px * var(--stage-scale));
+    right: calc(-320px * var(--stage-scale));
+  }
+}
+
+@media (min-width: 1440px) {
+  .tank-stage[data-mods="5"] { --stage-scale: 1; }
+}
+
+@media (max-width: 1100px) {
+  .equip-buttons {
+    width: 95%;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(255 255 255 / 35%) transparent;
+  }
+
+  .tank-table {
+    width: 1200px;
+    min-width: 1200px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 900px) { .tank-stage { --stage-scale: 0.8; } }
+@media (max-width: 640px) { .tank-stage { --stage-scale: 0.62; } }
 
 .slot-icon.item-BonDosil img        { transform: translate(-2px, 0); }
 .slot-icon.item-BonOptica img       { transform: translate(-5px, 0); }
@@ -1449,7 +1843,8 @@ th:has(> .map-link) {
   .dropdown-nation,
   .dropdown-class,
   .dropdown-role,
-  .dropdown-level {
+  .dropdown-level,
+  .dropdown-rating {
     width: 100%;
     max-width: 350px;
     flex: none;
@@ -1471,6 +1866,30 @@ th:has(> .map-link) {
     min-width: auto;
     width: 100%;
     max-width: 420px;
+  }
+
+  .back-button-bar {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+
+  .equip-filters {
+    width: calc(100% - 2 * var(--space-4));
+    padding: var(--space-4);
+  }
+
+  .back-button-bar #backToTableBtn {
+    grid-column: 1;
+    justify-self: center;
+    margin-bottom: var(--space-3);
+  }
+
+  .back-button-bar .equip-mode-switch {
+    grid-column: 1;
+  }
+
+  .equip-mode {
+    min-width: 96px;
   }
 }
 
@@ -1504,61 +1923,61 @@ th:has(> .map-link) {
   overscroll-behavior: contain;
 }
 
-table th:first-child,
-table td:first-child {
+#table table th:first-child,
+#table table td:first-child {
   position: sticky;
   left: 0;
   z-index: 2;
   background: var(--table-sticky-bg);
 }
 
-table tr:nth-child(-n + 2) th,
-table tr:nth-child(-n + 2) td {
+#table table tr:nth-child(-n + 2) th,
+#table table tr:nth-child(-n + 2) td {
   position: sticky;
   z-index: 3;
   background: var(--table-sticky-bg);
 }
 
-table tr:first-child th,
-table tr:first-child td { top: 0; }
+#table table tr:first-child th,
+#table table tr:first-child td { top: 0; }
 
-table tr:nth-child(2) th,
-table tr:nth-child(2) td { top: var(--sticky-row-1, 44px); }
+#table table tr:nth-child(2) th,
+#table table tr:nth-child(2) td { top: var(--sticky-row-1, 44px); }
 
-table tr:nth-child(-n + 2) th:first-child,
-table tr:nth-child(-n + 2) td:first-child { z-index: 4; }
+#table table tr:nth-child(-n + 2) th:first-child,
+#table table tr:nth-child(-n + 2) td:first-child { z-index: 4; }
 
-table tr:nth-child(-n + 2) th.win {
+#table table tr:nth-child(-n + 2) th.win {
   background: linear-gradient(var(--color-win), var(--color-win)), var(--table-sticky-bg);
 }
-table tr:nth-child(-n + 2) th.lose {
+#table table tr:nth-child(-n + 2) th.lose {
   background: linear-gradient(var(--color-lose), var(--color-lose)), var(--table-sticky-bg);
 }
 
-table tr.hover-row th:first-child:not(.win):not(.lose),
-table tr.hover-row td:first-child:not(.win):not(.lose),
-table th:first-child.hover-col:not(.win):not(.lose),
-table td:first-child.hover-col:not(.win):not(.lose),
-table tr:nth-child(-n + 2).hover-row th:not(.win):not(.lose),
-table tr:nth-child(-n + 2).hover-row td:not(.win):not(.lose),
-table tr:nth-child(-n + 2) th.hover-col:not(.win):not(.lose),
-table tr:nth-child(-n + 2) td.hover-col:not(.win):not(.lose) {
+#table table tr.hover-row th:first-child:not(.win):not(.lose),
+#table table tr.hover-row td:first-child:not(.win):not(.lose),
+#table table th:first-child.hover-col:not(.win):not(.lose),
+#table table td:first-child.hover-col:not(.win):not(.lose),
+#table table tr:nth-child(-n + 2).hover-row th:not(.win):not(.lose),
+#table table tr:nth-child(-n + 2).hover-row td:not(.win):not(.lose),
+#table table tr:nth-child(-n + 2) th.hover-col:not(.win):not(.lose),
+#table table tr:nth-child(-n + 2) td.hover-col:not(.win):not(.lose) {
   background:
     linear-gradient(var(--color-surface-hover), var(--color-surface-hover)),
     var(--table-sticky-bg);
 }
 
-table th:first-child.hover-cell:not(.win):not(.lose),
-table td:first-child.hover-cell:not(.win):not(.lose),
-table tr:nth-child(-n + 2) th.hover-cell:not(.win):not(.lose),
-table tr:nth-child(-n + 2) td.hover-cell:not(.win):not(.lose) {
+#table table th:first-child.hover-cell:not(.win):not(.lose),
+#table table td:first-child.hover-cell:not(.win):not(.lose),
+#table table tr:nth-child(-n + 2) th.hover-cell:not(.win):not(.lose),
+#table table tr:nth-child(-n + 2) td.hover-cell:not(.win):not(.lose) {
   background:
     linear-gradient(var(--color-surface-hover-strong), var(--color-surface-hover-strong)),
     var(--table-sticky-bg);
 }
 
-table th:first-child::after,
-table td:first-child::after {
+#table table th:first-child::after,
+#table table td:first-child::after {
   content: '';
   position: absolute;
   top: 0;
@@ -2073,56 +2492,58 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
             <span class="dropdown-arrow" aria-hidden="true">▼</span>
           </div>
           <div class="dropdown-options">
-            <div class="dropdown-option active" data-value="all" role="option" aria-selected="true">
-              <span class="dropdown-text">Все</span>
-            </div>
-            <div class="dropdown-option" data-value="ussr" role="option" aria-selected="false">
-              <img src="flags/ussr.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">СССР</span>
-            </div>
-            <div class="dropdown-option" data-value="germany" role="option" aria-selected="false">
-              <img src="flags/germany.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">Германия</span>
-            </div>
-            <div class="dropdown-option" data-value="usa" role="option" aria-selected="false">
-              <img src="flags/usa.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">США</span>
-            </div>
-            <div class="dropdown-option" data-value="china" role="option" aria-selected="false">
-              <img src="flags/china.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">Китай</span>
-            </div>
-            <div class="dropdown-option" data-value="france" role="option" aria-selected="false">
-              <img src="flags/france.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">Франция</span>
-            </div>
-            <div class="dropdown-option" data-value="uk" role="option" aria-selected="false">
-              <img src="flags/uk.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">Великобритания</span>
-            </div>
-            <div class="dropdown-option" data-value="japan" role="option" aria-selected="false">
-              <img src="flags/japan.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">Япония</span>
-            </div>
-            <div class="dropdown-option" data-value="czech" role="option" aria-selected="false">
-              <img src="flags/czech.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">Чехословакия</span>
-            </div>
-            <div class="dropdown-option" data-value="sweden" role="option" aria-selected="false">
-              <img src="flags/sweden.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">Швеция</span>
-            </div>
-            <div class="dropdown-option" data-value="poland" role="option" aria-selected="false">
-              <img src="flags/poland.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">Польша</span>
-            </div>
-            <div class="dropdown-option" data-value="italy" role="option" aria-selected="false">
-              <img src="flags/italy.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">Италия</span>
-            </div>
-            <div class="dropdown-option" data-value="intunion" role="option" aria-selected="false">
-              <img src="flags/intunion.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">Сборная наций</span>
+            <div class="dropdown-scroll">
+              <div class="dropdown-option active" data-value="all" role="option" aria-selected="true">
+                <span class="dropdown-text">Все</span>
+              </div>
+              <div class="dropdown-option" data-value="ussr" role="option" aria-selected="false">
+                <img src="flags/ussr.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">СССР</span>
+              </div>
+              <div class="dropdown-option" data-value="germany" role="option" aria-selected="false">
+                <img src="flags/germany.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">Германия</span>
+              </div>
+              <div class="dropdown-option" data-value="usa" role="option" aria-selected="false">
+                <img src="flags/usa.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">США</span>
+              </div>
+              <div class="dropdown-option" data-value="china" role="option" aria-selected="false">
+                <img src="flags/china.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">Китай</span>
+              </div>
+              <div class="dropdown-option" data-value="france" role="option" aria-selected="false">
+                <img src="flags/france.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">Франция</span>
+              </div>
+              <div class="dropdown-option" data-value="uk" role="option" aria-selected="false">
+                <img src="flags/uk.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">Великобритания</span>
+              </div>
+              <div class="dropdown-option" data-value="japan" role="option" aria-selected="false">
+                <img src="flags/japan.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">Япония</span>
+              </div>
+              <div class="dropdown-option" data-value="czech" role="option" aria-selected="false">
+                <img src="flags/czech.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">Чехословакия</span>
+              </div>
+              <div class="dropdown-option" data-value="sweden" role="option" aria-selected="false">
+                <img src="flags/sweden.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">Швеция</span>
+              </div>
+              <div class="dropdown-option" data-value="poland" role="option" aria-selected="false">
+                <img src="flags/poland.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">Польша</span>
+              </div>
+              <div class="dropdown-option" data-value="italy" role="option" aria-selected="false">
+                <img src="flags/italy.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">Италия</span>
+              </div>
+              <div class="dropdown-option" data-value="intunion" role="option" aria-selected="false">
+                <img src="flags/intunion.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">Сборная наций</span>
+              </div>
             </div>
           </div>
         </div>
@@ -2136,28 +2557,27 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
             <span class="dropdown-arrow" aria-hidden="true">▼</span>
           </div>
           <div class="dropdown-options">
-            <div class="dropdown-option active" data-value="all" role="option" aria-selected="true">
-              <span class="dropdown-text">Все</span>
-            </div>
-            <div class="dropdown-option" data-value="heavyTank" role="option" aria-selected="false">
-              <img src="classes/heavyTank.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">Тяжёлые</span>
-            </div>
-            <div class="dropdown-option" data-value="mediumTank" role="option" aria-selected="false">
-              <img src="classes/mediumTank.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">Средние</span>
-            </div>
-            <div class="dropdown-option" data-value="lightTank" role="option" aria-selected="false">
-              <img src="classes/lightTank.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">Лёгкие</span>
-            </div>
-            <div class="dropdown-option" data-value="AT-SPG" role="option" aria-selected="false">
-              <img src="classes/AT-SPG.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">ПТ-САУ</span>
-            </div>
-            <div class="dropdown-option" data-value="SPG" role="option" aria-selected="false">
-              <img src="classes/SPG.png" class="dropdown-icon" alt="">
-              <span class="dropdown-text">САУ</span>
+            <div class="dropdown-scroll">
+              <div class="dropdown-option active" data-value="all" role="option" aria-selected="true">
+                <span class="dropdown-text">Все</span>
+              </div>
+              <div class="dropdown-option" data-value="heavyTank" role="option" aria-selected="false">
+                <img src="classes/heavyTank.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">Тяжёлые</span>
+              </div>
+              <div class="dropdown-option" data-value="mediumTank" role="option" aria-selected="false">
+                <img src="classes/mediumTank.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">Средние</span>
+              </div>
+              <div class="dropdown-option" data-value="lightTank" role="option" aria-selected="false">
+                <img src="classes/lightTank.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">Лёгкие</span>
+              </div>
+              <div class="dropdown-option" data-value="AT-SPG" role="option" aria-selected="false">
+                <img src="classes/AT-SPG.png" class="dropdown-icon" alt="">
+                <span class="dropdown-text">ПТ-САУ</span>
+              </div>
+
             </div>
           </div>
         </div>
@@ -2171,65 +2591,94 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
             <span class="dropdown-arrow" aria-hidden="true">▼</span>
           </div>
           <div class="dropdown-options">
-            <div class="dropdown-option active" data-value="all" role="option" aria-selected="true">
-              <span class="dropdown-text">Все</span>
-            </div>
-            <div class="dropdown-option" data-value="role_LT_universal" role="option" aria-selected="false">
-              <span class="dropdown-text">Лёгкие танки универсальные</span>
-            </div>
-            <div class="dropdown-option" data-value="role_LT_wheeled" role="option" aria-selected="false">
-              <span class="dropdown-text">Лёгкие танки колёсные</span>
-            </div>
-            <div class="dropdown-option" data-value="role_MT_assault" role="option" aria-selected="false">
-              <span class="dropdown-text">Средние танки штурмовые</span>
-            </div>
-            <div class="dropdown-option" data-value="role_MT_universal" role="option" aria-selected="false">
-              <span class="dropdown-text">Средние танки универсальные</span>
-            </div>
-            <div class="dropdown-option" data-value="role_MT_sniper" role="option" aria-selected="false">
-              <span class="dropdown-text">Средние танки снайперские</span>
-            </div>
-            <div class="dropdown-option" data-value="role_MT_support" role="option" aria-selected="false">
-              <span class="dropdown-text">Средние танки поддержки</span>
-            </div>
-            <div class="dropdown-option" data-value="role_HT_assault" role="option" aria-selected="false">
-              <span class="dropdown-text">Тяжёлые танки штурмовые</span>
-            </div>
-            <div class="dropdown-option" data-value="role_HT_universal" role="option" aria-selected="false">
-              <span class="dropdown-text">Тяжёлые танки универсальные</span>
-            </div>
-            <div class="dropdown-option" data-value="role_HT_break" role="option" aria-selected="false">
-              <span class="dropdown-text">Тяжёлые танки прорыва</span>
-            </div>
-            <div class="dropdown-option" data-value="role_HT_support" role="option" aria-selected="false">
-              <span class="dropdown-text">Тяжёлые танки поддержки</span>
-            </div>
-            <div class="dropdown-option" data-value="role_ATSPG_assault" role="option" aria-selected="false">
-              <span class="dropdown-text">ПТ-САУ штурмовые</span>
-            </div>
-            <div class="dropdown-option" data-value="role_ATSPG_universal" role="option" aria-selected="false">
-              <span class="dropdown-text">ПТ-САУ универсальные</span>
-            </div>
-            <div class="dropdown-option" data-value="role_ATSPG_sniper" role="option" aria-selected="false">
-              <span class="dropdown-text">ПТ-САУ снайперские</span>
-            </div>
-            <div class="dropdown-option" data-value="role_ATSPG_support" role="option" aria-selected="false">
-              <span class="dropdown-text">ПТ-САУ поддержки</span>
-            </div>
-            <div class="dropdown-option" data-value="role_SPG_assault" role="option" aria-selected="false">
-              <span class="dropdown-text">САУ штурмовые</span>
-            </div>
-            <div class="dropdown-option" data-value="role_SPG" role="option" aria-selected="false">
-              <span class="dropdown-text">САУ поддержки</span>
-            </div>
-            <div class="dropdown-option" data-value="role_SPG_flame" role="option" aria-selected="false">
-              <span class="dropdown-text">САУ огнемётные</span>
+            <div class="dropdown-scroll">
+              <div class="dropdown-option active" data-value="all" role="option" aria-selected="true">
+                <span class="dropdown-text">Все</span>
+              </div>
+              <div class="dropdown-option" data-value="role_LT_universal" role="option" aria-selected="false">
+                <span class="dropdown-text">Лёгкие танки универсальные</span>
+              </div>
+              <div class="dropdown-option" data-value="role_LT_wheeled" role="option" aria-selected="false">
+                <span class="dropdown-text">Лёгкие танки колёсные</span>
+              </div>
+              <div class="dropdown-option" data-value="role_MT_assault" role="option" aria-selected="false">
+                <span class="dropdown-text">Средние танки штурмовые</span>
+              </div>
+              <div class="dropdown-option" data-value="role_MT_universal" role="option" aria-selected="false">
+                <span class="dropdown-text">Средние танки универсальные</span>
+              </div>
+              <div class="dropdown-option" data-value="role_MT_sniper" role="option" aria-selected="false">
+                <span class="dropdown-text">Средние танки снайперские</span>
+              </div>
+              <div class="dropdown-option" data-value="role_MT_support" role="option" aria-selected="false">
+                <span class="dropdown-text">Средние танки поддержки</span>
+              </div>
+              <div class="dropdown-option" data-value="role_HT_assault" role="option" aria-selected="false">
+                <span class="dropdown-text">Тяжёлые танки штурмовые</span>
+              </div>
+              <div class="dropdown-option" data-value="role_HT_universal" role="option" aria-selected="false">
+                <span class="dropdown-text">Тяжёлые танки универсальные</span>
+              </div>
+              <div class="dropdown-option" data-value="role_HT_break" role="option" aria-selected="false">
+                <span class="dropdown-text">Тяжёлые танки прорыва</span>
+              </div>
+              <div class="dropdown-option" data-value="role_HT_support" role="option" aria-selected="false">
+                <span class="dropdown-text">Тяжёлые танки поддержки</span>
+              </div>
+              <div class="dropdown-option" data-value="role_ATSPG_assault" role="option" aria-selected="false">
+                <span class="dropdown-text">ПТ-САУ штурмовые</span>
+              </div>
+              <div class="dropdown-option" data-value="role_ATSPG_universal" role="option" aria-selected="false">
+                <span class="dropdown-text">ПТ-САУ универсальные</span>
+              </div>
+              <div class="dropdown-option" data-value="role_ATSPG_sniper" role="option" aria-selected="false">
+                <span class="dropdown-text">ПТ-САУ снайперские</span>
+              </div>
+              <div class="dropdown-option" data-value="role_ATSPG_support" role="option" aria-selected="false">
+                <span class="dropdown-text">ПТ-САУ поддержки</span>
+              </div>
+
             </div>
           </div>
         </div>
       </div>
 
       <div class="filter-group">
+        <label id="filterRatingLabel">Эффективность (АБС)</label>
+        <div class="custom-dropdown dropdown-rating" id="filterRatingDropdown" role="listbox" aria-labelledby="filterRatingLabel">
+          <div class="dropdown-selected" tabindex="0" role="button" aria-haspopup="listbox">
+            <span class="dropdown-text">Все</span>
+            <span class="dropdown-arrow" aria-hidden="true">▼</span>
+          </div>
+          <div class="dropdown-options">
+            <div class="dropdown-scroll">
+              <div class="dropdown-option active" data-value="all" role="option" aria-selected="true">
+                <span class="dropdown-text">Все</span>
+              </div>
+              <div class="dropdown-option" data-value="1" role="option" aria-selected="false">
+                <span class="dropdown-text">1</span>
+              </div>
+              <div class="dropdown-option" data-value="2" role="option" aria-selected="false">
+                <span class="dropdown-text">2</span>
+              </div>
+              <div class="dropdown-option" data-value="3" role="option" aria-selected="false">
+                <span class="dropdown-text">3</span>
+              </div>
+              <div class="dropdown-option" data-value="4" role="option" aria-selected="false">
+                <span class="dropdown-text">4</span>
+              </div>
+              <div class="dropdown-option" data-value="5" role="option" aria-selected="false">
+                <span class="dropdown-text">5</span>
+              </div>
+              <div class="dropdown-option" data-value="5+" role="option" aria-selected="false">
+                <span class="dropdown-text">5+</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-group" hidden>
         <label id="filterLevelLabel">Уровень</label>
         <div class="custom-dropdown dropdown-level" id="filterLevelDropdown" role="listbox" aria-labelledby="filterLevelLabel">
           <div class="dropdown-selected" tabindex="0" role="button" aria-haspopup="listbox">
@@ -2237,20 +2686,22 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
             <span class="dropdown-arrow" aria-hidden="true">▼</span>
           </div>
           <div class="dropdown-options">
-            <div class="dropdown-option active" data-value="all" role="option" aria-selected="true">
-              <span class="dropdown-text">Все</span>
-            </div>
-            <div class="dropdown-option" data-value="8" role="option" aria-selected="false">
-              <span class="dropdown-text">VIII</span>
-            </div>
-            <div class="dropdown-option" data-value="9" role="option" aria-selected="false">
-              <span class="dropdown-text">IX</span>
-            </div>
-            <div class="dropdown-option" data-value="10" role="option" aria-selected="false">
-              <span class="dropdown-text">X</span>
-            </div>
-            <div class="dropdown-option" data-value="11" role="option" aria-selected="false">
-              <span class="dropdown-text">XI</span>
+            <div class="dropdown-scroll">
+              <div class="dropdown-option active" data-value="all" role="option" aria-selected="true">
+                <span class="dropdown-text">Все</span>
+              </div>
+              <div class="dropdown-option" data-value="8" role="option" aria-selected="false">
+                <span class="dropdown-text">VIII</span>
+              </div>
+              <div class="dropdown-option" data-value="9" role="option" aria-selected="false">
+                <span class="dropdown-text">IX</span>
+              </div>
+              <div class="dropdown-option" data-value="10" role="option" aria-selected="false">
+                <span class="dropdown-text">X</span>
+              </div>
+              <div class="dropdown-option" data-value="11" role="option" aria-selected="false">
+                <span class="dropdown-text">XI</span>
+              </div>
             </div>
           </div>
         </div>
@@ -2259,6 +2710,11 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
 
     <div id="backButtonContainer" class="back-button-bar" hidden>
       <button type="button" id="backToTableBtn">← К выбору танка</button>
+
+      <div class="equip-mode-switch" id="equipModeSwitch" role="group" aria-label="Режим боя">
+        <button type="button" class="equip-mode" data-mode="random" aria-pressed="false">Рандом</button>
+        <button type="button" class="equip-mode active" data-mode="abs" aria-pressed="true">АБС</button>
+      </div>
     </div>
 
     <div class="equip-buttons" id="tankButtons"></div>
@@ -2274,8 +2730,11 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
 
 </div>
 
-<script src="tables.js?v=4"></script>
-<script src="maps.js?v=4"></script>
+<script src="tables.js?v=5"></script>
+<script src="maps.js?v=5"></script>
+
+<script src="Equip/equipment_t10.js?v=4"></script>
+<script src="Equip/equipment_overrides.js?v=4"></script>
 
 <script>
 "use strict";
@@ -2319,33 +2778,108 @@ const ROMAN_LEVELS = { 8: "VIII", 9: "IX", 10: "X", 11: "XI" };
 
 const BUILD_TITLES = { main: "Основной", alternative: "Альтернативный", situational: "Ситуативный" };
 
-const SORT_COLUMNS = ["name", "nation", "class", "role", "level"];
+const SORT_COLUMNS = ["name", "nation", "class", "role", "rating"];
+
+const RATING_ORDER = { "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "5+": 6 };
+
+const NATION_ORDER = [
+  "ussr", "germany", "usa", "china", "france", "uk",
+  "japan", "czech", "sweden", "poland", "italy", "intunion",
+];
+
+const CLASS_ORDER = ["heavyTank", "mediumTank", "lightTank", "AT-SPG", "SPG"];
+
+const orderIndex = (value, order) => {
+  const index = order.indexOf(value);
+  return index < 0 ? order.length : index;
+};
+
+const BUILD_MODES = ["random", "abs"];
+const DEFAULT_BUILD_MODE = "abs";
+
+const MODE_EMPTY_TEXT = {
+  random: "Оборудование для рандома пока не добавлено",
+  abs: "Оборудование для АБС пока не добавлено",
+};
 
 let EQUIPMENT_DB = null;
 let currentTankId = null;
+let currentBuildMode = DEFAULT_BUILD_MODE;
 let currentSortColumn = null;
 let currentSortDirection = "asc";
+
+let pendingEquipmentState = null;
+
+function equipmentHashParams() {
+  if (!currentTankId) return {};
+  return { tank: currentTankId, fmt: currentBuildMode };
+}
+
+function applyEquipmentHashState({ tank, fmt } = {}) {
+  pendingEquipmentState = tank ? { tank, fmt } : null;
+  if (!EQUIPMENT_DB) return;
+
+  pendingEquipmentState = null;
+
+  if (fmt && BUILD_MODES.includes(fmt)) {
+    currentBuildMode = fmt;
+    syncBuildModeButtons();
+  }
+
+  if (!tank) {
+    if (currentTankId) backToTable();
+    return;
+  }
+  if (tank !== currentTankId) openTank(tank);
+  else renderTankView();
+}
 
 function getTanksList() {
   return getField(EQUIPMENT_DB, "tanks") ?? [];
 }
 
-async function loadEquipmentDB() {
-  try {
-    const response = await fetch("equipment.json");
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    EQUIPMENT_DB = await response.json();
-    initEquipmentFilters();
-    applyFilters();
-  } catch (err) {
-    console.error("Ошибка загрузки equipment.json:", err);
+function findTank(tankId) {
+  return getTanksList().find((tank) => readField(tank, "id") === tankId) ?? null;
+}
+
+function tankRating(tank) {
+  const overrides = typeof TANK_BUILD_OVERRIDES === "undefined" ? null : TANK_BUILD_OVERRIDES;
+  const custom = overrides?.[readField(tank, "id")]?.rating;
+  return String(custom ?? readField(tank, "rating") ?? "").trim();
+}
+
+function loadEquipmentDB() {
+  if (typeof EQUIPMENT_T10 === "undefined") {
+    console.error("equipment_t10.js не загружен");
     document.getElementById("equipmentContent").innerHTML =
-      `<p class="error-state">Не удалось загрузить данные оборудования</p>`;
+      `<p class="error-state">Нет файла equipment_t10.js — соберите его командой <code>python build_equipment_t10.py</code></p>`;
+    return;
   }
+
+  EQUIPMENT_DB = EQUIPMENT_T10;
+  initEquipmentFilters();
+  applyFilters();
+
+  if (pendingEquipmentState) applyEquipmentHashState(pendingEquipmentState);
+}
+
+function resolveTankBuild(tank, mode) {
+  const role = readField(tank, "role");
+  const preset = EQUIPMENT_DB?.roleBuilds?.[mode]?.[role];
+
+  const overrides = typeof TANK_BUILD_OVERRIDES === "undefined" ? null : TANK_BUILD_OVERRIDES;
+  const override = overrides?.[readField(tank, "id")]?.[mode];
+
+  return {
+    equipmentBuilds: override?.equipmentBuilds ?? preset?.equipmentBuilds ?? [],
+    mods: override?.mods ?? preset?.mods ?? [],
+    isCustom: Boolean(override?.equipmentBuilds || override?.mods),
+  };
 }
 
 function initEquipmentFilters() {
-  ["filterNationDropdown", "filterClassDropdown", "filterRoleDropdown", "filterLevelDropdown"]
+  ["filterNationDropdown", "filterClassDropdown", "filterRoleDropdown",
+   "filterRatingDropdown", "filterLevelDropdown"]
     .forEach((id) => initCustomDropdown(id, applyFilters));
 }
 
@@ -2412,10 +2946,11 @@ document.addEventListener("click", () => {
 function getSortValue(tank, column) {
   const raw = readField(tank, column);
   switch (column) {
-    case "nation": return (NATION_NAMES[raw] ?? raw).toLowerCase();
-    case "class": return (CLASS_NAMES[raw] ?? raw).toLowerCase();
+    case "nation": return orderIndex(raw, NATION_ORDER);
+    case "class": return orderIndex(raw, CLASS_ORDER);
     case "role": return (ROLE_NAMES[raw] ?? raw).toLowerCase();
     case "level": return parseInt(raw || "0", 10);
+    case "rating": return RATING_ORDER[tankRating(tank)] ?? 0;
     default: return raw.toLowerCase();
   }
 }
@@ -2449,12 +2984,14 @@ function applyFilters() {
   const nation = getDropdownValue("filterNationDropdown");
   const cls = getDropdownValue("filterClassDropdown");
   const role = getDropdownValue("filterRoleDropdown");
+  const rating = getDropdownValue("filterRatingDropdown");
   const level = getDropdownValue("filterLevelDropdown");
 
   const filtered = getTanksList().filter((tank) => {
     if (nation !== "all" && readField(tank, "nation") !== nation) return false;
     if (cls !== "all" && readField(tank, "class") !== cls) return false;
     if (role !== "all" && readField(tank, "role") !== role) return false;
+    if (rating !== "all" && tankRating(tank) !== rating) return false;
     if (level !== "all" && readField(tank, "level") !== level) return false;
     return true;
   });
@@ -2468,13 +3005,12 @@ function renderTankRow(tank) {
   const rawClass = readField(tank, "class");
   const name = readField(tank, "name");
   const rawRole = readField(tank, "role");
-  const level = readField(tank, "level");
+  const rating = tankRating(tank);
 
   const isActive = id === currentTankId ? "active" : "";
   const nation = NATION_NAMES[rawNation] ?? rawNation;
   const cls = CLASS_NAMES[rawClass] ?? rawClass;
   const role = ROLE_NAMES[rawRole] ?? rawRole;
-  const romanLevel = ROMAN_LEVELS[level] ?? level;
 
   const tankIcon = `icons/${rawNation}-${id}.png`;
   const nationIcon = `flags/${rawNation}.png`;
@@ -2486,7 +3022,7 @@ function renderTankRow(tank) {
       <td><div class="cell-content"><img src="${nationIcon}" class="icon-img" alt=""><span>${escapeHtml(nation)}</span></div></td>
       <td><div class="cell-content"><img src="${classIcon}" class="icon-img" alt=""><span>${escapeHtml(cls)}</span></div></td>
       <td><div class="cell-content"><span>${escapeHtml(role)}</span></div></td>
-      <td>${escapeHtml(String(romanLevel))}</td>
+      <td>${rating ? `<span class="rating-badge" data-rating="${escapeHtml(rating)}">${escapeHtml(rating)}</span>` : ""}</td>
     </tr>
   `;
 }
@@ -2510,7 +3046,7 @@ function renderTankTable(tanks = null) {
           <th class="sortable" data-sort="nation">Нация <span id="sort-nation"></span></th>
           <th class="sortable" data-sort="class">Класс <span id="sort-class"></span></th>
           <th class="sortable" data-sort="role">Роль <span id="sort-role"></span></th>
-          <th class="sortable" data-sort="level">Уровень <span id="sort-level"></span></th>
+          <th class="sortable" data-sort="rating">Эфф. <span id="sort-rating"></span></th>
         </tr>
       </thead>
       <tbody>${list.map(renderTankRow).join("")}</tbody>
@@ -2536,35 +3072,104 @@ function renderTankTable(tanks = null) {
 }
 
 function openTank(tankId) {
+  if (!findTank(tankId)) return;
+
   currentTankId = tankId;
-  const tank = getTanksList().find((t) => readField(t, "id") === tankId);
-  if (!tank) return;
 
   document.querySelector(".equip-filters").hidden = true;
   document.getElementById("tankButtons").hidden = true;
   document.getElementById("backButtonContainer").hidden = false;
 
-  const name = readField(tank, "name");
-  const images = getField(tank, "images");
-  const mods = getField(tank, "mods");
-  const builds = getField(tank, "equipmentBuilds");
+  renderTankView();
+  writeStateToHash();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
-  let html = `<div class="tank-name">${escapeHtml(name)}</div>`;
-
-  if (images?.[0]) {
-    const imgSrc = String(images[0]).trim();
-    html += `
-      <div class="tank-main-image">
-        <img src="images/${imgSrc}" alt="${escapeHtml(name)}">
-        ${mods?.length ? renderFieldMods(mods) : ""}
-      </div>
-    `;
+function renderTankView() {
+  const tank = findTank(currentTankId);
+  const container = document.getElementById("equipmentContent");
+  if (!tank) {
+    container.innerHTML = "";
+    return;
   }
 
-  if (builds?.length) html += renderEquipmentBuilds(builds);
+  const { equipmentBuilds, mods } = resolveTankBuild(tank, currentBuildMode);
 
-  document.getElementById("equipmentContent").innerHTML = html;
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  const rating = tankRating(tank);
+  const ratingMarkup = currentBuildMode === "abs" && rating
+    ? `<div class="tank-rating">Эффективность
+         <span class="rating-badge" data-rating="${escapeHtml(rating)}">${escapeHtml(rating)}</span>
+       </div>`
+    : "";
+
+  container.innerHTML = `
+    <div class="tank-name">${escapeHtml(readField(tank, "name"))}</div>
+    ${ratingMarkup}
+    ${renderTankStage(tank, mods)}
+    ${equipmentBuilds.length
+      ? renderEquipmentBuilds(equipmentBuilds)
+      : `<p class="empty-state equip-empty">${escapeHtml(MODE_EMPTY_TEXT[currentBuildMode] ?? "")}</p>`}
+  `;
+
+  applyImageFallbacks(container);
+}
+
+function renderTankStage(tank, mods) {
+  const id = readField(tank, "id");
+  const nation = readField(tank, "nation");
+  const name = readField(tank, "name");
+  const image = String((getField(tank, "images") ?? [])[0] ?? "").trim();
+
+  const fallback = `icons/${encodeURIComponent(`${nation}-${id}`)}.png`;
+  const source = image ? `images/${encodeURIComponent(image)}` : fallback;
+
+  return `
+    <div class="tank-stage" data-mods="${mods.length}">
+      <div class="tank-frame${image ? "" : " tank-frame--fallback"}">
+        <img class="tank-hero__img${image ? "" : " is-fallback"}"
+             src="${source}"
+             ${image ? `data-fallback="${escapeHtml(fallback)}"` : ""}
+             alt="${escapeHtml(name)}">
+        <div class="mods-wrapper">${mods.map(renderModBlock).join("")}</div>
+      </div>
+    </div>
+  `;
+}
+
+function applyImageFallbacks(root) {
+  root.querySelectorAll("img[data-fallback]").forEach((img) => {
+    const swap = () => {
+      const fallback = img.dataset.fallback;
+      if (!fallback) return;
+      delete img.dataset.fallback;
+      img.src = fallback;
+      img.classList.add("is-fallback");
+      img.closest(".tank-frame")?.classList.add("tank-frame--fallback");
+    };
+
+    img.addEventListener("error", swap, { once: true });
+    if (img.complete && img.naturalWidth === 0) swap();
+  });
+}
+
+function syncBuildModeButtons() {
+  document.querySelectorAll("#equipModeSwitch .equip-mode").forEach((btn) => {
+    const isActive = btn.dataset.mode === currentBuildMode;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-pressed", String(isActive));
+  });
+}
+
+function setBuildMode(mode) {
+  if (!BUILD_MODES.includes(mode)) return;
+
+  currentBuildMode = mode;
+  syncBuildModeButtons();
+
+  if (currentTankId) {
+    renderTankView();
+    writeStateToHash();
+  }
 }
 
 function backToTable() {
@@ -2575,26 +3180,27 @@ function backToTable() {
 
   currentTankId = null;
   applyFilters();
+  writeStateToHash();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 document.getElementById("backToTableBtn").addEventListener("click", backToTable);
 
+document.querySelectorAll("#equipModeSwitch .equip-mode").forEach((btn) => {
+  btn.addEventListener("click", () => setBuildMode(btn.dataset.mode));
+});
+
 function renderEquipmentSlot(item) {
-  const rawItem = String(item).trim();
+  const rawItem = String(item ?? "").trim();
   const cleanName = rawItem.replace(/\.[^/.]+$/, "");
-  return `
-    <div class="slot">
-      <div class="corner tl"></div>
-      <div class="corner tr"></div>
-      <div class="corner bl"></div>
-      <div class="corner br"></div>
-      <div class="slot-bottom-line"></div>
-      <div class="slot-icon item-${cleanName}">
-        <img src="equipment/${rawItem}" alt="">
-      </div>
-    </div>
-  `;
+
+  const icon = rawItem
+    ? `<div class="slot-icon item-${escapeHtml(cleanName)}">
+         <img src="equipment/${encodeURIComponent(rawItem)}" alt="">
+       </div>`
+    : "";
+
+  return `<div class="slot${rawItem ? "" : " slot--empty"}">${icon}</div>`;
 }
 
 function renderEquipmentBuilds(builds) {
@@ -2614,15 +3220,11 @@ function renderEquipmentBuilds(builds) {
   return `<div class="equipment-builds" data-count="${builds.length}">${buildsMarkup}</div>`;
 }
 
-function renderFieldMods(mods) {
-  return `<div class="mods-wrapper">${mods.map(renderModBlock).join("")}</div>`;
-}
-
 function renderModBlock(mod) {
   const left = readField(mod, "left");
   const right = readField(mod, "right");
   const level = readField(mod, "level");
-  const activeSide = readField(mod, "activeSide");
+  const activeSide = readField(mod, "activeSide").toLowerCase();
 
   const overlaysBySide = {
     left: `
@@ -2645,12 +3247,15 @@ function renderModBlock(mod) {
     `,
   };
 
+  const perk = (name, side) =>
+    name ? `<img src="Modernization/${encodeURIComponent(name)}" class="mod-base ${side}" alt="">` : "";
+
   return `
     <div class="mod-block">
-      <img src="Modernization/${left}" class="mod-base left" alt="">
-      <img src="Modernization/${right}" class="mod-base right" alt="">
-      ${overlaysBySide[activeSide] ?? ""}
-      <img src="Modernization/${level}" class="mod-level" alt="">
+      ${perk(left, "left")}
+      ${perk(right, "right")}
+      ${overlaysBySide[activeSide] ?? overlaysBySide.none}
+      ${level ? `<img src="Modernization/${encodeURIComponent(level)}" class="mod-level" alt="">` : ""}
     </div>
   `;
 }
