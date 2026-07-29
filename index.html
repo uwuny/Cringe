@@ -2730,8 +2730,8 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
 
 </div>
 
-<script src="tables.js?v=5"></script>
-<script src="maps.js?v=5"></script>
+<script src="tables.js?v=6"></script>
+<script src="maps.js?v=6"></script>
 
 <script src="Equip/equipment_t10.js?v=4"></script>
 <script src="Equip/equipment_overrides.js?v=4"></script>
@@ -2812,7 +2812,8 @@ let pendingEquipmentState = null;
 
 function equipmentHashParams() {
   if (!currentTankId) return {};
-  return { tank: currentTankId, fmt: currentBuildMode };
+  const isDefault = currentBuildMode === DEFAULT_BUILD_MODE;
+  return { tank: currentTankId, ...(isDefault ? {} : { fmt: currentBuildMode }) };
 }
 
 function applyEquipmentHashState({ tank, fmt } = {}) {
@@ -2821,10 +2822,8 @@ function applyEquipmentHashState({ tank, fmt } = {}) {
 
   pendingEquipmentState = null;
 
-  if (fmt && BUILD_MODES.includes(fmt)) {
-    currentBuildMode = fmt;
-    syncBuildModeButtons();
-  }
+  currentBuildMode = BUILD_MODES.includes(fmt) ? fmt : DEFAULT_BUILD_MODE;
+  syncBuildModeButtons();
 
   if (!tank) {
     if (currentTankId) backToTable();
