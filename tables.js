@@ -171,18 +171,28 @@ function currentActiveTab() {
   return document.querySelector(".tab.active")?.dataset.tab || "stats";
 }
 
+/** Параметры хэша только для активной вкладки — ссылка короче и читабельнее. */
+function hashParamsForTab(tab) {
+  if (tab === "maps") {
+    return mapsHashParams();
+  }
+  if (tab === "equipment") {
+    return typeof equipmentHashParams === "function" ? equipmentHashParams() : {};
+  }
+  return {
+    stat: currentType,
+    season: currentSeason,
+    stage: currentStage,
+    date: currentDate ?? "all",
+    avg: avgPosition,
+  };
+}
+
 function writeStateToHash() {
   clearTimeout(hashUpdateTimer);
   hashUpdateTimer = setTimeout(() => {
-    const params = new URLSearchParams({
-      tab: currentActiveTab(),
-      stat: currentType,
-      season: currentSeason,
-      stage: currentStage,
-      date: currentDate ?? "all",
-      avg: avgPosition,
-      ...mapsHashParams(),
-    });
+    const tab = currentActiveTab();
+    const params = new URLSearchParams({ tab, ...hashParamsForTab(tab) });
     history.replaceState(null, "", "#" + params.toString());
   }, 250);
 }
@@ -200,6 +210,8 @@ function readStateFromHash() {
     avg: params.get("avg"),
     map: params.get("map"),
     mode: params.get("mode"),
+    tank: params.get("tank"),
+    fmt: params.get("fmt"),
   };
 }
 
@@ -258,6 +270,10 @@ function applyHashState(hashState) {
   }
 
   applyMapsHashState(hashState ?? {});
+
+  if (typeof applyEquipmentHashState === "function") {
+    applyEquipmentHashState(hashState ?? {});
+  }
 }
 
 window.addEventListener("hashchange", () => {
