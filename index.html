@@ -2730,11 +2730,11 @@ td, th { transition: background-color var(--duration-fast) var(--ease-out); }
 
 </div>
 
-<script src="tables.js?v=6"></script>
-<script src="maps.js?v=6"></script>
+<script src="tables.js?v=8"></script>
+<script src="maps.js?v=8"></script>
 
-<script src="Equip/equipment_t10.js?v=4"></script>
-<script src="Equip/equipment_overrides.js?v=4"></script>
+<script src="Equip/equipment_t10.js?v=8"></script>
+<script src="Equip/equipment_overrides.js?v=8"></script>
 
 <script>
 "use strict";
@@ -2862,6 +2862,29 @@ function loadEquipmentDB() {
   if (pendingEquipmentState) applyEquipmentHashState(pendingEquipmentState);
 }
 
+const MOD_SIDES = ["left", "right", "none"];
+
+function rolePerks(role) {
+  const roles = EQUIPMENT_DB?.roleBuilds ?? {};
+  return roles.abs?.[role]?.mods ?? roles.random?.[role]?.mods ?? [];
+}
+
+function resolveMods(role, mode, override) {
+  const perks = rolePerks(role);
+  if (!perks.length) return [];
+
+  const presetMods = EQUIPMENT_DB?.roleBuilds?.[mode]?.[role]?.mods;
+  const sides = override?.modSides
+    ?? override?.mods?.map((mod) => mod.activeSide)
+    ?? presetMods?.map((mod) => mod.activeSide)
+    ?? perks.map((perk) => perk.activeSide);
+
+  return perks.map((perk, index) => ({
+    ...perk,
+    activeSide: MOD_SIDES.includes(sides[index]) ? sides[index] : "none",
+  }));
+}
+
 function resolveTankBuild(tank, mode) {
   const role = readField(tank, "role");
   const preset = EQUIPMENT_DB?.roleBuilds?.[mode]?.[role];
@@ -2871,8 +2894,8 @@ function resolveTankBuild(tank, mode) {
 
   return {
     equipmentBuilds: override?.equipmentBuilds ?? preset?.equipmentBuilds ?? [],
-    mods: override?.mods ?? preset?.mods ?? [],
-    isCustom: Boolean(override?.equipmentBuilds || override?.mods),
+    mods: resolveMods(role, mode, override),
+    isCustom: Boolean(override?.equipmentBuilds || override?.modSides || override?.mods),
   };
 }
 
