@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Визуализатор попаданий — Рыбацкая бухта">
+<title>Рыбацкая бухта — визуализатор попаданий</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root {
+    --team1:        #45d66f;
+    --team1-rgb:    69 214 111;
+    --team1-dim:    rgba(69, 214, 111, 0.10);
+    --team1-mid:    rgba(69, 214, 111, 0.24);
+
+    --team2:        #e45a5a;
+    --team2-rgb:    228 90 90;
+    --team2-dim:    rgba(228, 90, 90, 0.10);
+    --team2-mid:    rgba(228, 90, 90, 0.24);
+
+    --color-accent:          #45d66f;
+    --color-accent-rgb:      69 214 111;
+    --color-accent-soft-rgb: 44 107 69;
+    --color-accent-dim:      rgb(69 214 111 / 20%);
+    --color-accent-deep:     #2c9350;
+
+    --danger:       #e45a5a;
+    --danger-rgb:   228 90 90;
+
+    --color-win:    #45d66f;
+    --color-lose:   #e45a5a;
+    --color-link:   #7cc7de;
+
+    --color-bg:     #22242a;
+    --bg-brightness: 1.09;
+    --card-bg:      rgba(28, 28, 32, 0.74);
+    --panel-bg:     rgba(20, 20, 24, 0.88);
+
+    --line:         rgb(255 255 255 / 6%);
+    --line-lt:      rgb(255 255 255 / 12%);
+    --line-md:      rgb(255 255 255 / 16%);
+
+    --text:           #f2f3f5;
+    --text-secondary: #a2a5ad;
+    --text-dim:       rgb(242 243 245 / 55%);
+
+    --glass-blur:     24px;
+    --glass-blur-sm:  14px;
+    --glass-saturate: 180%;
+    --glass-bg:            rgba(28, 28, 32, 0.74);
+    --glass-bg-strong:     rgba(38, 38, 43, 0.80);
+    --glass-bg-active:     rgba(48, 48, 54, 0.84);
+    --glass-border:        rgb(255 255 255 / 9%);
+    --glass-border-strong: rgb(255 255 255 / 16%);
+    --glass-highlight:     rgba(255, 255, 255, 0.10);
+    --glass-shade:         rgba(0, 0, 0, 0.45);
+
+    --glass-shadow:       0 14px 40px rgb(0 0 0 / 40%), inset 0 1px 0 var(--glass-highlight), inset 0 -14px 20px -14px var(--glass-shade);
+    --glass-shadow-sm:    0 6px 18px rgb(0 0 0 / 32%), inset 0 1px 0 var(--glass-highlight);
+    --glass-shadow-stack: inset 0 1px 0 var(--glass-highlight), inset 0 -14px 20px -14px var(--glass-shade);
+
+    --shadow-border:       0 4px 14px rgb(0 0 0 / 24%), inset 0 1px 0 rgb(255 255 255 / 6%);
+    --shadow-border-hover: 0 6px 18px rgb(0 0 0 / 30%), inset 0 1px 0 rgb(255 255 255 / 12%);
+    --shadow-inset:        inset 0 1px 0 rgb(255 255 255 / 5%);
+
+    --font-ui:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    --radius-sm:   10px;
+    --radius-md:   14px;
+    --radius-lg:   20px;
+    --radius-xl:   22px;
+    --radius-full: 999px;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+
+    --duration-fast: 120ms;
+    --duration-base: 180ms;
+    --duration-med:  250ms;
+    --duration-slow: 350ms;
+    --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+
+* { box-sizing: border-box; }
+html, body {
+margin: 0; padding: 0; width: 100%; height: 100%;
+background: var(--color-bg); color: var(--text);
+font-family: var(--font-ui); overflow: hidden;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+@media (prefers-reduced-motion: reduce) {
+*, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+}
+}
+#scene { position: absolute; inset: 0; }
+#hud {
+position: absolute; top: 0; left: 0; right: 0;
+padding: 20px 24px 0 24px;
+pointer-events: none;
+z-index: 10;
+}
+#hud h1 {
+font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
+text-transform: uppercase; color: var(--text-dim); margin: 0 0 6px 0;
+}
+#hud .subtitle {
+display: flex;
+flex-direction: column;
+gap: 4px;
+margin: 0 0 12px 0;
+}
+#hud .subtitle-row {
+display: flex;
+align-items: baseline;
+flex-wrap: wrap;
+gap: 8px;
+}
+#hud .map-name {
+font-size: 17px;
+font-weight: 700;
+color: var(--text);
+letter-spacing: 0.01em;
+}
+#hud .battle-date {
+font-family: var(--font-mono); font-size: 11px; color: var(--text-dim);
+}
+#hud .clan-matchup {
+font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+}
+#hud .clan-tag { font-weight: 600; }
+#hud .clan-ally { color: var(--team1); }
+#hud .clan-enemy { color: var(--team2); }
+#hud .clan-vs { color: var(--text-dim); font-weight: 400; }
+#backLink {
+display: inline-block;
+pointer-events: all;
+font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);
+text-decoration: none;
+background: var(--card-bg);
+border: 1px solid var(--glass-border);
+border-radius: var(--radius-sm);
+padding: 5px 10px;
+margin-bottom: 12px;
+backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+-webkit-backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+box-shadow: var(--shadow-border);
+transition: border-color var(--duration-med) var(--ease-out), color var(--duration-med) var(--ease-out), background-color var(--duration-med) var(--ease-out), box-shadow var(--duration-med) var(--ease-out), translate var(--duration-fast) var(--ease-out);
+}
+#backLink:hover { border-color: var(--glass-border-strong); color: var(--text); background: var(--glass-bg-strong); box-shadow: var(--shadow-border-hover); translate: 0 -1px; }
+#backLink:active { translate: 0 0; scale: 0.97; }
+#filter-container {
+display: flex;
+align-items: flex-end;
+gap: 12px;
+flex-wrap: wrap;
+pointer-events: all;
+}
+#filter-container .filter-group {
+position: relative;
+}
+#filter-container .filter-group:first-child {
+min-width: 200px;
+}
+.filter-btn {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+gap: 2px;
+background: var(--card-bg);
+border: 1px solid var(--glass-border);
+color: var(--text);
+font-family: var(--font-ui);
+padding: 8px 14px;
+border-radius: var(--radius-sm);
+outline: none;
+cursor: pointer;
+min-width: 200px;
+backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+-webkit-backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+box-shadow: var(--shadow-border);
+transition: border-color var(--duration-med) var(--ease-out), box-shadow var(--duration-med) var(--ease-out), background-color var(--duration-med) var(--ease-out);
+}
+.filter-btn:hover { border-color: var(--glass-border-strong); background: var(--glass-bg-strong); box-shadow: var(--shadow-border-hover); }
+.filter-btn.open { border-color: var(--color-accent); box-shadow: 0 0 0 1px rgb(var(--color-accent-rgb) / 30%), inset 0 1px 0 rgb(255 255 255 / 14%); }
+.filter-btn-label { display: none; }
+.filter-btn-value {
+font-family: var(--font-mono);
+font-size: 13px;
+color: var(--text);
+}
+
+#modeBtn { display: none; }
+
+#modeDropdown {
+position: relative;
+visibility: visible;
+opacity: 1;
+transform: none;
+transition: none;
+pointer-events: auto;
+display: flex;
+width: 100%;
+min-width: 0;
+max-height: none;
+overflow: visible;
+gap: 2px;
+padding: 3px;
+background: var(--card-bg);
+border: 1px solid var(--glass-border);
+border-radius: var(--radius-full);
+backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+-webkit-backdrop-filter: blur(var(--glass-blur-sm)) saturate(var(--glass-saturate));
+box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%);
+}
+#modeDropdown::before {
+content: '';
+position: absolute;
+top: 3px; bottom: 3px; left: 3px;
+width: calc(50% - 4px);
+border-radius: var(--radius-full);
+background: var(--color-accent-dim);
+box-shadow: inset 0 1px 0 rgb(255 255 255 / 14%);
+transition: transform var(--duration-med) var(--ease-spring);
+z-index: 0;
+pointer-events: none;
+}
+#modeDropdown:has(.filter-dropdown-item:nth-child(2).active)::before {
+transform: translateX(calc(100% + 2px));
+}
+#modeDropdown .filter-dropdown-item {
+position: relative;
+z-index: 1;
+flex: 1;
+padding: 9px 10px;
+border-radius: var(--radius-full);
+font-family: var(--font-ui);
+font-weight: 600;
+color: var(--text-secondary);
+background: transparent;
+}
+#modeDropdown .filter-dropdown-item:hover { color: var(--text); }
+#modeDropdown .filter-dropdown-item.active { background: transparent; color: #c8f2d4; }
+
+#playerBtn {
+align-items: center;
+justify-content: center;
+padding: 10px 20px;
+border-radius: var(--radius-full);
+}
+#playerBtn .filter-btn-value { text-align: center; }
+
+.filter-dropdown {
+position: absolute;
+top: calc(100% + 6px);
+left: 0;
+min-width: 220px;
+max-height: 320px;
+overflow-y: auto;
+background:
+    linear-gradient(180deg, rgb(255 255 255 / 8%), transparent 50%),
+    rgba(28, 28, 30, 0.96);
+border: 1px solid var(--glass-border-strong);
+border-radius: var(--radius-md);
+box-shadow: var(--glass-shadow);
+backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+z-index: 20;
+padding: 6px;
+visibility: hidden;
+opacity: 0;
+transform: translateY(-6px) scale(0.98);
+transform-origin: top center;
+transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out), visibility 0s linear var(--duration-base);
+}
+.filter-dropdown.open {
+visibility: visible;
+opacity: 1;
+transform: translateY(0) scale(1);
+transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out), visibility 0s linear;
+}
+.filter-dropdown::-webkit-scrollbar { width: 8px; }
+.filter-dropdown::-webkit-scrollbar-track { background: transparent; margin: 16px 0; }
+.filter-dropdown::-webkit-scrollbar-thumb {
+background: linear-gradient(180deg, rgb(255 255 255 / 45%), rgb(255 255 255 / 22%));
+border-radius: var(--radius-sm);
+}
+.filter-dropdown-item {
+padding: 9px 12px;
+border-radius: var(--radius-sm);
+cursor: pointer;
+font-family: var(--font-mono);
+font-size: 12px;
+color: var(--text);
+text-align: center;
+transition: background 0.12s ease, color 0.12s ease;
+}
+.filter-dropdown-item:hover { background: var(--glass-bg-strong); }
+.filter-dropdown-item.active { background: var(--color-accent-dim); color: #c8f2d4; }
+.filter-dropdown-item.team-ally { color: var(--team1); }
+.filter-dropdown-item.team-ally:hover { background: rgb(var(--team1-rgb) / 12%); color: var(--team1); }
+.filter-dropdown-item.team-ally.active { background: rgb(var(--team1-rgb) / 20%); color: var(--team1); }
+.filter-dropdown-item.team-enemy { color: var(--team2); }
+.filter-dropdown-item.team-enemy:hover { background: rgb(var(--team2-rgb) / 12%); color: var(--team2); }
+.filter-dropdown-item.team-enemy.active { background: rgb(var(--team2-rgb) / 20%); color: var(--team2); }
+
+#emptyState {
+position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+text-align: center; z-index: 5;
+font-family: var(--font-mono); color: var(--text-secondary);
+pointer-events: none;
+}
+#emptyState .big { font-size: 15px; color: var(--text); margin-bottom: 6px; font-weight: 600; }
+#emptyState .small { font-size: 12px; opacity: 0.7; }
+
+#panel {
+position: absolute; bottom: 24px; left: 24px;
+width: 300px;
+background: var(--card-bg);
+border: 1px solid var(--glass-border);
+border-radius: var(--radius-xl);
+padding: 20px 22px;
+pointer-events: all;
+z-index: 10;
+backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+box-shadow: var(--glass-shadow);
+display: none;
+}
+#panel .row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+#panel .row:last-child { margin-bottom: 0; }
+#panel > .row:first-child {
+padding-bottom: 12px;
+margin-bottom: 14px;
+border-bottom: 1px solid var(--glass-border);
+}
+#panel .label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0; }
+#panel .value { font-family: var(--font-mono); font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums; }
+#panel > .row:nth-of-type(4) {
+padding-top: 12px;
+margin-top: 2px;
+border-top: 1px solid var(--glass-border);
+}
+#panel .value.dmg { color: var(--danger); font-weight: 700; font-size: 19px; text-shadow: 0 0 6px rgb(var(--danger-rgb) / 30%); }
+#panel > .row:nth-of-type(5) .value,
+#panel > .row:nth-of-type(6) .value { color: var(--text-secondary); font-size: 12px; }
+
+#panel .row.entity-row {
+display: grid;
+grid-template-columns: 1fr auto;
+grid-template-rows: auto auto;
+row-gap: 4px;
+column-gap: 10px;
+align-items: baseline;
+margin-bottom: 12px;
+}
+#panel .row.entity-row .label { grid-column: 1 / -1; grid-row: 1; }
+#panel .entity-name {
+grid-column: 1;
+grid-row: 2;
+min-width: 0;
+font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--text);
+white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#panel .entity-name.team-ally { color: var(--team1); }
+#panel .entity-name.team-enemy { color: var(--team2); }
+#panel .entity-tank {
+grid-column: 2;
+grid-row: 2;
+justify-self: end;
+font-family: var(--font-mono); font-size: 10.5px; color: var(--text-secondary);
+white-space: nowrap;
+padding: 2px 7px;
+background: rgb(255 255 255 / 5%);
+border-radius: var(--radius-sm);
+}
+#panel hr { border: none; border-top: 1px solid var(--glass-border); margin: 14px 0; }
+
+#shotlist-container {
+position: absolute; bottom: 24px; right: 24px;
+width: 320px;
+z-index: 10;
+pointer-events: all;
+display: flex;
+flex-direction: column;
+background: var(--card-bg);
+border: 1px solid var(--glass-border);
+border-radius: var(--radius-xl);
+backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+box-shadow: var(--glass-shadow);
+overflow: hidden;
+}
+#shotlist-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-shrink: 0;
+padding: 13px 14px;
+border-bottom: 1px solid var(--glass-border);
+}
+#shotlist-title {
+font-family: var(--font-mono); font-size: 11px; color: var(--text-dim);
+text-transform: uppercase; letter-spacing: 0.08em;
+}
+#nav {
+display: flex;
+gap: 2px;
+padding: 2px;
+background: rgb(255 255 255 / 5%);
+border: 1px solid var(--glass-border);
+border-radius: var(--radius-full);
+}
+.nav-btn {
+width: 24px; height: 24px;
+padding: 0;
+background-color: transparent;
+background-repeat: no-repeat;
+background-position: center;
+background-size: 12px 12px;
+border: none;
+border-radius: var(--radius-full);
+color: transparent;
+font-size: 0;
+line-height: 0;
+cursor: pointer;
+transition: background-color 0.12s ease, scale var(--duration-fast) var(--ease-out);
+}
+.nav-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.nav-btn:disabled { opacity: 0.35; cursor: default; }
+#prevBtn { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a6a6a6' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='15 5 8 12 15 19'/%3E%3C/svg%3E"); }
+#nextBtn { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a6a6a6' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 5 16 12 9 19'/%3E%3C/svg%3E"); }
+#prevBtn:hover { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='15 5 8 12 15 19'/%3E%3C/svg%3E"); }
+#nextBtn:hover { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 5 16 12 9 19'/%3E%3C/svg%3E"); }
+.nav-btn:hover { background-color: rgb(255 255 255 / 12%); }
+.nav-btn:active { scale: 0.88; }
+
+#shotlist {
+background: transparent;
+border: none;
+border-radius: 0;
+padding: 8px;
+max-height: 55vh;
+overflow-y: auto;
+display: none;
+scrollbar-width: thin;
+scrollbar-color: rgb(255 255 255 / 35%) transparent;
+}
+#shotlist::-webkit-scrollbar { width: 8px; }
+#shotlist::-webkit-scrollbar-track { background: transparent; }
+#shotlist::-webkit-scrollbar-thumb {
+background: linear-gradient(180deg, rgb(255 255 255 / 45%), rgb(255 255 255 / 22%));
+border-radius: var(--radius-sm);
+transition: background-color var(--duration-fast) var(--ease-out);
+}
+#shotlist::-webkit-scrollbar-thumb:hover {
+background: linear-gradient(180deg, rgb(255 255 255 / 60%), rgb(255 255 255 / 32%));
+}
+.shot-item {
+padding: 9px 12px;
+border-radius: var(--radius-sm);
+cursor: pointer;
+font-family: var(--font-mono);
+font-size: 12px;
+color: var(--text-secondary);
+display: grid;
+grid-template-columns: 1fr auto;
+align-items: baseline;
+column-gap: 12px;
+transition: background 0.12s ease, color 0.12s ease;
+}
+.shot-item:not(:last-child) { margin-bottom: 1px; }
+.shot-item .shot-line {
+display: flex;
+align-items: baseline;
+gap: 7px;
+min-width: 0;
+overflow: hidden;
+}
+.shot-item:hover { background: var(--glass-bg-strong); color: var(--text); }
+.shot-item.active { background: var(--color-accent-dim); color: #c8f2d4; }
+.shot-item .dmg-tag { color: var(--danger); font-weight: 700; text-align: right; min-width: 30px; font-variant-numeric: tabular-nums; }
+.shot-item.active .dmg-tag { color: #ef9c9c; }
+.shot-item .shot-idx { flex-shrink: 0; color: var(--text-dim); }
+.shot-item .shot-time { flex-shrink: 0; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.shot-item .shot-divider { flex-shrink: 0; width: 1px; align-self: stretch; background: var(--glass-border-strong); }
+.shot-item .shot-arrow { flex-shrink: 0; color: var(--text-dim); }
+.shot-item .victim-tag { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+.shot-item .victim-tag.team-ally { color: var(--team1); }
+.shot-item .victim-tag.team-enemy { color: var(--team2); }
+
+#hint {
+pointer-events: none;
+font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); opacity: 0.85;
+margin: 4px 0 14px 0;
+}
+#loading {
+position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+color: var(--color-accent); font-size: 15px; z-index: 30; text-align: center;
+font-family: var(--font-mono);
+}
+#loading.error { color: var(--danger); max-width: 480px; line-height: 1.5; }
+
+@media (max-width: 900px) {
+#hud { padding: 14px 16px 0 16px; }
+#hud .map-name { font-size: 15px; }
+.filter-btn,
+#filter-container .filter-group:first-child { min-width: 168px; }
+#panel { left: 16px; bottom: 16px; width: min(300px, 42vw); padding: 16px 18px; }
+#shotlist-container { right: 16px; bottom: 16px; width: min(320px, 46vw); }
+#shotlist { max-height: 40vh; }
+}
+
+@media (max-width: 680px) {
+#hud { padding: 10px 12px 0 12px; }
+#hud h1 { font-size: 10px; }
+#hud .map-name { font-size: 14px; }
+#hud .battle-date, #hud .clan-matchup { font-size: 10.5px; }
+#hint { display: none; }
+
+#filter-container { gap: 8px; }
+#filter-container .filter-group { flex: 1 1 132px; }
+.filter-btn,
+#filter-container .filter-group:first-child { min-width: 0; }
+#playerBtn { min-width: 0; padding: 9px 12px; }
+
+#panel {
+    left: 10px; bottom: 10px;
+    width: calc(50% - 15px);
+    padding: 13px 14px;
+    border-radius: var(--radius-lg);
+}
+#panel .row { margin-bottom: 8px; }
+#panel .label { font-size: 9px; }
+#panel .value { font-size: 11.5px; }
+#panel .value.dmg { font-size: 16px; }
+#panel .entity-name { font-size: 12px; }
+#panel .entity-tank { display: none; }
+
+#shotlist-container {
+    right: 10px; bottom: 10px;
+    width: calc(50% - 15px);
+    border-radius: var(--radius-lg);
+}
+#shotlist { max-height: 30vh; padding: 6px; }
+.shot-item { font-size: 11px; padding: 7px 9px; column-gap: 8px; }
+.shot-item .shot-idx { display: none; }
+}
+
+@media (max-height: 520px) {
+#hint { display: none; }
+#shotlist { max-height: 24vh; }
+}
+
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="loading">Загрузка данных…</div>
+<div id="hud">
+<h1>Визуализатор попаданий</h1>
+<div class="subtitle">
+    <div class="subtitle-row">
+        <span class="map-name">Рыбацкая бухта</span>
+        <span class="clan-matchup" id="clanMatchup"></span>
+    </div>
+    <div class="subtitle-row">
+        <span class="battle-date">2026-06-02 15:00</span>
+    </div>
+</div>
+<a id="backLink" href="20260602_1500_poland-Pl34_CS_63_02_36_fishing_bay.html">← к карте боя</a>
+<div id="hint">ЛКМ — вращение · колесо — зум · ПКМ — панорама · ← → — выстрелы</div>
+<div id="filter-container">
+    <div class="filter-group">
+        <button class="filter-btn" id="modeBtn" type="button">
+            <span class="filter-btn-label">Режим</span>
+            <span class="filter-btn-value" id="modeBtnValue">Атакующий</span>
+        </button>
+        <div class="filter-dropdown" id="modeDropdown"></div>
+    </div>
+    <div class="filter-group">
+        <button class="filter-btn" id="playerBtn" type="button">
+            <span class="filter-btn-label" id="playerBtnLabel">Атакующий</span>
+            <span class="filter-btn-value" id="playerBtnValue">—</span>
+        </button>
+        <div class="filter-dropdown" id="playerDropdown"></div>
+    </div>
+</div>
+</div>
+<div id="emptyState">
+    <div class="big">Выберите игрока</div>
+    <div class="small">режим и игрока сверху — чтобы увидеть выстрелы</div>
+</div>
+<div id="panel">
+<div class="row"><span class="label">Время</span><span class="value" id="v-clock">—</span></div>
+<div class="row entity-row">
+    <span class="label">Атакующий</span>
+    <span class="entity-name" id="v-attacker-name">—</span>
+    <span class="entity-tank" id="v-attacker-tank"></span>
+</div>
+<div class="row entity-row">
+    <span class="label">Жертва</span>
+    <span class="entity-name" id="v-victim-name">—</span>
+    <span class="entity-tank" id="v-victim-tank"></span>
+</div>
+<div class="row"><span class="label">урон</span><span class="value dmg" id="v-dmg">—</span></div>
+<hr>
+<div class="row"><span class="label">Расстояние</span><span class="value" id="v-dist">—</span></div>
+<div class="row"><span class="label">Выстрел</span><span class="value" id="v-idx">—</span></div>
+</div>
+<div id="shotlist-container">
+    <div id="shotlist-header">
+        <span id="shotlist-title">Выстрелы</span>
+        <div id="nav">
+            <button class="nav-btn" id="prevBtn" type="button" aria-label="Предыдущий выстрел">‹</button>
+            <button class="nav-btn" id="nextBtn" type="button" aria-label="Следующий выстрел">›</button>
+        </div>
+    </div>
+    <div id="shotlist" role="listbox" aria-label="Список выстрелов"></div>
+</div>
+
+<script type="importmap">
+{
+"imports": {
+"three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+}
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+
+const MODELS_DIR = 'objects/';
+const FALLBACK_MODEL_URL = MODELS_DIR + '121.obj';
+
+function nameWithoutClan(name) {
+    return String(name || '').replace(/\s*\[[^\]]*\]\s*$/, '');
+}
+
+const TRACER_LENGTH = 9;
+const TRACER_START_OFFSET = 3.5;
+
+let SHOTS = [];
+const tankModelCache = new Map();
+let fallbackModelEntry = null;
+
+const ui = {
+loading: document.getElementById('loading'),
+clock: document.getElementById('v-clock'),
+attackerName: document.getElementById('v-attacker-name'),
+attackerTank: document.getElementById('v-attacker-tank'),
+victimName: document.getElementById('v-victim-name'),
+victimTank: document.getElementById('v-victim-tank'),
+dmg: document.getElementById('v-dmg'),
+dist: document.getElementById('v-dist'),
+idx: document.getElementById('v-idx'),
+panel: document.getElementById('panel'),
+shotlist: document.getElementById('shotlist'),
+emptyState: document.getElementById('emptyState'),
+};
+
+function normalizeKeys(obj) {
+if (Array.isArray(obj)) {
+    return obj.map(normalizeKeys);
+}
+if (obj !== null && typeof obj === 'object') {
+    const normalized = {};
+    for (const [key, value] of Object.entries(obj)) {
+        normalized[key.trim()] = normalizeKeys(value);
+    }
+    return normalized;
+}
+if (typeof obj === 'string') {
+    return obj.trim();
+}
+return obj;
+}
+
+const container = document.getElementById('scene');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x2c2c2e);
+scene.fog = new THREE.Fog(0x2c2c2e, 40, 220);
+
+const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.05, 500);
+camera.position.set(10, 8, 14);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+container.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 2;
+controls.maxDistance = 120;
+controls.target.set(0, 1, 0);
+
+scene.add(new THREE.HemisphereLight(0xf5f5f0, 0x3a3a3c, 0.5));
+scene.add(new THREE.AmbientLight(0xffffff, 0.18));
+
+const key = new THREE.DirectionalLight(0xffffff, 0.55);
+key.position.set(12, 18, 10);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.left = -20;
+key.shadow.camera.right = 20;
+key.shadow.camera.top = 20;
+key.shadow.camera.bottom = -20;
+scene.add(key);
+
+const fillLeft = new THREE.DirectionalLight(0xffffff, 0.3);
+fillLeft.position.set(-14, 14, 9);
+scene.add(fillLeft);
+
+const fillBack = new THREE.DirectionalLight(0xffffff, 0.26);
+fillBack.position.set(-6, 10, -14);
+scene.add(fillBack);
+
+const rim = new THREE.DirectionalLight(0xdfe8ff, 0.22);
+rim.position.set(10, 8, -12);
+scene.add(rim);
+
+const fillBelow = new THREE.DirectionalLight(0xffffff, 0.16);
+fillBelow.position.set(3, -8, 6);
+scene.add(fillBelow);
+
+const sideLeftLow = new THREE.DirectionalLight(0xffffff, 0.16);
+sideLeftLow.position.set(-13, 1.5, 3);
+scene.add(sideLeftLow);
+
+const sideRightLow = new THREE.DirectionalLight(0xffffff, 0.16);
+sideRightLow.position.set(13, 1.5, -3);
+scene.add(sideRightLow);
+
+const grid = new THREE.GridHelper(80, 40, 0x4a4a4c, 0x323234);
+scene.add(grid);
+
+const floor = new THREE.Mesh(
+new THREE.CircleGeometry(60, 64),
+new THREE.MeshStandardMaterial({ color: 0x222224, roughness: 1 })
+);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -0.01;
+floor.receiveShadow = true;
+scene.add(floor);
+
+const BATTLE_DATA = {"shots": [{"hit_clock": 25.52, "attacker_id": 7535417, "attacker_name": "_Press_akk_[LPACO]", "attacker_tank": "Orso", "attacker_tank_raw": "italy:It33_Orso", "victim_id": 7535415, "victim_name": "McQueen[LST_S]", "victim_tank": "Wilk", "victim_tank_raw": "poland:Pl34_CS_63_02", "attacker_team": 2, "victim_team": 1, "damage": 448, "shooter_pos": {"x": -6.36, "y": 7.58, "z": -218.89}, "shooter_ypr": {"yaw": -0.2669, "pitch": -0.0169, "roll": -0.0123}, "victim_pos": {"x": -193.69, "y": 20.54, "z": -43.63}, "victim_ypr": {"yaw": -1.5008, "pitch": 0.0159, "roll": 0.1152}, "impact_point": {"x": 27.16, "y": 8.24, "z": -283.73}}, {"hit_clock": 28.91, "attacker_id": 7535421, "attacker_name": "Mudazor[LST_S]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535418, "victim_name": "xRoM4iKx[LPACO]", "victim_tank": "Т-100 ЛТ", "victim_tank_raw": "ussr:R132_VNII_100LT", "attacker_team": 1, "victim_team": 2, "damage": 486, "shooter_pos": {"x": -239.8, "y": 17.18, "z": 37.44}, "shooter_ypr": {"yaw": 2.7397, "pitch": -0.1075, "roll": -0.0245}, "victim_pos": {"x": -312.44, "y": 20.35, "z": -196.52}, "victim_ypr": {"yaw": -0.359, "pitch": 0.0307, "roll": 0.0061}, "impact_point": {"x": -311.77, "y": 21.0, "z": -195.69}}, {"hit_clock": 45.01, "attacker_id": 7535425, "attacker_name": "Iriska_27[LPACO]", "attacker_tank": "T95/Chieftain", "attacker_tank_raw": "uk:GB88_T95_Chieftain_turret", "victim_id": 7535424, "victim_name": "Gluvit[LST_S]", "victim_tank": "FV215b", "victim_tank_raw": "uk:GB13_FV215b", "attacker_team": 2, "victim_team": 1, "damage": 415, "shooter_pos": {"x": -134.94, "y": 20.44, "z": -33.16}, "shooter_ypr": {"yaw": 0.0675, "pitch": -0.0046, "roll": -0.0123}, "victim_pos": {"x": -129.53, "y": 20.25, "z": 49.64}, "victim_ypr": {"yaw": 1.7211, "pitch": -0.0246, "roll": -0.0123}, "impact_point": {"x": -141.44, "y": 17.81, "z": 79.62}}, {"hit_clock": 65.71, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535422, "victim_name": "Zloy_Otets[LPACO]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 1, "victim_team": 2, "damage": 406, "shooter_pos": {"x": -188.03, "y": 17.77, "z": 57.43}, "shooter_ypr": {"yaw": 2.7182, "pitch": -0.1075, "roll": 0.0061}, "victim_pos": {"x": -158.29, "y": 20.45, "z": -47.55}, "victim_ypr": {"yaw": -1.1351, "pitch": -0.0107, "roll": 0.0123}, "impact_point": {"x": -191.35, "y": 20.79, "z": 16.02}}, {"hit_clock": 78.21, "attacker_id": 7535418, "attacker_name": "xRoM4iKx[LPACO]", "attacker_tank": "Т-100 ЛТ", "attacker_tank_raw": "ussr:R132_VNII_100LT", "victim_id": 7535420, "victim_name": "_CKOBOPODA_[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 304, "shooter_pos": {"x": -474.87, "y": 13.11, "z": -229.62}, "shooter_ypr": {"yaw": -2.2918, "pitch": 0.0384, "roll": -0.0859}, "victim_pos": {"x": -466.0, "y": 14.94, "z": -249.19}, "victim_ypr": {"yaw": 1.5156, "pitch": -0.2733, "roll": -0.0491}, "impact_point": {"x": -386.54, "y": 21.38, "z": -167.65}}, {"hit_clock": 83.21, "attacker_id": 7535426, "attacker_name": "PeHeuM[LST_S]", "attacker_tank": "Об. 260", "attacker_tank_raw": "ussr:R110_Object_260", "victim_id": 7535418, "victim_name": "xRoM4iKx[LPACO]", "victim_tank": "Т-100 ЛТ", "victim_tank_raw": "ussr:R132_VNII_100LT", "attacker_team": 1, "victim_team": 2, "damage": 453, "shooter_pos": {"x": -473.52, "y": 13.58, "z": -300.49}, "shooter_ypr": {"yaw": 2.8379, "pitch": 0.0123, "roll": 0.0061}, "victim_pos": {"x": -499.88, "y": 13.64, "z": -268.93}, "victim_ypr": {"yaw": 3.0526, "pitch": 0.0046, "roll": 0.0}, "impact_point": {"x": -122.12, "y": 22.58, "z": 42.27}}, {"hit_clock": 83.91, "attacker_id": 7535427, "attacker_name": "DjonniDead[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535420, "victim_name": "_CKOBOPODA_[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 520, "shooter_pos": {"x": -455.8, "y": 18.16, "z": -243.3}, "shooter_ypr": {"yaw": -2.2304, "pitch": 0.2441, "roll": -0.1227}, "victim_pos": {"x": -472.43, "y": 13.28, "z": -265.2}, "victim_ypr": {"yaw": -0.3866, "pitch": -0.0322, "roll": 0.0123}, "impact_point": {"x": -122.12, "y": 22.58, "z": 42.27}}, {"hit_clock": 84.41, "attacker_id": 7535420, "attacker_name": "_CKOBOPODA_[LST_S]", "attacker_tank": "ИС-7", "attacker_tank_raw": "ussr:R45_IS-7", "victim_id": 7535418, "victim_name": "xRoM4iKx[LPACO]", "victim_tank": "Т-100 ЛТ", "victim_tank_raw": "ussr:R132_VNII_100LT", "attacker_team": 1, "victim_team": 2, "damage": 508, "shooter_pos": {"x": -473.27, "y": 13.25, "z": -263.24}, "shooter_ypr": {"yaw": -0.3866, "pitch": 0.0184, "roll": 0.0061}, "victim_pos": {"x": -499.89, "y": 13.64, "z": -265.14}, "victim_ypr": {"yaw": -3.1017, "pitch": -0.0553, "roll": 0.0}, "impact_point": {"x": -122.12, "y": 22.58, "z": 42.27}}, {"hit_clock": 85.31, "attacker_id": 7535419, "attacker_name": "Sq1zman_[LPACO]", "attacker_tank": "Concept 5", "attacker_tank_raw": "uk:GB120_Concept_No_5", "victim_id": 7535420, "victim_name": "_CKOBOPODA_[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 408, "shooter_pos": {"x": -423.58, "y": 20.65, "z": -387.85}, "shooter_ypr": {"yaw": -0.092, "pitch": 0.0307, "roll": -0.0245}, "victim_pos": {"x": -472.75, "y": 13.25, "z": -264.5}, "victim_ypr": {"yaw": -0.3252, "pitch": 0.0, "roll": 0.0123}, "impact_point": {"x": -115.07, "y": 21.63, "z": 46.47}}, {"hit_clock": 85.71, "attacker_id": 7535418, "attacker_name": "xRoM4iKx[LPACO]", "attacker_tank": "Т-100 ЛТ", "attacker_tank_raw": "ussr:R132_VNII_100LT", "victim_id": 7535420, "victim_name": "_CKOBOPODA_[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 284, "shooter_pos": {"x": -499.75, "y": 13.62, "z": -262.61}, "shooter_ypr": {"yaw": -3.1017, "pitch": -0.043, "roll": 0.0}, "victim_pos": {"x": -472.38, "y": 13.27, "z": -266.03}, "victim_ypr": {"yaw": -0.1565, "pitch": 0.0107, "roll": 0.0061}, "impact_point": {"x": -115.07, "y": 21.63, "z": 46.47}}, {"hit_clock": 86.91, "attacker_id": 7535422, "attacker_name": "Zloy_Otets[LPACO]", "attacker_tank": "ИС-7", "attacker_tank_raw": "ussr:R45_IS-7", "victim_id": 7535421, "victim_name": "Mudazor[LST_S]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 2, "victim_team": 1, "damage": 532, "shooter_pos": {"x": -156.98, "y": 20.44, "z": -47.66}, "shooter_ypr": {"yaw": -0.5093, "pitch": -0.023, "roll": 0.0061}, "victim_pos": {"x": -228.2, "y": 19.26, "z": 17.98}, "victim_ypr": {"yaw": 2.6354, "pitch": -0.0261, "roll": -0.0245}, "impact_point": {"x": -106.96, "y": 22.02, "z": 45.42}}, {"hit_clock": 87.31, "attacker_id": 7535427, "attacker_name": "DjonniDead[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535420, "victim_name": "_CKOBOPODA_[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 518, "shooter_pos": {"x": -460.52, "y": 16.7, "z": -246.92}, "shooter_ypr": {"yaw": -2.2304, "pitch": 0.2841, "roll": -0.1411}, "victim_pos": {"x": -472.57, "y": 13.31, "z": -270.12}, "victim_ypr": {"yaw": 0.27, "pitch": 0.0061, "roll": 0.0123}, "impact_point": {"x": -105.97, "y": 22.19, "z": 37.88}}, {"hit_clock": 88.41, "attacker_id": 7535421, "attacker_name": "Mudazor[LST_S]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535422, "victim_name": "Zloy_Otets[LPACO]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 1, "victim_team": 2, "damage": 427, "shooter_pos": {"x": -226.22, "y": 19.51, "z": 14.42}, "shooter_ypr": {"yaw": 2.6016, "pitch": -0.0353, "roll": -0.0061}, "victim_pos": {"x": -158.26, "y": 20.46, "z": -46.14}, "victim_ypr": {"yaw": -0.5093, "pitch": -0.0061, "roll": 0.0184}, "impact_point": {"x": -139.33, "y": 21.96, "z": -21.8}}, {"hit_clock": 88.61, "attacker_id": 7535416, "attacker_name": "uCHoBa_3qPacTByUTe[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535420, "victim_name": "_CKOBOPODA_[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 480, "shooter_pos": {"x": -463.41, "y": 16.38, "z": -228.32}, "shooter_ypr": {"yaw": -2.2703, "pitch": 0.2733, "roll": -0.1963}, "victim_pos": {"x": -472.83, "y": 13.34, "z": -271.68}, "victim_ypr": {"yaw": 0.0828, "pitch": -0.0107, "roll": 0.0123}, "impact_point": {"x": -138.85, "y": 21.79, "z": -21.79}}, {"hit_clock": 91.21, "attacker_id": 7535427, "attacker_name": "DjonniDead[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535420, "victim_name": "_CKOBOPODA_[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 316, "shooter_pos": {"x": -465.11, "y": 15.14, "z": -249.57}, "shooter_ypr": {"yaw": -2.6262, "pitch": 0.1843, "roll": -0.2209}, "victim_pos": {"x": -471.54, "y": 13.33, "z": -271.1}, "victim_ypr": {"yaw": -0.3037, "pitch": 0.0092, "roll": 0.0061}, "impact_point": {"x": -135.74, "y": 21.69, "z": -36.81}}, {"hit_clock": 92.51, "attacker_id": 7535415, "attacker_name": "McQueen[LST_S]", "attacker_tank": "Wilk", "attacker_tank_raw": "poland:Pl34_CS_63_02", "victim_id": 7535425, "victim_name": "Iriska_27[LPACO]", "victim_tank": "T95/Chieftain", "victim_tank_raw": "uk:GB88_T95_Chieftain_turret", "attacker_team": 1, "victim_team": 2, "damage": 323, "shooter_pos": {"x": -115.02, "y": 20.47, "z": 0.85}, "shooter_ypr": {"yaw": -2.5761, "pitch": 0.0506, "roll": 0.001}, "victim_pos": {"x": -136.6, "y": 20.41, "z": -36.84}, "victim_ypr": {"yaw": 0.4449, "pitch": -0.0138, "roll": -0.0245}, "impact_point": {"x": -135.11, "y": 21.41, "z": -33.65}}, {"hit_clock": 93.01, "attacker_id": 7535415, "attacker_name": "McQueen[LST_S]", "attacker_tank": "Wilk", "attacker_tank_raw": "poland:Pl34_CS_63_02", "victim_id": 7535425, "victim_name": "Iriska_27[LPACO]", "victim_tank": "T95/Chieftain", "victim_tank_raw": "uk:GB88_T95_Chieftain_turret", "attacker_team": 1, "victim_team": 2, "damage": 316, "shooter_pos": {"x": -114.12, "y": 20.46, "z": 2.28}, "shooter_ypr": {"yaw": -2.5759, "pitch": 0.002, "roll": -0.0018}, "victim_pos": {"x": -137.68, "y": 20.39, "z": -38.55}, "victim_ypr": {"yaw": 0.6596, "pitch": -0.0015, "roll": -0.043}, "impact_point": {"x": -135.75, "y": 21.32, "z": -35.18}}, {"hit_clock": 93.11, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535422, "victim_name": "Zloy_Otets[LPACO]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 1, "victim_team": 2, "damage": 481, "shooter_pos": {"x": -86.21, "y": 20.47, "z": -17.95}, "shooter_ypr": {"yaw": -3.1385, "pitch": 0.0061, "roll": 0.0}, "victim_pos": {"x": -144.51, "y": 18.96, "z": -56.92}, "victim_ypr": {"yaw": -0.5553, "pitch": -0.152, "roll": -0.043}, "impact_point": {"x": -135.93, "y": 21.23, "z": -35.53}}, {"hit_clock": 93.41, "attacker_id": 7535425, "attacker_name": "Iriska_27[LPACO]", "attacker_tank": "T95/Chieftain", "attacker_tank_raw": "uk:GB88_T95_Chieftain_turret", "victim_id": 7535424, "victim_name": "Gluvit[LST_S]", "victim_tank": "FV215b", "victim_tank_raw": "uk:GB13_FV215b", "attacker_team": 2, "victim_team": 1, "damage": 373, "shooter_pos": {"x": -138.56, "y": 20.37, "z": -39.7}, "shooter_ypr": {"yaw": 0.6596, "pitch": -0.0215, "roll": -0.0491}, "victim_pos": {"x": -86.2, "y": 20.47, "z": -16.9}, "victim_ypr": {"yaw": -3.1385, "pitch": 0.0, "roll": 0.0}, "impact_point": {"x": -136.78, "y": 20.39, "z": -37.75}}, {"hit_clock": 94.21, "attacker_id": 7535419, "attacker_name": "Sq1zman_[LPACO]", "attacker_tank": "Concept 5", "attacker_tank_raw": "uk:GB120_Concept_No_5", "victim_id": 7535428, "victim_name": "Ray__White[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 402, "shooter_pos": {"x": -433.58, "y": 20.45, "z": -368.4}, "shooter_ypr": {"yaw": -0.4449, "pitch": 0.0077, "roll": 0.0123}, "victim_pos": {"x": -463.42, "y": 13.97, "z": -267.86}, "victim_ypr": {"yaw": -0.2976, "pitch": -0.0215, "roll": 0.2086}, "impact_point": {"x": -112.11, "y": 22.51, "z": -2.96}}, {"hit_clock": 94.51, "attacker_id": 7535426, "attacker_name": "PeHeuM[LST_S]", "attacker_tank": "Об. 260", "attacker_tank_raw": "ussr:R110_Object_260", "victim_id": 7535418, "victim_name": "xRoM4iKx[LPACO]", "victim_tank": "Т-100 ЛТ", "victim_tank_raw": "ussr:R132_VNII_100LT", "attacker_team": 1, "victim_team": 2, "damage": 213, "shooter_pos": {"x": -469.27, "y": 13.39, "z": -314.26}, "shooter_ypr": {"yaw": 2.7918, "pitch": 0.023, "roll": -0.0061}, "victim_pos": {"x": -499.91, "y": 13.61, "z": -265.58}, "victim_ypr": {"yaw": -3.1017, "pitch": -0.0061, "roll": 0.0}, "impact_point": {"x": -112.62, "y": 21.7, "z": -2.85}}, {"hit_clock": 98.01, "attacker_id": 7535422, "attacker_name": "Zloy_Otets[LPACO]", "attacker_tank": "ИС-7", "attacker_tank_raw": "ussr:R45_IS-7", "victim_id": 7535415, "victim_name": "McQueen[LST_S]", "victim_tank": "Wilk", "victim_tank_raw": "poland:Pl34_CS_63_02", "attacker_team": 2, "victim_team": 1, "damage": 528, "shooter_pos": {"x": -142.77, "y": 19.76, "z": -48.83}, "shooter_ypr": {"yaw": 0.2424, "pitch": -0.1075, "roll": -0.1166}, "victim_pos": {"x": -111.39, "y": 20.47, "z": 1.66}, "victim_ypr": {"yaw": -1.9547, "pitch": 0.0183, "roll": -0.001}, "impact_point": {"x": -141.27, "y": 20.85, "z": -45.21}}, {"hit_clock": 98.41, "attacker_id": 7535415, "attacker_name": "McQueen[LST_S]", "attacker_tank": "Wilk", "attacker_tank_raw": "poland:Pl34_CS_63_02", "victim_id": 7535422, "victim_name": "Zloy_Otets[LPACO]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 1, "victim_team": 2, "damage": 320, "shooter_pos": {"x": -111.39, "y": 20.47, "z": 1.66}, "shooter_ypr": {"yaw": -1.9546, "pitch": -0.0031, "roll": -0.0011}, "victim_pos": {"x": -143.16, "y": 19.58, "z": -50.49}, "victim_ypr": {"yaw": 0.1963, "pitch": -0.1106, "roll": -0.1166}, "impact_point": {"x": -142.0, "y": 20.65, "z": -46.87}}, {"hit_clock": 98.41, "attacker_id": 7535428, "attacker_name": "Ray__White[LST_S]", "attacker_tank": "ИС-7", "attacker_tank_raw": "ussr:R45_IS-7", "victim_id": 7535416, "victim_name": "uCHoBa_3qPacTByUTe[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 494, "shooter_pos": {"x": -459.75, "y": 13.94, "z": -280.1}, "shooter_ypr": {"yaw": -0.2945, "pitch": -0.0215, "roll": 0.0982}, "victim_pos": {"x": -457.61, "y": 17.52, "z": -247.1}, "victim_ypr": {"yaw": 2.7673, "pitch": -0.0614, "roll": -0.2761}, "impact_point": {"x": -142.0, "y": 20.65, "z": -46.87}}, {"hit_clock": 98.61, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535422, "victim_name": "Zloy_Otets[LPACO]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 1, "victim_team": 2, "damage": 407, "shooter_pos": {"x": -83.65, "y": 20.47, "z": -11.29}, "shooter_ypr": {"yaw": -1.7978, "pitch": 0.0, "roll": 0.0}, "victim_pos": {"x": -143.32, "y": 19.48, "z": -51.35}, "victim_ypr": {"yaw": 0.1565, "pitch": -0.1152, "roll": -0.1104}, "impact_point": {"x": -142.24, "y": 20.49, "z": -47.78}}, {"hit_clock": 98.81, "attacker_id": 7535415, "attacker_name": "McQueen[LST_S]", "attacker_tank": "Wilk", "attacker_tank_raw": "poland:Pl34_CS_63_02", "victim_id": 7535422, "victim_name": "Zloy_Otets[LPACO]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 1, "victim_team": 2, "damage": 292, "shooter_pos": {"x": -111.39, "y": 20.47, "z": 1.66}, "shooter_ypr": {"yaw": -1.9546, "pitch": -0.0031, "roll": -0.0011}, "victim_pos": {"x": -143.44, "y": 19.39, "z": -52.21}, "victim_ypr": {"yaw": 0.1166, "pitch": -0.1198, "roll": -0.1104}, "impact_point": {"x": -142.66, "y": 20.47, "z": -48.5}}, {"hit_clock": 99.21, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535422, "victim_name": "Zloy_Otets[LPACO]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 1, "victim_team": 2, "damage": 431, "shooter_pos": {"x": -166.83, "y": 20.47, "z": -41.5}, "shooter_ypr": {"yaw": 3.0097, "pitch": -0.043, "roll": 0.0}, "victim_pos": {"x": -143.58, "y": 19.18, "z": -53.96}, "victim_ypr": {"yaw": 0.043, "pitch": -0.1213, "roll": -0.1104}, "impact_point": {"x": -144.41, "y": 19.87, "z": -51.46}}, {"hit_clock": 100.61, "attacker_id": 7535427, "attacker_name": "DjonniDead[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535428, "victim_name": "Ray__White[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 97, "shooter_pos": {"x": -458.83, "y": 13.69, "z": -288.17}, "shooter_ypr": {"yaw": 1.6045, "pitch": -0.0476, "roll": -0.0245}, "victim_pos": {"x": -459.26, "y": 14.01, "z": -279.85}, "victim_ypr": {"yaw": -0.0123, "pitch": -0.0645, "roll": 0.0982}, "impact_point": {"x": -125.76, "y": 19.81, "z": -36.77}}, {"hit_clock": 101.81, "attacker_id": 7535417, "attacker_name": "_Press_akk_[LPACO]", "attacker_tank": "Orso", "attacker_tank_raw": "italy:It33_Orso", "victim_id": 7535424, "victim_name": "Gluvit[LST_S]", "victim_tank": "FV215b", "victim_tank_raw": "uk:GB13_FV215b", "attacker_team": 2, "victim_team": 1, "damage": 457, "shooter_pos": {"x": -138.15, "y": 17.76, "z": -64.49}, "shooter_ypr": {"yaw": 0.6872, "pitch": 0.0292, "roll": -0.092}, "victim_pos": {"x": -94.25, "y": 20.44, "z": -24.74}, "victim_ypr": {"yaw": -2.5648, "pitch": 0.0154, "roll": 0.0061}, "impact_point": {"x": -107.66, "y": 21.83, "z": -2.87}}, {"hit_clock": 102.61, "attacker_id": 7535425, "attacker_name": "Iriska_27[LPACO]", "attacker_tank": "T95/Chieftain", "attacker_tank_raw": "uk:GB88_T95_Chieftain_turret", "victim_id": 7535424, "victim_name": "Gluvit[LST_S]", "victim_tank": "FV215b", "victim_tank_raw": "uk:GB13_FV215b", "attacker_team": 2, "victim_team": 1, "damage": 382, "shooter_pos": {"x": -141.85, "y": 20.45, "z": -38.02}, "shooter_ypr": {"yaw": 1.221, "pitch": 0.0031, "roll": -0.0061}, "victim_pos": {"x": -98.63, "y": 20.25, "z": -28.6}, "victim_ypr": {"yaw": -2.0126, "pitch": 0.0445, "roll": 0.0675}, "impact_point": {"x": -107.66, "y": 21.83, "z": -2.87}}, {"hit_clock": 102.71, "attacker_id": 7535419, "attacker_name": "Sq1zman_[LPACO]", "attacker_tank": "Concept 5", "attacker_tank_raw": "uk:GB120_Concept_No_5", "victim_id": 7535428, "victim_name": "Ray__White[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 424, "shooter_pos": {"x": -451.15, "y": 13.61, "z": -306.66}, "shooter_ypr": {"yaw": 0.991, "pitch": -0.0445, "roll": -0.0307}, "victim_pos": {"x": -460.45, "y": 13.95, "z": -279.2}, "victim_ypr": {"yaw": 0.6443, "pitch": -0.1321, "roll": 0.0184}, "impact_point": {"x": -107.66, "y": 21.83, "z": -2.87}}, {"hit_clock": 103.91, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535422, "victim_name": "Zloy_Otets[LPACO]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 1, "victim_team": 2, "damage": 36, "shooter_pos": {"x": -107.04, "y": 19.7, "z": -32.51}, "shooter_ypr": {"yaw": -2.0064, "pitch": 0.0599, "roll": 0.1473}, "victim_pos": {"x": -144.17, "y": 18.77, "z": -58.37}, "victim_ypr": {"yaw": -0.5001, "pitch": -0.1336, "roll": -0.0614}, "impact_point": {"x": -107.66, "y": 21.83, "z": -2.87}}, {"hit_clock": 105.91, "attacker_id": 7535426, "attacker_name": "PeHeuM[LST_S]", "attacker_tank": "Об. 260", "attacker_tank_raw": "ussr:R110_Object_260", "victim_id": 7535427, "victim_name": "DjonniDead[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 423, "shooter_pos": {"x": -449.7, "y": 13.66, "z": -323.98}, "shooter_ypr": {"yaw": 1.0861, "pitch": -0.086, "roll": 0.0307}, "victim_pos": {"x": -459.79, "y": 13.67, "z": -288.04}, "victim_ypr": {"yaw": 1.7303, "pitch": 0.0015, "roll": 0.0}, "impact_point": {"x": -133.17, "y": 20.45, "z": -26.51}}, {"hit_clock": 106.51, "attacker_id": 7535421, "attacker_name": "Mudazor[LST_S]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535417, "victim_name": "_Press_akk_[LPACO]", "victim_tank": "Orso", "victim_tank_raw": "italy:It33_Orso", "attacker_team": 1, "victim_team": 2, "damage": 486, "shooter_pos": {"x": -143.67, "y": 18.2, "z": -74.83}, "shooter_ypr": {"yaw": 1.7027, "pitch": 0.0706, "roll": 0.0061}, "victim_pos": {"x": -137.56, "y": 17.68, "z": -67.42}, "victim_ypr": {"yaw": 0.5461, "pitch": 0.0138, "roll": -0.0552}, "impact_point": {"x": -134.92, "y": 20.38, "z": -36.28}}, {"hit_clock": 107.41, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535425, "victim_name": "Iriska_27[LPACO]", "victim_tank": "T95/Chieftain", "victim_tank_raw": "uk:GB88_T95_Chieftain_turret", "attacker_team": 1, "victim_team": 2, "damage": 492, "shooter_pos": {"x": -163.94, "y": 20.33, "z": -52.27}, "shooter_ypr": {"yaw": 2.89, "pitch": 0.0184, "roll": 0.0}, "victim_pos": {"x": -145.56, "y": 20.77, "z": -37.24}, "victim_ypr": {"yaw": 2.258, "pitch": 0.1643, "roll": -0.1534}, "impact_point": {"x": -145.45, "y": 21.86, "z": -37.44}}, {"hit_clock": 108.91, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535425, "victim_name": "Iriska_27[LPACO]", "victim_tank": "T95/Chieftain", "victim_tank_raw": "uk:GB88_T95_Chieftain_turret", "attacker_team": 1, "victim_team": 2, "damage": 405, "shooter_pos": {"x": -120.85, "y": 17.28, "z": -57.22}, "shooter_ypr": {"yaw": -1.4696, "pitch": -0.0169, "roll": 0.0061}, "victim_pos": {"x": -145.65, "y": 20.79, "z": -37.36}, "victim_ypr": {"yaw": 2.2335, "pitch": 0.1643, "roll": -0.1166}, "impact_point": {"x": -138.86, "y": 17.91, "z": -60.95}}, {"hit_clock": 109.71, "attacker_id": 7535425, "attacker_name": "Iriska_27[LPACO]", "attacker_tank": "T95/Chieftain", "attacker_tank_raw": "uk:GB88_T95_Chieftain_turret", "victim_id": 7535424, "victim_name": "Gluvit[LST_S]", "victim_tank": "FV215b", "victim_tank_raw": "uk:GB13_FV215b", "attacker_team": 2, "victim_team": 1, "damage": 390, "shooter_pos": {"x": -145.65, "y": 20.75, "z": -37.35}, "shooter_ypr": {"yaw": 2.2365, "pitch": 0.1505, "roll": -0.1104}, "victim_pos": {"x": -118.14, "y": 17.22, "z": -57.91}, "victim_ypr": {"yaw": -1.0861, "pitch": -0.0154, "roll": -0.0061}, "impact_point": {"x": -136.96, "y": 17.66, "z": -63.51}}, {"hit_clock": 109.81, "attacker_id": 7535421, "attacker_name": "Mudazor[LST_S]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535417, "victim_name": "_Press_akk_[LPACO]", "victim_tank": "Orso", "victim_tank_raw": "italy:It33_Orso", "attacker_team": 1, "victim_team": 2, "damage": 455, "shooter_pos": {"x": -142.56, "y": 18.09, "z": -76.62}, "shooter_ypr": {"yaw": 0.8406, "pitch": 0.0261, "roll": -0.0614}, "victim_pos": {"x": -129.31, "y": 17.41, "z": -61.14}, "victim_ypr": {"yaw": 0.9419, "pitch": 0.0107, "roll": -0.0245}, "impact_point": {"x": -136.96, "y": 17.66, "z": -63.51}}, {"hit_clock": 110.01, "attacker_id": 7535419, "attacker_name": "Sq1zman_[LPACO]", "attacker_tank": "Concept 5", "attacker_tank_raw": "uk:GB120_Concept_No_5", "victim_id": 7535428, "victim_name": "Ray__White[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 403, "shooter_pos": {"x": -488.02, "y": 13.39, "z": -314.69}, "shooter_ypr": {"yaw": -1.0002, "pitch": 0.0077, "roll": 0.0614}, "victim_pos": {"x": -476.77, "y": 13.7, "z": -289.89}, "victim_ypr": {"yaw": 0.5246, "pitch": -0.0215, "roll": -0.0061}, "impact_point": {"x": -137.17, "y": 19.47, "z": -47.39}}, {"hit_clock": 110.11, "attacker_id": 7535428, "attacker_name": "Ray__White[LST_S]", "attacker_tank": "ИС-7", "attacker_tank_raw": "ussr:R45_IS-7", "victim_id": 7535427, "victim_name": "DjonniDead[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 542, "shooter_pos": {"x": -476.77, "y": 13.7, "z": -289.89}, "shooter_ypr": {"yaw": 0.5246, "pitch": -0.0154, "roll": -0.0061}, "victim_pos": {"x": -464.42, "y": 13.66, "z": -279.47}, "victim_ypr": {"yaw": -2.439, "pitch": 0.02, "roll": -0.0307}, "impact_point": {"x": -137.35, "y": 19.41, "z": -47.95}}, {"hit_clock": 110.41, "attacker_id": 7535417, "attacker_name": "_Press_akk_[LPACO]", "attacker_tank": "Orso", "attacker_tank_raw": "italy:It33_Orso", "victim_id": 7535424, "victim_name": "Gluvit[LST_S]", "victim_tank": "FV215b", "victim_tank_raw": "uk:GB13_FV215b", "attacker_team": 2, "victim_team": 1, "damage": 429, "shooter_pos": {"x": -131.5, "y": 17.45, "z": -62.73}, "shooter_ypr": {"yaw": 0.9419, "pitch": 0.0184, "roll": -0.0307}, "victim_pos": {"x": -115.92, "y": 17.18, "z": -58.97}, "victim_ypr": {"yaw": -1.172, "pitch": -0.0154, "roll": 0.0}, "impact_point": {"x": -140.36, "y": 19.85, "z": -46.63}}, {"hit_clock": 111.21, "attacker_id": 7535417, "attacker_name": "_Press_akk_[LPACO]", "attacker_tank": "Orso", "attacker_tank_raw": "italy:It33_Orso", "victim_id": 7535423, "victim_name": "asman666[LST_S]", "victim_tank": "T95/FV4201", "victim_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "attacker_team": 2, "victim_team": 1, "damage": 47, "shooter_pos": {"x": -133.4, "y": 17.5, "z": -64.18}, "shooter_ypr": {"yaw": 1.0922, "pitch": 0.0537, "roll": -0.0491}, "victim_pos": {"x": -140.28, "y": 17.9, "z": -66.31}, "victim_ypr": {"yaw": 1.2824, "pitch": 0.086, "roll": -0.0614}, "impact_point": {"x": -144.46, "y": 21.49, "z": -39.58}}, {"hit_clock": 111.21, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535417, "victim_name": "_Press_akk_[LPACO]", "victim_tank": "Orso", "victim_tank_raw": "italy:It33_Orso", "attacker_team": 1, "victim_team": 2, "damage": 38, "shooter_pos": {"x": -140.28, "y": 17.9, "z": -66.31}, "shooter_ypr": {"yaw": 1.2824, "pitch": 0.086, "roll": -0.0614}, "victim_pos": {"x": -133.4, "y": 17.5, "z": -64.18}, "victim_ypr": {"yaw": 1.0922, "pitch": 0.0537, "roll": -0.0491}, "impact_point": {"x": -144.46, "y": 21.49, "z": -39.58}}, {"hit_clock": 112.91, "attacker_id": 7535427, "attacker_name": "DjonniDead[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535428, "victim_name": "Ray__White[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 501, "shooter_pos": {"x": -469.82, "y": 13.62, "z": -284.27}, "shooter_ypr": {"yaw": -2.2734, "pitch": -0.0077, "roll": 0.0123}, "victim_pos": {"x": -480.28, "y": 13.66, "z": -297.66}, "victim_ypr": {"yaw": 0.224, "pitch": -0.0292, "roll": -0.0061}, "impact_point": {"x": -144.51, "y": 21.79, "z": -39.43}}, {"hit_clock": 113.31, "attacker_id": 7535427, "attacker_name": "DjonniDead[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535428, "victim_name": "Ray__White[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 80, "shooter_pos": {"x": -470.06, "y": 13.62, "z": -284.48}, "shooter_ypr": {"yaw": -2.2734, "pitch": -0.0184, "roll": 0.0123}, "victim_pos": {"x": -480.28, "y": 13.65, "z": -297.66}, "victim_ypr": {"yaw": 0.227, "pitch": 0.0092, "roll": -0.0061}, "impact_point": {"x": -145.04, "y": 21.72, "z": -39.12}}, {"hit_clock": 113.61, "attacker_id": 7535421, "attacker_name": "Mudazor[LST_S]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535417, "victim_name": "_Press_akk_[LPACO]", "victim_tank": "Orso", "victim_tank_raw": "italy:It33_Orso", "attacker_team": 1, "victim_team": 2, "damage": 457, "shooter_pos": {"x": -141.62, "y": 18.0, "z": -77.92}, "shooter_ypr": {"yaw": 0.408, "pitch": 0.0292, "roll": -0.0736}, "victim_pos": {"x": -138.52, "y": 17.79, "z": -64.45}, "victim_ypr": {"yaw": 1.5923, "pitch": 0.0814, "roll": -0.0245}, "impact_point": {"x": -145.04, "y": 21.72, "z": -39.02}}, {"hit_clock": 114.01, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535425, "victim_name": "Iriska_27[LPACO]", "victim_tank": "T95/Chieftain", "victim_tank_raw": "uk:GB88_T95_Chieftain_turret", "attacker_team": 1, "victim_team": 2, "damage": 497, "shooter_pos": {"x": -111.66, "y": 17.11, "z": -60.32}, "shooter_ypr": {"yaw": -1.2855, "pitch": -0.0092, "roll": 0.0}, "victim_pos": {"x": -147.09, "y": 20.81, "z": -37.0}, "victim_ypr": {"yaw": 2.0463, "pitch": 0.1689, "roll": -0.0798}, "impact_point": {"x": -144.65, "y": 21.53, "z": -38.75}}, {"hit_clock": 114.51, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535425, "victim_name": "Iriska_27[LPACO]", "victim_tank": "T95/Chieftain", "victim_tank_raw": "uk:GB88_T95_Chieftain_turret", "attacker_team": 1, "victim_team": 2, "damage": 437, "shooter_pos": {"x": -153.76, "y": 19.41, "z": -65.66}, "shooter_ypr": {"yaw": 1.8623, "pitch": 0.1029, "roll": -0.0061}, "victim_pos": {"x": -146.87, "y": 20.81, "z": -37.16}, "victim_ypr": {"yaw": 2.123, "pitch": 0.1597, "roll": -0.0798}, "impact_point": {"x": -144.56, "y": 21.19, "z": -38.65}}, {"hit_clock": 114.61, "attacker_id": 7535426, "attacker_name": "PeHeuM[LST_S]", "attacker_tank": "Об. 260", "attacker_tank_raw": "ussr:R110_Object_260", "victim_id": 7535427, "victim_name": "DjonniDead[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 434, "shooter_pos": {"x": -453.43, "y": 14.35, "z": -288.39}, "shooter_ypr": {"yaw": -0.3896, "pitch": 0.0369, "roll": 0.2577}, "victim_pos": {"x": -475.93, "y": 13.7, "z": -287.94}, "victim_ypr": {"yaw": -1.8899, "pitch": -0.0092, "roll": 0.0184}, "impact_point": {"x": -144.18, "y": 21.15, "z": -38.93}}, {"hit_clock": 116.11, "attacker_id": 7535415, "attacker_name": "McQueen[LST_S]", "attacker_tank": "Wilk", "attacker_tank_raw": "poland:Pl34_CS_63_02", "victim_id": 7535417, "victim_name": "_Press_akk_[LPACO]", "victim_tank": "Orso", "victim_tank_raw": "italy:It33_Orso", "attacker_team": 1, "victim_team": 2, "damage": 323, "shooter_pos": {"x": -124.8, "y": 17.4, "z": -55.58}, "shooter_ypr": {"yaw": -2.5981, "pitch": 0.0802, "roll": 0.0426}, "victim_pos": {"x": -147.7, "y": 18.89, "z": -62.71}, "victim_ypr": {"yaw": 1.9512, "pitch": 0.1397, "roll": 0.0123}, "impact_point": {"x": -144.86, "y": 19.43, "z": -62.89}}, {"hit_clock": 116.71, "attacker_id": 7535416, "attacker_name": "uCHoBa_3qPacTByUTe[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535428, "victim_name": "Ray__White[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 457, "shooter_pos": {"x": -473.39, "y": 13.32, "z": -255.79}, "shooter_ypr": {"yaw": 2.4237, "pitch": -0.0491, "roll": -0.0491}, "victim_pos": {"x": -480.3, "y": 13.65, "z": -297.65}, "victim_ypr": {"yaw": 0.227, "pitch": -0.0077, "roll": -0.0061}, "impact_point": {"x": -127.56, "y": 19.19, "z": -57.03}}, {"hit_clock": 118.01, "attacker_id": 7535419, "attacker_name": "Sq1zman_[LPACO]", "attacker_tank": "Concept 5", "attacker_tank_raw": "uk:GB120_Concept_No_5", "victim_id": 7535428, "victim_name": "Ray__White[LST_S]", "victim_tank": "ИС-7", "victim_tank_raw": "ussr:R45_IS-7", "attacker_team": 2, "victim_team": 1, "damage": 436, "shooter_pos": {"x": -486.84, "y": 13.26, "z": -326.92}, "shooter_ypr": {"yaw": 0.7547, "pitch": -0.0061, "roll": -0.0123}, "victim_pos": {"x": -480.29, "y": 13.66, "z": -297.59}, "victim_ypr": {"yaw": 0.227, "pitch": -0.0031, "roll": -0.0061}, "impact_point": {"x": -143.82, "y": 18.38, "z": -62.59}}, {"hit_clock": 119.21, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535417, "victim_name": "_Press_akk_[LPACO]", "victim_tank": "Orso", "victim_tank_raw": "italy:It33_Orso", "attacker_team": 1, "victim_team": 2, "damage": 447, "shooter_pos": {"x": -116.45, "y": 17.19, "z": -59.32}, "shooter_ypr": {"yaw": -1.9819, "pitch": -0.0015, "roll": 0.0123}, "victim_pos": {"x": -150.04, "y": 19.35, "z": -59.73}, "victim_ypr": {"yaw": 1.5616, "pitch": 0.129, "roll": -0.0736}, "impact_point": {"x": -149.25, "y": 21.8, "z": -59.47}}, {"hit_clock": 121.31, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535417, "victim_name": "_Press_akk_[LPACO]", "victim_tank": "Orso", "victim_tank_raw": "italy:It33_Orso", "attacker_team": 1, "victim_team": 2, "damage": 445, "shooter_pos": {"x": -153.57, "y": 19.2, "z": -74.25}, "shooter_ypr": {"yaw": -0.1626, "pitch": -0.0614, "roll": -0.0736}, "victim_pos": {"x": -151.54, "y": 19.49, "z": -59.74}, "victim_ypr": {"yaw": 1.5647, "pitch": 0.1106, "roll": -0.0675}, "impact_point": {"x": -151.4, "y": 22.18, "z": -59.59}}, {"hit_clock": 121.71, "attacker_id": 7535415, "attacker_name": "McQueen[LST_S]", "attacker_tank": "Wilk", "attacker_tank_raw": "poland:Pl34_CS_63_02", "victim_id": 7535417, "victim_name": "_Press_akk_[LPACO]", "victim_tank": "Orso", "victim_tank_raw": "italy:It33_Orso", "attacker_team": 1, "victim_team": 2, "damage": 69, "shooter_pos": {"x": -121.2, "y": 18.41, "z": -43.73}, "shooter_ypr": {"yaw": -3.1251, "pitch": 0.1701, "roll": 0.0914}, "victim_pos": {"x": -152.76, "y": 19.61, "z": -59.76}, "victim_ypr": {"yaw": 1.5585, "pitch": 0.0706, "roll": -0.0614}, "impact_point": {"x": -152.8, "y": 22.38, "z": -59.61}}, {"hit_clock": 123.31, "attacker_id": 7535426, "attacker_name": "PeHeuM[LST_S]", "attacker_tank": "Об. 260", "attacker_tank_raw": "ussr:R110_Object_260", "victim_id": 7535427, "victim_name": "DjonniDead[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 438, "shooter_pos": {"x": -473.9, "y": 13.54, "z": -305.63}, "shooter_ypr": {"yaw": -2.1414, "pitch": 0.0246, "roll": 0.0123}, "victim_pos": {"x": -494.5, "y": 13.68, "z": -292.97}, "victim_ypr": {"yaw": 2.9483, "pitch": -0.0015, "roll": -0.0123}, "impact_point": {"x": -148.26, "y": 18.71, "z": -70.16}}, {"hit_clock": 126.31, "attacker_id": 7535419, "attacker_name": "Sq1zman_[LPACO]", "attacker_tank": "Concept 5", "attacker_tank_raw": "uk:GB120_Concept_No_5", "victim_id": 7535426, "victim_name": "PeHeuM[LST_S]", "victim_tank": "Об. 260", "victim_tank_raw": "ussr:R110_Object_260", "attacker_team": 2, "victim_team": 1, "damage": 422, "shooter_pos": {"x": -444.91, "y": 14.52, "z": -312.3}, "shooter_ypr": {"yaw": -1.3254, "pitch": 0.152, "roll": 0.1104}, "victim_pos": {"x": -462.28, "y": 13.56, "z": -302.33}, "victim_ypr": {"yaw": -1.6076, "pitch": 0.0015, "roll": 0.0123}, "impact_point": {"x": -221.52, "y": 20.32, "z": -101.64}}, {"hit_clock": 127.71, "attacker_id": 7535427, "attacker_name": "DjonniDead[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535426, "victim_name": "PeHeuM[LST_S]", "victim_tank": "Об. 260", "victim_tank_raw": "ussr:R110_Object_260", "attacker_team": 2, "victim_team": 1, "damage": 426, "shooter_pos": {"x": -491.99, "y": 13.52, "z": -303.35}, "shooter_ypr": {"yaw": 2.7826, "pitch": 0.0123, "roll": -0.0245}, "victim_pos": {"x": -460.19, "y": 13.56, "z": -302.22}, "victim_ypr": {"yaw": -1.8837, "pitch": 0.0077, "roll": 0.0061}, "impact_point": {"x": -278.21, "y": 20.56, "z": -158.49}}, {"hit_clock": 129.01, "attacker_id": 7535416, "attacker_name": "uCHoBa_3qPacTByUTe[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535426, "victim_name": "PeHeuM[LST_S]", "victim_tank": "Об. 260", "victim_tank_raw": "ussr:R110_Object_260", "attacker_team": 2, "victim_team": 1, "damage": 521, "shooter_pos": {"x": -454.43, "y": 14.48, "z": -283.25}, "shooter_ypr": {"yaw": -3.0342, "pitch": 0.1167, "roll": -0.2209}, "victim_pos": {"x": -466.54, "y": 13.52, "z": -304.87}, "victim_ypr": {"yaw": -1.8745, "pitch": 0.0123, "roll": 0.0123}, "impact_point": {"x": -349.85, "y": 20.16, "z": -200.26}}, {"hit_clock": 134.61, "attacker_id": 7535419, "attacker_name": "Sq1zman_[LPACO]", "attacker_tank": "Concept 5", "attacker_tank_raw": "uk:GB120_Concept_No_5", "victim_id": 7535426, "victim_name": "PeHeuM[LST_S]", "victim_tank": "Об. 260", "victim_tank_raw": "ussr:R110_Object_260", "attacker_team": 2, "victim_team": 1, "damage": 421, "shooter_pos": {"x": -488.91, "y": 13.67, "z": -297.51}, "shooter_ypr": {"yaw": 0.405, "pitch": -0.0169, "roll": 0.0368}, "victim_pos": {"x": -477.41, "y": 13.55, "z": -305.53}, "victim_ypr": {"yaw": -1.4143, "pitch": -0.0015, "roll": 0.0061}, "impact_point": {"x": -345.78, "y": 19.86, "z": -189.08}}, {"hit_clock": 140.31, "attacker_id": 7535427, "attacker_name": "DjonniDead[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535426, "victim_name": "PeHeuM[LST_S]", "victim_tank": "Об. 260", "victim_tank_raw": "ussr:R110_Object_260", "attacker_team": 2, "victim_team": 1, "damage": 475, "shooter_pos": {"x": -495.51, "y": 13.73, "z": -282.91}, "shooter_ypr": {"yaw": 1.8254, "pitch": 0.0046, "roll": 0.0}, "victim_pos": {"x": -486.71, "y": 13.47, "z": -311.4}, "victim_ypr": {"yaw": 0.046, "pitch": -0.0215, "roll": 0.0061}, "impact_point": {"x": -345.78, "y": 19.86, "z": -189.08}}, {"hit_clock": 141.11, "attacker_id": 7535416, "attacker_name": "uCHoBa_3qPacTByUTe[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535426, "victim_name": "PeHeuM[LST_S]", "victim_tank": "Об. 260", "victim_tank_raw": "ussr:R110_Object_260", "attacker_team": 2, "victim_team": 1, "damage": 215, "shooter_pos": {"x": -463.45, "y": 13.7, "z": -279.3}, "shooter_ypr": {"yaw": -0.678, "pitch": 0.0292, "roll": 0.0491}, "victim_pos": {"x": -486.72, "y": 13.47, "z": -311.79}, "victim_ypr": {"yaw": 0.046, "pitch": -0.0154, "roll": 0.0061}, "impact_point": {"x": -345.78, "y": 19.86, "z": -189.08}}, {"hit_clock": 153.61, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535427, "victim_name": "DjonniDead[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 432, "shooter_pos": {"x": -436.3, "y": 20.17, "z": -271.51}, "shooter_ypr": {"yaw": -1.3039, "pitch": 0.0184, "roll": 0.0123}, "victim_pos": {"x": -457.12, "y": 18.33, "z": -225.71}, "victim_ypr": {"yaw": 0.8713, "pitch": -0.1935, "roll": 0.1657}, "impact_point": {"x": -456.14, "y": 19.55, "z": -224.43}}, {"hit_clock": 156.91, "attacker_id": 7535427, "attacker_name": "DjonniDead[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535423, "victim_name": "asman666[LST_S]", "victim_tank": "T95/FV4201", "victim_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "attacker_team": 2, "victim_team": 1, "damage": 453, "shooter_pos": {"x": -470.15, "y": 14.12, "z": -226.47}, "shooter_ypr": {"yaw": 1.7242, "pitch": -0.3286, "roll": -0.043}, "victim_pos": {"x": -457.72, "y": 17.64, "z": -243.56}, "victim_ypr": {"yaw": -0.6412, "pitch": 0.1213, "roll": 0.227}, "impact_point": {"x": -430.16, "y": 19.35, "z": -136.01}}, {"hit_clock": 157.01, "attacker_id": 7535419, "attacker_name": "Sq1zman_[LPACO]", "attacker_tank": "Concept 5", "attacker_tank_raw": "uk:GB120_Concept_No_5", "victim_id": 7535423, "victim_name": "asman666[LST_S]", "victim_tank": "T95/FV4201", "victim_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "attacker_team": 2, "victim_team": 1, "damage": 413, "shooter_pos": {"x": -474.91, "y": 11.34, "z": -118.11}, "shooter_ypr": {"yaw": 0.046, "pitch": 0.0752, "roll": 0.0491}, "victim_pos": {"x": -458.49, "y": 17.48, "z": -242.54}, "victim_ypr": {"yaw": -0.675, "pitch": 0.1321, "roll": 0.227}, "impact_point": {"x": -430.16, "y": 19.35, "z": -136.01}}, {"hit_clock": 157.31, "attacker_id": 7535416, "attacker_name": "uCHoBa_3qPacTByUTe[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535421, "victim_name": "Mudazor[LST_S]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 2, "victim_team": 1, "damage": 432, "shooter_pos": {"x": -441.95, "y": 18.76, "z": -162.63}, "shooter_ypr": {"yaw": 1.8776, "pitch": -0.2303, "roll": -0.1718}, "victim_pos": {"x": -453.5, "y": 18.68, "z": -242.15}, "victim_ypr": {"yaw": -0.9327, "pitch": 0.1873, "roll": 0.135}, "impact_point": {"x": -430.16, "y": 19.35, "z": -136.01}}, {"hit_clock": 158.91, "attacker_id": 7535427, "attacker_name": "DjonniDead[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535423, "victim_name": "asman666[LST_S]", "victim_tank": "T95/FV4201", "victim_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "attacker_team": 2, "victim_team": 1, "damage": 47, "shooter_pos": {"x": -482.9, "y": 13.19, "z": -222.3}, "shooter_ypr": {"yaw": 2.304, "pitch": -0.0384, "roll": 0.0184}, "victim_pos": {"x": -476.65, "y": 13.0, "z": -225.67}, "victim_ypr": {"yaw": -1.0707, "pitch": -0.0215, "roll": -0.0184}, "impact_point": {"x": -417.14, "y": 22.07, "z": -152.77}}, {"hit_clock": 158.91, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535427, "victim_name": "DjonniDead[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 167, "shooter_pos": {"x": -476.65, "y": 13.0, "z": -225.67}, "shooter_ypr": {"yaw": -1.0707, "pitch": -0.0215, "roll": -0.0184}, "victim_pos": {"x": -482.9, "y": 13.19, "z": -222.3}, "victim_ypr": {"yaw": 2.304, "pitch": -0.0384, "roll": 0.0184}, "impact_point": {"x": -417.14, "y": 22.07, "z": -152.77}}, {"hit_clock": 159.01, "attacker_id": 7535427, "attacker_name": "DjonniDead[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535423, "victim_name": "asman666[LST_S]", "victim_tank": "T95/FV4201", "victim_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "attacker_team": 2, "victim_team": 1, "damage": 19, "shooter_pos": {"x": -483.57, "y": 13.2, "z": -221.71}, "shooter_ypr": {"yaw": 2.3562, "pitch": -0.0445, "roll": 0.0123}, "victim_pos": {"x": -477.37, "y": 13.03, "z": -225.31}, "victim_ypr": {"yaw": -1.1167, "pitch": -0.0307, "roll": -0.0368}, "impact_point": {"x": -416.83, "y": 22.13, "z": -152.79}}, {"hit_clock": 159.01, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535427, "victim_name": "DjonniDead[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 16, "shooter_pos": {"x": -477.37, "y": 13.03, "z": -225.31}, "shooter_ypr": {"yaw": -1.1167, "pitch": -0.0307, "roll": -0.0368}, "victim_pos": {"x": -483.57, "y": 13.2, "z": -221.71}, "victim_ypr": {"yaw": 2.3562, "pitch": -0.0445, "roll": 0.0123}, "impact_point": {"x": -416.83, "y": 22.13, "z": -152.79}}, {"hit_clock": 160.81, "attacker_id": 7535421, "attacker_name": "Mudazor[LST_S]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535427, "victim_name": "DjonniDead[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 28, "shooter_pos": {"x": -469.32, "y": 14.25, "z": -213.25}, "shooter_ypr": {"yaw": -0.1473, "pitch": 0.1198, "roll": 0.3191}, "victim_pos": {"x": -487.39, "y": 13.2, "z": -213.68}, "victim_ypr": {"yaw": 2.9207, "pitch": -0.0676, "roll": -0.0061}, "impact_point": {"x": -423.46, "y": 19.54, "z": -142.52}}, {"hit_clock": 163.31, "attacker_id": 7535415, "attacker_name": "McQueen[LST_S]", "attacker_tank": "Wilk", "attacker_tank_raw": "poland:Pl34_CS_63_02", "victim_id": 7535419, "victim_name": "Sq1zman_[LPACO]", "victim_tank": "Concept 5", "victim_tank_raw": "uk:GB120_Concept_No_5", "attacker_team": 1, "victim_team": 2, "damage": 318, "shooter_pos": {"x": -404.21, "y": 21.09, "z": -151.02}, "shooter_ypr": {"yaw": -1.3695, "pitch": -0.1059, "roll": -0.12}, "victim_pos": {"x": -440.94, "y": 16.83, "z": -111.83}, "victim_ypr": {"yaw": 1.8162, "pitch": -0.1766, "roll": -0.0123}, "impact_point": {"x": -442.18, "y": 17.94, "z": -111.29}}, {"hit_clock": 163.51, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535419, "victim_name": "Sq1zman_[LPACO]", "victim_tank": "Concept 5", "victim_tank_raw": "uk:GB120_Concept_No_5", "attacker_team": 1, "victim_team": 2, "damage": 405, "shooter_pos": {"x": -404.37, "y": 22.78, "z": -175.23}, "shooter_ypr": {"yaw": -1.0646, "pitch": -0.0384, "roll": -0.0061}, "victim_pos": {"x": -440.08, "y": 17.04, "z": -112.05}, "victim_ypr": {"yaw": 1.8438, "pitch": -0.1781, "roll": -0.0184}, "impact_point": {"x": -439.26, "y": 18.34, "z": -113.43}}, {"hit_clock": 163.71, "attacker_id": 7535415, "attacker_name": "McQueen[LST_S]", "attacker_tank": "Wilk", "attacker_tank_raw": "poland:Pl34_CS_63_02", "victim_id": 7535419, "victim_name": "Sq1zman_[LPACO]", "victim_tank": "Concept 5", "victim_tank_raw": "uk:GB120_Concept_No_5", "attacker_team": 1, "victim_team": 2, "damage": 332, "shooter_pos": {"x": -403.2, "y": 20.98, "z": -151.23}, "shooter_ypr": {"yaw": -1.3723, "pitch": -0.0805, "roll": -0.1248}, "victim_pos": {"x": -439.03, "y": 17.27, "z": -112.35}, "victim_ypr": {"yaw": 1.8469, "pitch": -0.2088, "roll": -0.0184}, "impact_point": {"x": -438.66, "y": 18.42, "z": -113.97}}, {"hit_clock": 166.11, "attacker_id": 7535419, "attacker_name": "Sq1zman_[LPACO]", "attacker_tank": "Concept 5", "attacker_tank_raw": "uk:GB120_Concept_No_5", "victim_id": 7535415, "victim_name": "McQueen[LST_S]", "victim_tank": "Wilk", "victim_tank_raw": "poland:Pl34_CS_63_02", "attacker_team": 2, "victim_team": 1, "damage": 416, "shooter_pos": {"x": -438.6, "y": 17.38, "z": -112.48}, "shooter_ypr": {"yaw": 1.85, "pitch": -0.2119, "roll": 0.0}, "victim_pos": {"x": -405.64, "y": 21.15, "z": -149.4}, "victim_ypr": {"yaw": -1.0992, "pitch": -0.1025, "roll": -0.1513}, "impact_point": {"x": -437.79, "y": 18.92, "z": -114.27}}, {"hit_clock": 166.71, "attacker_id": 7535421, "attacker_name": "Mudazor[LST_S]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535416, "victim_name": "uCHoBa_3qPacTByUTe[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 480, "shooter_pos": {"x": -469.92, "y": 12.81, "z": -172.7}, "shooter_ypr": {"yaw": 0.3988, "pitch": 0.0384, "roll": 0.0061}, "victim_pos": {"x": -454.64, "y": 13.88, "z": -174.52}, "victim_ypr": {"yaw": -0.1442, "pitch": 0.1321, "roll": 0.2086}, "impact_point": {"x": -441.57, "y": 18.65, "z": -112.87}}, {"hit_clock": 168.31, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535416, "victim_name": "uCHoBa_3qPacTByUTe[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 378, "shooter_pos": {"x": -460.15, "y": 15.53, "z": -184.78}, "shooter_ypr": {"yaw": 1.1045, "pitch": -0.0338, "roll": 0.2148}, "victim_pos": {"x": -455.03, "y": 15.0, "z": -180.48}, "victim_ypr": {"yaw": 0.1473, "pitch": 0.2656, "roll": 0.1473}, "impact_point": {"x": -464.9, "y": 14.02, "z": -169.15}}, {"hit_clock": 168.51, "attacker_id": 7535416, "attacker_name": "uCHoBa_3qPacTByUTe[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535423, "victim_name": "asman666[LST_S]", "victim_tank": "T95/FV4201", "victim_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "attacker_team": 2, "victim_team": 1, "damage": 61, "shooter_pos": {"x": -454.86, "y": 15.08, "z": -180.66}, "shooter_ypr": {"yaw": 0.0583, "pitch": 0.261, "roll": 0.1104}, "victim_pos": {"x": -459.83, "y": 15.52, "z": -184.68}, "victim_ypr": {"yaw": 1.2548, "pitch": -0.0722, "roll": 0.2209}, "impact_point": {"x": -455.07, "y": 15.48, "z": -177.68}}, {"hit_clock": 168.51, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535416, "victim_name": "uCHoBa_3qPacTByUTe[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 96, "shooter_pos": {"x": -459.83, "y": 15.52, "z": -184.68}, "shooter_ypr": {"yaw": 1.2548, "pitch": -0.0722, "roll": 0.2209}, "victim_pos": {"x": -454.86, "y": 15.08, "z": -180.66}, "victim_ypr": {"yaw": 0.0583, "pitch": 0.261, "roll": 0.1104}, "impact_point": {"x": -455.07, "y": 15.48, "z": -177.68}}, {"hit_clock": 169.81, "attacker_id": 7535416, "attacker_name": "uCHoBa_3qPacTByUTe[LPACO]", "attacker_tank": "Об. 278", "attacker_tank_raw": "ussr:R231_Object_278", "victim_id": 7535421, "victim_name": "Mudazor[LST_S]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 2, "victim_team": 1, "damage": 487, "shooter_pos": {"x": -454.69, "y": 15.3, "z": -181.39}, "shooter_ypr": {"yaw": -0.1043, "pitch": 0.2549, "roll": 0.1166}, "victim_pos": {"x": -460.88, "y": 12.92, "z": -168.12}, "victim_ypr": {"yaw": 1.7917, "pitch": -0.0261, "roll": 0.0123}, "impact_point": {"x": -453.58, "y": 16.85, "z": -180.01}}, {"hit_clock": 170.21, "attacker_id": 7535415, "attacker_name": "McQueen[LST_S]", "attacker_tank": "Wilk", "attacker_tank_raw": "poland:Pl34_CS_63_02", "victim_id": 7535416, "victim_name": "uCHoBa_3qPacTByUTe[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 324, "shooter_pos": {"x": -416.59, "y": 21.31, "z": -145.51}, "shooter_ypr": {"yaw": -1.5065, "pitch": 0.1789, "roll": -0.1565}, "victim_pos": {"x": -454.76, "y": 15.15, "z": -180.77}, "victim_ypr": {"yaw": -0.1074, "pitch": 0.2226, "roll": 0.1166}, "impact_point": {"x": -453.53, "y": 17.01, "z": -180.43}}, {"hit_clock": 172.81, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535416, "victim_name": "uCHoBa_3qPacTByUTe[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 421, "shooter_pos": {"x": -419.15, "y": 22.58, "z": -166.15}, "shooter_ypr": {"yaw": -1.2241, "pitch": 0.2011, "roll": 0.0675}, "victim_pos": {"x": -454.22, "y": 14.9, "z": -179.57}, "victim_ypr": {"yaw": -0.0614, "pitch": 0.2825, "roll": 0.1595}, "impact_point": {"x": -458.66, "y": 14.0, "z": -135.56}}, {"hit_clock": 173.21, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535416, "victim_name": "uCHoBa_3qPacTByUTe[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 56, "shooter_pos": {"x": -420.02, "y": 22.38, "z": -165.84}, "shooter_ypr": {"yaw": -1.221, "pitch": 0.2288, "roll": 0.0675}, "victim_pos": {"x": -454.21, "y": 15.28, "z": -181.06}, "victim_ypr": {"yaw": 0.0399, "pitch": 0.2549, "roll": 0.1657}, "impact_point": {"x": -460.0, "y": 14.23, "z": -136.43}}, {"hit_clock": 173.71, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535416, "victim_name": "uCHoBa_3qPacTByUTe[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 53, "shooter_pos": {"x": -422.16, "y": 21.64, "z": -165.03}, "shooter_ypr": {"yaw": -1.2026, "pitch": 0.3808, "roll": 0.092}, "victim_pos": {"x": -454.42, "y": 15.71, "z": -182.98}, "victim_ypr": {"yaw": 0.1626, "pitch": 0.2104, "roll": 0.1718}, "impact_point": {"x": -442.54, "y": 18.61, "z": -138.22}}, {"hit_clock": 174.21, "attacker_id": 7535419, "attacker_name": "Sq1zman_[LPACO]", "attacker_tank": "Concept 5", "attacker_tank_raw": "uk:GB120_Concept_No_5", "victim_id": 7535421, "victim_name": "Mudazor[LST_S]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 2, "victim_team": 1, "damage": 431, "shooter_pos": {"x": -482.65, "y": 10.84, "z": -112.16}, "shooter_ypr": {"yaw": 1.4327, "pitch": 0.0031, "roll": 0.0552}, "victim_pos": {"x": -448.12, "y": 16.2, "z": -179.06}, "victim_ypr": {"yaw": -3.1355, "pitch": -0.1059, "roll": -0.2638}, "impact_point": {"x": -442.48, "y": 18.73, "z": -137.99}}, {"hit_clock": 174.21, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535416, "victim_name": "uCHoBa_3qPacTByUTe[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 50, "shooter_pos": {"x": -425.32, "y": 20.49, "z": -163.83}, "shooter_ypr": {"yaw": -1.1536, "pitch": 0.3301, "roll": 0.0552}, "victim_pos": {"x": -454.85, "y": 16.06, "z": -184.9}, "victim_ypr": {"yaw": 0.27, "pitch": 0.1428, "roll": 0.1779}, "impact_point": {"x": -442.48, "y": 18.73, "z": -137.99}}, {"hit_clock": 174.71, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535416, "victim_name": "uCHoBa_3qPacTByUTe[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 46, "shooter_pos": {"x": -429.28, "y": 19.71, "z": -162.13}, "shooter_ypr": {"yaw": -1.1689, "pitch": -0.0107, "roll": 0.0245}, "victim_pos": {"x": -454.8, "y": 16.05, "z": -184.75}, "victim_ypr": {"yaw": 0.2853, "pitch": 0.1198, "roll": 0.1841}, "impact_point": {"x": -474.72, "y": 12.47, "z": -165.29}}, {"hit_clock": 175.21, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535416, "victim_name": "uCHoBa_3qPacTByUTe[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 43, "shooter_pos": {"x": -433.3, "y": 19.68, "z": -160.4}, "shooter_ypr": {"yaw": -1.129, "pitch": 0.0184, "roll": 0.0061}, "victim_pos": {"x": -454.65, "y": 15.98, "z": -184.23}, "victim_ypr": {"yaw": 0.3037, "pitch": 0.2226, "roll": 0.1841}, "impact_point": {"x": -442.07, "y": 19.62, "z": -136.6}}, {"hit_clock": 175.71, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535416, "victim_name": "uCHoBa_3qPacTByUTe[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 39, "shooter_pos": {"x": -437.38, "y": 19.53, "z": -158.43}, "shooter_ypr": {"yaw": -1.1198, "pitch": 0.0476, "roll": 0.0245}, "victim_pos": {"x": -454.59, "y": 15.92, "z": -184.02}, "victim_ypr": {"yaw": 0.2945, "pitch": 0.1658, "roll": 0.1902}, "impact_point": {"x": -440.07, "y": 19.82, "z": -129.69}}, {"hit_clock": 176.21, "attacker_id": 7535424, "attacker_name": "Gluvit[LST_S]", "attacker_tank": "FV215b", "attacker_tank_raw": "uk:GB13_FV215b", "victim_id": 7535416, "victim_name": "uCHoBa_3qPacTByUTe[LPACO]", "victim_tank": "Об. 278", "victim_tank_raw": "ussr:R231_Object_278", "attacker_team": 1, "victim_team": 2, "damage": 36, "shooter_pos": {"x": -441.58, "y": 19.07, "z": -156.3}, "shooter_ypr": {"yaw": -1.0523, "pitch": 0.1428, "roll": 0.0675}, "victim_pos": {"x": -454.59, "y": 15.92, "z": -184.03}, "victim_ypr": {"yaw": 0.2945, "pitch": 0.1643, "roll": 0.1902}, "impact_point": {"x": -440.07, "y": 19.82, "z": -129.69}}, {"hit_clock": 179.51, "attacker_id": 7535419, "attacker_name": "Sq1zman_[LPACO]", "attacker_tank": "Concept 5", "attacker_tank_raw": "uk:GB120_Concept_No_5", "victim_id": 7535415, "victim_name": "McQueen[LST_S]", "victim_tank": "Wilk", "victim_tank_raw": "poland:Pl34_CS_63_02", "attacker_team": 2, "victim_team": 1, "damage": 21, "shooter_pos": {"x": -431.31, "y": 18.83, "z": -121.16}, "shooter_ypr": {"yaw": 2.2427, "pitch": -0.0599, "roll": 0.0368}, "victim_pos": {"x": -434.77, "y": 18.59, "z": -124.06}, "victim_ypr": {"yaw": 0.5399, "pitch": -0.0298, "roll": 0.113}, "impact_point": {"x": -437.05, "y": 17.66, "z": -112.76}}, {"hit_clock": 179.51, "attacker_id": 7535415, "attacker_name": "McQueen[LST_S]", "attacker_tank": "Wilk", "attacker_tank_raw": "poland:Pl34_CS_63_02", "victim_id": 7535419, "victim_name": "Sq1zman_[LPACO]", "victim_tank": "Concept 5", "victim_tank_raw": "uk:GB120_Concept_No_5", "attacker_team": 1, "victim_team": 2, "damage": 100, "shooter_pos": {"x": -434.77, "y": 18.59, "z": -124.06}, "shooter_ypr": {"yaw": 0.5399, "pitch": -0.0298, "roll": 0.113}, "victim_pos": {"x": -431.31, "y": 18.83, "z": -121.16}, "victim_ypr": {"yaw": 2.2427, "pitch": -0.0599, "roll": 0.0368}, "impact_point": {"x": -437.05, "y": 17.66, "z": -112.76}}, {"hit_clock": 179.71, "attacker_id": 7535415, "attacker_name": "McQueen[LST_S]", "attacker_tank": "Wilk", "attacker_tank_raw": "poland:Pl34_CS_63_02", "victim_id": 7535419, "victim_name": "Sq1zman_[LPACO]", "victim_tank": "Concept 5", "victim_tank_raw": "uk:GB120_Concept_No_5", "attacker_team": 1, "victim_team": 2, "damage": 9, "shooter_pos": {"x": -434.4, "y": 18.62, "z": -123.44}, "shooter_ypr": {"yaw": 0.5394, "pitch": -0.0349, "roll": 0.1268}, "victim_pos": {"x": -429.78, "y": 18.89, "z": -121.79}, "victim_ypr": {"yaw": 2.4421, "pitch": -0.0384, "roll": 0.0368}, "impact_point": {"x": -435.65, "y": 17.87, "z": -112.11}}, {"hit_clock": 182.81, "attacker_id": 7535419, "attacker_name": "Sq1zman_[LPACO]", "attacker_tank": "Concept 5", "attacker_tank_raw": "uk:GB120_Concept_No_5", "victim_id": 7535415, "victim_name": "McQueen[LST_S]", "victim_tank": "Wilk", "victim_tank_raw": "poland:Pl34_CS_63_02", "attacker_team": 2, "victim_team": 1, "damage": 463, "shooter_pos": {"x": -411.8, "y": 21.0, "z": -140.45}, "shooter_ypr": {"yaw": 2.9544, "pitch": -0.1075, "roll": 0.0245}, "victim_pos": {"x": -419.32, "y": 18.81, "z": -120.03}, "victim_ypr": {"yaw": 2.2714, "pitch": -0.0152, "roll": 0.0358}, "impact_point": {"x": -412.72, "y": 21.92, "z": -136.57}}, {"hit_clock": 187.91, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535419, "victim_name": "Sq1zman_[LPACO]", "victim_tank": "Concept 5", "victim_tank_raw": "uk:GB120_Concept_No_5", "attacker_team": 1, "victim_team": 2, "damage": 430, "shooter_pos": {"x": -415.53, "y": 18.78, "z": -119.69}, "shooter_ypr": {"yaw": 1.6168, "pitch": 0.0, "roll": 0.0368}, "victim_pos": {"x": -370.41, "y": 21.98, "z": -186.2}, "victim_ypr": {"yaw": 2.6354, "pitch": 0.1029, "roll": 0.0675}, "impact_point": {"x": -398.06, "y": 22.57, "z": -169.48}}, {"hit_clock": 188.31, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535419, "victim_name": "Sq1zman_[LPACO]", "victim_tank": "Concept 5", "victim_tank_raw": "uk:GB120_Concept_No_5", "attacker_team": 1, "victim_team": 2, "damage": 88, "shooter_pos": {"x": -412.14, "y": 18.74, "z": -119.85}, "shooter_ypr": {"yaw": 1.6291, "pitch": 0.0123, "roll": 0.0368}, "victim_pos": {"x": -367.4, "y": 21.48, "z": -190.84}, "victim_ypr": {"yaw": 2.4666, "pitch": 0.0983, "roll": 0.1166}, "impact_point": {"x": -398.06, "y": 22.57, "z": -169.48}}, {"hit_clock": 188.81, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535419, "victim_name": "Sq1zman_[LPACO]", "victim_tank": "Concept 5", "victim_tank_raw": "uk:GB120_Concept_No_5", "attacker_team": 1, "victim_team": 2, "damage": 84, "shooter_pos": {"x": -407.87, "y": 18.65, "z": -120.59}, "shooter_ypr": {"yaw": 1.8623, "pitch": 0.0276, "roll": 0.0614}, "victim_pos": {"x": -362.46, "y": 20.65, "z": -195.89}, "victim_ypr": {"yaw": 2.258, "pitch": 0.1136, "roll": 0.0614}, "impact_point": {"x": -366.83, "y": 22.51, "z": -192.35}}, {"hit_clock": 189.31, "attacker_id": 7535423, "attacker_name": "asman666[LST_S]", "attacker_tank": "T95/FV4201", "attacker_tank_raw": "uk:GB98_T95_FV4201_Chieftain", "victim_id": 7535419, "victim_name": "Sq1zman_[LPACO]", "victim_tank": "Concept 5", "victim_tank_raw": "uk:GB120_Concept_No_5", "attacker_team": 1, "victim_team": 2, "damage": 80, "shooter_pos": {"x": -403.71, "y": 18.51, "z": -122.4}, "shooter_ypr": {"yaw": 2.1046, "pitch": 0.0261, "roll": 0.0736}, "victim_pos": {"x": -356.48, "y": 20.04, "z": -199.81}, "victim_ypr": {"yaw": 1.9972, "pitch": 0.0353, "roll": 0.0307}, "impact_point": {"x": -381.48, "y": 22.55, "z": -178.35}}], "my_team": "1", "ally_clan": "LST_S", "enemy_clan": "LPACO"};
+
+const MY_TEAM = parseInt(BATTLE_DATA.my_team, 10) || 1;
+const ALLY_CLAN_TAG = String(BATTLE_DATA.ally_clan || '').trim();
+const ENEMY_CLAN_TAG = String(BATTLE_DATA.enemy_clan || '').trim();
+
+function isAllyTeam(team) {
+return parseInt(team, 10) === MY_TEAM;
+}
+
+const teamIndex = { attacker: new Map(), victim: new Map() };
+
+function buildTeamIndex() {
+teamIndex.attacker.clear();
+teamIndex.victim.clear();
+for (const shot of SHOTS) {
+    if (shot.attacker_name && !teamIndex.attacker.has(shot.attacker_name)) {
+        teamIndex.attacker.set(shot.attacker_name, shot.attacker_team);
+    }
+    if (shot.victim_name && !teamIndex.victim.has(shot.victim_name)) {
+        teamIndex.victim.set(shot.victim_name, shot.victim_team);
+    }
+}
+}
+
+function teamOfPlayerInMode(name, mode) {
+const map = teamIndex[mode] || teamIndex.attacker;
+return map.has(name) ? map.get(name) : null;
+}
+
+function renderClanMatchup() {
+const el = document.getElementById('clanMatchup');
+if (!el) return;
+if (!ALLY_CLAN_TAG && !ENEMY_CLAN_TAG) { el.remove(); return; }
+el.innerHTML = '';
+if (ALLY_CLAN_TAG) {
+    const a = document.createElement('span');
+    a.className = 'clan-tag clan-ally';
+    a.textContent = ALLY_CLAN_TAG;
+    el.appendChild(a);
+}
+if (ALLY_CLAN_TAG && ENEMY_CLAN_TAG) {
+    const vs = document.createElement('span');
+    vs.className = 'clan-vs';
+    vs.textContent = ' vs ';
+    el.appendChild(vs);
+}
+if (ENEMY_CLAN_TAG) {
+    const e = document.createElement('span');
+    e.className = 'clan-tag clan-enemy';
+    e.textContent = ENEMY_CLAN_TAG;
+    el.appendChild(e);
+}
+}
+
+function loadShotsData() {
+const data = normalizeKeys(BATTLE_DATA.shots || []);
+console.log(`[hit_viewer] Загружено ${data.length} попаданий`);
+return data;
+}
+
+function createFallbackTank() {
+const group = new THREE.Group();
+const steelMat = new THREE.MeshStandardMaterial({
+    color: 0x8b9096, metalness: 0.35, roughness: 0.65
+});
+
+const hull = new THREE.Mesh(new THREE.BoxGeometry(3.2, 1.2, 5.5), steelMat);
+hull.position.y = 0.6;
+hull.castShadow = true;
+group.add(hull);
+
+const turret = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.9, 2.8), steelMat);
+turret.position.y = 1.65;
+turret.castShadow = true;
+group.add(turret);
+
+const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 4.5, 8), steelMat);
+barrel.rotation.x = Math.PI / 2;
+barrel.position.set(0, 1.65, 3.5);
+barrel.castShadow = true;
+group.add(barrel);
+
+return group;
+}
+
+function tankModelUrlFromRaw(tankRaw) {
+if (!tankRaw) return null;
+const idx = tankRaw.indexOf(':');
+const techName = idx >= 0 ? tankRaw.slice(idx + 1) : tankRaw;
+if (!techName) return null;
+return `${MODELS_DIR}${techName}.obj`;
+}
+
+async function fetchAndParseObj(url) {
+const res = await fetch(url);
+if (!res.ok) throw new Error(`HTTP ${res.status}`);
+const text = await res.text();
+if (!text || !text.trim()) throw new Error('Файл пустой');
+
+const loader = new OBJLoader();
+const obj = loader.parse(text);
+
+let meshCount = 0;
+obj.traverse(c => { if (c.isMesh) meshCount++; });
+if (meshCount === 0) throw new Error('Нет мешей');
+
+const steelMat = new THREE.MeshStandardMaterial({
+    color: 0x8b9096, metalness: 0.35, roughness: 0.65, side: THREE.DoubleSide
+});
+obj.traverse(c => {
+    if (c.isMesh) {
+        c.material = steelMat;
+        c.castShadow = true;
+        c.receiveShadow = true;
+    }
+});
+return obj;
+}
+
+function getFallbackModelEntry() {
+
+if (fallbackModelEntry) return fallbackModelEntry;
+
+fallbackModelEntry = (async () => {
+    let model;
+    try {
+        model = await fetchAndParseObj(FALLBACK_MODEL_URL);
+        console.log(`[hit_viewer] Запасная модель ${FALLBACK_MODEL_URL} загружена`);
+    } catch (err) {
+        console.warn(`[hit_viewer] Запасная модель ${FALLBACK_MODEL_URL} недоступна: ${err.message}. Используем встроенный меш.`);
+        model = createFallbackTank();
+    }
+    return { model, footOffsetY: computeFootOffset(model) };
+})();
+
+return fallbackModelEntry;
+}
+
+function getTankModelEntry(tankRaw) {
+const cacheKey = tankRaw || '__fallback__';
+
+if (tankModelCache.has(cacheKey)) return tankModelCache.get(cacheKey);
+
+const pending = (async () => {
+    const url = tankModelUrlFromRaw(tankRaw);
+    if (!url) return getFallbackModelEntry();
+
+    try {
+        const model = await fetchAndParseObj(url);
+        console.log(`[hit_viewer] Модель ${url} загружена для ${tankRaw}`);
+        return { model, footOffsetY: computeFootOffset(model) };
+    } catch (err) {
+        console.warn(`[hit_viewer] Не удалось загрузить ${url} для ${tankRaw}: ${err.message}. Используем запасную модель.`);
+        return getFallbackModelEntry();
+    }
+})();
+
+tankModelCache.set(cacheKey, pending);
+return pending;
+}
+
+function computeFootOffset(model) {
+const box = new THREE.Box3().setFromObject(model);
+if (!isFinite(box.min.y)) return 0;
+return -box.min.y;
+}
+
+let currentShotObjects = null;
+
+function disposeShotGroup(group) {
+scene.remove(group);
+group.traverse(child => {
+    if (child.material) {
+        if (Array.isArray(child.material)) child.material.forEach(m => m.dispose());
+        else child.material.dispose();
+    }
+
+    if (child.geometry && !child.userData.sharedGeometry) child.geometry.dispose();
+});
+}
+
+function clearCurrentShot() {
+if (!currentShotObjects) return;
+disposeShotGroup(currentShotObjects.group);
+currentShotObjects = null;
+}
+
+function fmtVec(v) {
+if (!v) return '—';
+return `x ${(v.x||0).toFixed(2)}  y ${(v.y||0).toFixed(2)}  z ${(v.z||0).toFixed(2)}`;
+}
+
+function vecOf(o) {
+return new THREE.Vector3(o?.x || 0, o?.y || 0, o?.z || 0);
+}
+
+const IGNORED_MESH_NAME_PATTERNS = [
+/track/i,
+/wheel/i,
+/roller/i,
+/_gun_\d+$/i,
+/screen/i,
+/spaced/i,
+];
+
+function isIgnoredHitboxMesh(mesh) {
+let node = mesh;
+while (node) {
+    if (node.name && IGNORED_MESH_NAME_PATTERNS.some(re => re.test(node.name))) {
+        return true;
+    }
+    node = node.parent;
+}
+return false;
+}
+
+async function buildShotScene(shot, token) {
+clearCurrentShot();
+
+const group = new THREE.Group();
+
+const { model: victimModel, footOffsetY } = await getTankModelEntry(shot.victim_tank_raw);
+
+if (token !== loadToken) return null;
+
+const tank = victimModel.clone(true);
+tank.traverse(c => {
+
+    c.userData.sharedGeometry = true;
+    if (c.isMesh) c.material = c.material.clone();
+});
+tank.position.set(0, footOffsetY, 0);
+tank.rotation.set(0, 0, 0);
+group.add(tank);
+tank.updateMatrixWorld(true);
+
+const shooterWorld = vecOf(shot.shooter_pos);
+const victimWorld = vecOf(shot.victim_pos);
+const impactWorld = vecOf(shot.impact_point);
+
+let dirWorld = new THREE.Vector3().subVectors(shooterWorld, victimWorld);
+if (dirWorld.lengthSq() < 1e-6) {
+    dirWorld = new THREE.Vector3().subVectors(shooterWorld, impactWorld);
+}
+if (dirWorld.lengthSq() < 1e-6) {
+    dirWorld = new THREE.Vector3(0, 0, 1);
+}
+dirWorld.normalize();
+
+const yaw = (shot.victim_ypr && shot.victim_ypr.yaw) || 0;
+const dir = dirWorld.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), -yaw);
+dir.z *= -1;
+dir.normalize();
+
+const tankCenterHeight = footOffsetY + 1.0;
+const originPoint = new THREE.Vector3(0, tankCenterHeight, 0);
+const shooterAnchor = dir.clone().multiplyScalar(TRACER_START_OFFSET + TRACER_LENGTH).add(originPoint);
+const rayDir = originPoint.clone().sub(shooterAnchor).normalize();
+
+const collidableMeshes = [];
+tank.traverse(c => {
+    if (c.isMesh && !isIgnoredHitboxMesh(c)) collidableMeshes.push(c);
+});
+
+const raycaster = new THREE.Raycaster(shooterAnchor, rayDir, 0, TRACER_START_OFFSET + TRACER_LENGTH + 1);
+const hits = raycaster.intersectObjects(collidableMeshes, false);
+
+let impactPos;
+let tracerEnd;
+if (hits.length > 0) {
+    impactPos = hits[0].point.clone();
+    tracerEnd = impactPos;
+} else {
+    impactPos = dir.clone().multiplyScalar(TRACER_START_OFFSET * 0.55).add(originPoint);
+    tracerEnd = impactPos;
+}
+
+const IMPACT_RADIUS = 0.14 * 0.8;
+const impactGeom = new THREE.SphereGeometry(IMPACT_RADIUS, 20, 20);
+const impactMat = new THREE.MeshStandardMaterial({
+    color: 0xe45a5a, emissive: 0x7a2f2f, emissiveIntensity: 0.7,
+    metalness: 0.2, roughness: 0.4
+});
+const impact = new THREE.Mesh(impactGeom, impactMat);
+impact.position.copy(impactPos);
+group.add(impact);
+
+const haloGeom = new THREE.SphereGeometry(IMPACT_RADIUS * 2, 16, 16);
+const haloMat = new THREE.MeshBasicMaterial({
+    color: 0xe45a5a, transparent: true, opacity: 0.25
+});
+const halo = new THREE.Mesh(haloGeom, haloMat);
+halo.position.copy(impactPos);
+halo.userData.pulse = true;
+group.add(halo);
+
+const lineMat = new THREE.LineBasicMaterial({ color: 0xe45a5a, transparent: true, opacity: 0.6 });
+const lineGeom = new THREE.BufferGeometry().setFromPoints([shooterAnchor, tracerEnd]);
+const line = new THREE.Line(lineGeom, lineMat);
+group.add(line);
+
+const tracerDist = shooterAnchor.distanceTo(tracerEnd);
+if (tracerDist > 0.01) {
+    const tracerGeom = new THREE.CylinderGeometry(0.025, 0.07, tracerDist, 8, 1, true);
+    const tracerMat = new THREE.MeshBasicMaterial({
+        color: 0xe98a75, transparent: true, opacity: 0.22, side: THREE.DoubleSide
+    });
+    const tracer = new THREE.Mesh(tracerGeom, tracerMat);
+    const mid = shooterAnchor.clone().lerp(tracerEnd, 0.5);
+    tracer.position.copy(mid);
+    tracer.lookAt(tracerEnd);
+    tracer.rotateX(Math.PI / 2);
+    group.add(tracer);
+}
+
+const shooterMarker = new THREE.Mesh(
+    new THREE.SphereGeometry(0.22, 12, 12),
+    new THREE.MeshBasicMaterial({ color: 0xffaa33, transparent: true, opacity: 0.85 })
+);
+shooterMarker.position.copy(shooterAnchor);
+group.add(shooterMarker);
+
+scene.add(group);
+currentShotObjects = { group, tank, impact, halo, line, shooterMarker };
+
+const camLookTarget = new THREE.Vector3(0, tankCenterHeight * 0.7, 0);
+const camDir = dir.clone().multiplyScalar(-1).add(new THREE.Vector3(0.35, 0.55, 0.35)).normalize();
+cameraTargetLook.copy(camLookTarget);
+cameraTargetPos.copy(camDir.multiplyScalar(11)).add(camLookTarget);
+cameraAnimating = true;
+
+const worldDist = shooterWorld.distanceTo(victimWorld);
+
+return { worldDist };
+}
+
+function fmtClock(seconds) {
+const s = Math.max(0, Math.round(seconds || 0));
+const mm = Math.floor(s / 60);
+const ss = s % 60;
+return `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+}
+
+function entityNameOf(shot, role) {
+return shot[`${role}_name`] || shot[`${role}_id`] || '—';
+}
+
+function entityTankOf(shot, role) {
+return shot[`${role}_tank`] || '';
+}
+
+let playerShots = [];
+let currentIndex = -1;
+let loadToken = 0;
+let filterMode = 'attacker';
+let selectedPlayer = '';
+
+let hashUpdateTimer = null;
+
+function updateHash() {
+clearTimeout(hashUpdateTimer);
+hashUpdateTimer = setTimeout(() => {
+    if (!selectedPlayer) {
+        history.replaceState(null, '', location.pathname + location.search);
+        return;
+    }
+    const params = new URLSearchParams({ mode: filterMode, p: selectedPlayer });
+    if (currentIndex >= 0) params.set('shot', String(currentIndex + 1));
+    history.replaceState(null, '', '#' + params.toString());
+}, 300);
+}
+
+function applyStateFromHash() {
+if (!SHOTS.length) return false;
+const raw = location.hash.replace(/^#/, '');
+if (!raw) return false;
+const params = new URLSearchParams(raw);
+
+const mode = params.get('mode');
+if (mode === 'attacker' || mode === 'victim') filterMode = mode;
+
+const player = params.get('p');
+if (!player || !playerNamesForMode(filterMode).includes(player)) return false;
+
+selectedPlayer = player;
+
+renderModeDropdown();
+document.getElementById('modeBtnValue').textContent = MODE_LABELS[filterMode];
+document.getElementById('playerBtnLabel').textContent = MODE_LABELS[filterMode];
+document.getElementById('playerBtnValue').textContent = nameWithoutClan(player) || '—';
+applyPlayerFilter();
+
+const shot = parseInt(params.get('shot'), 10);
+if (Number.isFinite(shot) && shot >= 1 && shot <= playerShots.length) selectShot(shot - 1);
+return true;
+}
+
+window.addEventListener('hashchange', () => {
+if (applyStateFromHash()) ui.emptyState.style.display = 'none';
+});
+
+const MODE_LABELS = { attacker: 'Атакующий', victim: 'Жертва' };
+
+function buildDropdown(dropdownEl, names, currentValue, onPick, { withReset = true, resetLabel = '— все —', renderLabel } = {}) {
+dropdownEl.innerHTML = '';
+dropdownEl.onclick = (e) => e.stopPropagation();
+
+if (withReset) {
+    const resetItem = document.createElement('div');
+    resetItem.className = 'filter-dropdown-item reset';
+    resetItem.textContent = resetLabel;
+    resetItem.addEventListener('click', () => onPick(''));
+    dropdownEl.appendChild(resetItem);
+}
+
+names.forEach(name => {
+    const item = document.createElement('div');
+    item.className = 'filter-dropdown-item';
+    if (name === currentValue) item.classList.add('active');
+    if (renderLabel) {
+        const info = renderLabel(name) || {};
+        item.textContent = info.text ?? name;
+        if (info.className) item.classList.add(info.className);
+    } else {
+        item.textContent = name;
+    }
+    item.addEventListener('click', () => onPick(name));
+    dropdownEl.appendChild(item);
+});
+}
+
+function closeAllDropdowns() {
+document.querySelectorAll('.filter-dropdown.open').forEach(el => el.classList.remove('open'));
+document.querySelectorAll('.filter-btn.open').forEach(el => el.classList.remove('open'));
+}
+
+function setupFilterPicker({ btn, dropdown, getNames, getValue, onPick, dropdownOpts, alwaysOpen }) {
+const render = () => buildDropdown(dropdown, getNames(), getValue(), (val) => {
+    onPick(val);
+    if (alwaysOpen) render();
+    else closeAllDropdowns();
+}, dropdownOpts);
+
+if (alwaysOpen) {
+    render();
+    return render;
+}
+
+btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = dropdown.classList.contains('open');
+    closeAllDropdowns();
+    if (isOpen) return;
+    render();
+    dropdown.classList.add('open');
+    btn.classList.add('open');
+});
+}
+
+function playerNamesForMode(mode) {
+const field = mode === 'attacker' ? 'attacker_name' : 'victim_name';
+const names = [...new Set(SHOTS.map(s => s[field]).filter(Boolean))];
+return names.sort((a, b) => {
+    const aAlly = isAllyTeam(teamOfPlayerInMode(a, mode)) ? 0 : 1;
+    const bAlly = isAllyTeam(teamOfPlayerInMode(b, mode)) ? 0 : 1;
+    if (aAlly !== bAlly) return aAlly - bAlly;
+    return a.localeCompare(b);
+});
+}
+
+let renderModeDropdown = () => {};
+
+function populatePlayerFilters() {
+renderModeDropdown = setupFilterPicker({
+    btn: document.getElementById('modeBtn'),
+    dropdown: document.getElementById('modeDropdown'),
+    getNames: () => Object.values(MODE_LABELS),
+    getValue: () => MODE_LABELS[filterMode],
+    onPick: (label) => {
+        const newMode = Object.keys(MODE_LABELS).find(k => MODE_LABELS[k] === label);
+        if (!newMode || newMode === filterMode) return;
+        filterMode = newMode;
+        document.getElementById('modeBtnValue').textContent = MODE_LABELS[filterMode];
+        document.getElementById('playerBtnLabel').textContent = MODE_LABELS[filterMode];
+        const namesInNewMode = playerNamesForMode(filterMode);
+        if (!namesInNewMode.includes(selectedPlayer)) {
+            selectedPlayer = '';
+            document.getElementById('playerBtnValue').textContent = '—';
+        }
+        applyPlayerFilter();
+    },
+    dropdownOpts: { withReset: false },
+    alwaysOpen: true,
+});
+
+setupFilterPicker({
+    btn: document.getElementById('playerBtn'),
+    dropdown: document.getElementById('playerDropdown'),
+    getNames: () => playerNamesForMode(filterMode),
+    getValue: () => selectedPlayer,
+    onPick: (name) => {
+        selectedPlayer = name;
+        document.getElementById('playerBtnValue').textContent = nameWithoutClan(name) || '—';
+        applyPlayerFilter();
+    },
+    dropdownOpts: {
+        withReset: false,
+        renderLabel: (name) => ({
+            text: nameWithoutClan(name),
+            className: isAllyTeam(teamOfPlayerInMode(name, filterMode)) ? 'team-ally' : 'team-enemy',
+        }),
+    },
+});
+
+document.addEventListener('click', closeAllDropdowns);
+}
+
+function setNavDisabled(disabled) {
+document.getElementById('prevBtn').disabled = disabled;
+document.getElementById('nextBtn').disabled = disabled;
+}
+
+function applyPlayerFilter() {
+clearCurrentShot();
+currentIndex = -1;
+
+if (!selectedPlayer) {
+    playerShots = [];
+    ui.panel.style.display = 'none';
+    ui.shotlist.style.display = 'none';
+    ui.emptyState.style.display = 'block';
+    ui.shotlist.replaceChildren();
+    setNavDisabled(true);
+    return;
+}
+
+const field = filterMode === 'attacker' ? 'attacker_name' : 'victim_name';
+playerShots = SHOTS.filter(s => s[field] === selectedPlayer);
+ui.emptyState.style.display = 'none';
+
+if (playerShots.length === 0) {
+    ui.panel.style.display = 'none';
+    ui.shotlist.style.display = 'none';
+    setNavDisabled(true);
+    return;
+}
+
+ui.panel.style.display = 'block';
+ui.shotlist.style.display = 'block';
+setNavDisabled(false);
+buildShotList();
+selectShot(0);
+}
+
+let cameraTargetPos = new THREE.Vector3();
+let cameraTargetLook = new THREE.Vector3();
+let cameraAnimating = false;
+
+async function selectShot(i) {
+if (playerShots.length === 0) return;
+currentIndex = ((i % playerShots.length) + playerShots.length) % playerShots.length;
+const shot = playerShots[currentIndex];
+
+const myToken = ++loadToken;
+const built = await buildShotScene(shot, myToken);
+
+if (!built || myToken !== loadToken) return;
+const { worldDist } = built;
+
+ui.clock.textContent = fmtClock(shot.hit_clock);
+ui.attackerName.textContent = entityNameOf(shot, 'attacker');
+ui.attackerName.classList.toggle('team-ally', isAllyTeam(shot.attacker_team));
+ui.attackerName.classList.toggle('team-enemy', !isAllyTeam(shot.attacker_team));
+ui.attackerTank.textContent = entityTankOf(shot, 'attacker');
+ui.victimName.textContent = entityNameOf(shot, 'victim');
+ui.victimName.classList.toggle('team-ally', isAllyTeam(shot.victim_team));
+ui.victimName.classList.toggle('team-enemy', !isAllyTeam(shot.victim_team));
+ui.victimTank.textContent = entityTankOf(shot, 'victim');
+ui.dmg.textContent = (shot.damage || 0) + ' HP';
+ui.dist.textContent = worldDist.toFixed(1) + ' м';
+ui.idx.textContent = `${currentIndex + 1} / ${playerShots.length}`;
+updateHash();
+
+document.querySelectorAll('.shot-item').forEach((el, idx) => {
+    const isCurrent = idx === currentIndex;
+    el.classList.toggle('active', isCurrent);
+    el.setAttribute('aria-selected', isCurrent ? 'true' : 'false');
+
+    el.tabIndex = isCurrent ? 0 : -1;
+});
+}
+
+function span(className, text) {
+const el = document.createElement('span');
+el.className = className;
+if (text !== undefined) el.textContent = text;
+return el;
+}
+
+function buildShotList() {
+const listEl = document.getElementById('shotlist');
+listEl.replaceChildren();
+const otherRole = filterMode === 'attacker' ? 'victim' : 'attacker';
+playerShots.forEach((shot, idx) => {
+    const item = document.createElement('div');
+    item.className = 'shot-item';
+    item.setAttribute('role', 'option');
+    item.setAttribute('aria-selected', 'false');
+    item.tabIndex = -1;
+
+    const otherName = nameWithoutClan(shot[`${otherRole}_name`] || shot[`${otherRole}_id`] || '?');
+    const teamClass = isAllyTeam(shot[`${otherRole}_team`]) ? 'team-ally' : 'team-enemy';
+
+    const line = span('shot-line');
+    line.append(
+        span('shot-idx', `№${idx + 1}`),
+        span('shot-time', fmtClock(shot.hit_clock)),
+        span('shot-divider'),
+        span('shot-arrow', '→'),
+        span(`victim-tag ${teamClass}`, otherName),
+    );
+
+    item.append(line, span('dmg-tag', String(shot.damage || 0)));
+    item.addEventListener('click', () => selectShot(idx));
+    item.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        selectShot(idx);
+    });
+    listEl.appendChild(item);
+});
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => { if (playerShots.length) selectShot(currentIndex - 1); });
+document.getElementById('nextBtn').addEventListener('click', () => { if (playerShots.length) selectShot(currentIndex + 1); });
+window.addEventListener('keydown', (e) => {
+if (!playerShots.length) return;
+if (e.key === 'ArrowRight') selectShot(currentIndex + 1);
+if (e.key === 'ArrowLeft') selectShot(currentIndex - 1);
+});
+window.addEventListener('resize', () => {
+camera.aspect = window.innerWidth / window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+const clock = new THREE.Clock();
+function animate() {
+const t = clock.getElapsedTime();
+
+if (currentShotObjects && currentShotObjects.halo.userData.pulse) {
+    const scale = 1 + 0.3 * Math.sin(t * 4);
+    currentShotObjects.halo.scale.set(scale, scale, scale);
+}
+
+if (cameraAnimating) {
+    camera.position.lerp(cameraTargetPos, 0.08);
+    controls.target.lerp(cameraTargetLook, 0.08);
+    if (camera.position.distanceTo(cameraTargetPos) < 0.05) cameraAnimating = false;
+}
+
+controls.update();
+renderer.render(scene, camera);
+}
+
+async function init() {
+try {
+    SHOTS = await loadShotsData();
+    buildTeamIndex();
+
+    renderClanMatchup();
+    setNavDisabled(true);
+
+    if (SHOTS.length === 0) {
+        document.getElementById('filter-container').style.display = 'none';
+        ui.emptyState.querySelector('.big').textContent = 'Нет данных о попаданиях';
+        ui.emptyState.querySelector('.small').textContent = 'в этом бою не зафиксировано ни одного пробития';
+    } else {
+        populatePlayerFilters();
+
+        applyStateFromHash();
+    }
+    if (!selectedPlayer) ui.emptyState.style.display = 'block';
+
+    ui.loading.style.display = 'none';
+    console.log('[hit_viewer] Инициализация завершена успешно');
+} catch (err) {
+    console.error('[hit_viewer] Критическая ошибка:', err);
+    ui.loading.textContent = 'Ошибка: ' + err.message + '\n\nОткройте консоль (F12) для подробностей.';
+    ui.loading.classList.add('error');
+}
+renderer.setAnimationLoop(animate);
+}
+
+init();
+</script>
+</body>
+</html>
