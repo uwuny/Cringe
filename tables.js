@@ -135,9 +135,9 @@ const SEASONS = [
   },
   {
     key: "new_season",
-    label: "Новый сезон",
+    label: "Сила времени",
     stages: [
-      { key: "stage_1", label: "Первый этап", icon: "stat/stage1.png", start: null, end: null },
+      { key: "stage_1", label: "Закатное безмолвие", icon: "stat/stage1.png", start: null, end: null },
       { key: "stage_2", label: "Второй этап", icon: "stat/stage2.png", start: null, end: null },
       { key: "stage_3", label: "Третий этап", icon: "stat/stage7.png", start: null, end: null },
       { key: "stage_4", label: "Четвёртый этап", icon: "stat/stage8.png", start: null, end: null },
