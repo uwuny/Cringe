@@ -68,6 +68,7 @@
 
 ## Что где лежит
 
+```
 index.html            сайт: три вкладки
 tables.js             статистика и общее состояние ссылки
 maps.js               вкладка карт, чтение игровых XML
@@ -82,6 +83,7 @@ Equip/
 
 maps/definitions/     игровые XML карт
 icons/ flags/ classes/ equipment/ Modernization/ images/   картинки
+```
 
 Файлы `equipment_t10.js` и `equipment_overrides.js` генерируются — править их
 руками бесполезно, перезапишутся.
