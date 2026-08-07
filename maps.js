@@ -15,7 +15,7 @@ const MAP_LIST = [
   { key: "60_asia_miao", name: "Жемчужная река" },
   { key: "03_campania_big", name: "Провинция" },
   { key: "01_karelia", name: "Карелия" },
-  { key: "37_caucasus", name: "Кавказ" },
+  { key: "37_caucasus", name: "Перевал" },
   { key: "503_kaliningrad", name: "Калининград" },
   { key: "07_lakeville", name: "Ласвилль" },
   { key: "38_mannerheim_line", name: "Линия Маннергейма" },
